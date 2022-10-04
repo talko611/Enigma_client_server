@@ -5,10 +5,15 @@ import java.util.Map;
 import java.util.UUID;
 
 public class Uboat extends User{
-    Map<UUID, Allie> allies;
+    private Map<UUID, Allie> allies;
+    private UUID battlefieldId;
 
     public Uboat(String name){
         super(name);
         this.allies = new HashMap<>();
+    }
+
+    public void setBattlefieldId(UUID battlefieldId) {
+        this.battlefieldId = battlefieldId;
     }
 }

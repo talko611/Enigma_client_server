@@ -25,7 +25,6 @@ public class XmlReader {
         isRotorsCountValid(cteMachine.getRotorsCount(), cteRotors.getCTERotor().size());
         isAllRotorsValid(cteRotors, cteMachine.getABC().length());
         isReflectorsValid(cteMachine.getCTEReflectors(), cteMachine.getABC().length());
-//        isAgentsNumValid(cteEnigma.getCTEDecipher());
         //Save to my object
         EnigmaParts enigmaParts = new EnigmaParts();
         enigmaParts.saveEnigmaParts(cteEnigma);
@@ -138,10 +137,4 @@ public class XmlReader {
             reflectorMapping.put(output, input);
         }
     }
-
-//    private void isAgentsNumValid(CTEDecipher decipher){
-//        int agentsNum = decipher.;
-//        if(agentsNum < 2 || agentsNum > MAX_AGENTS )
-//            throw  new InputMismatchException("Number of deciphers' agents is not between 2 to 50");
-//    }
 }
