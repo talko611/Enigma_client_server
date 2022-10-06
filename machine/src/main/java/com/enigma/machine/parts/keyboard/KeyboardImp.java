@@ -27,7 +27,7 @@ public class KeyboardImp implements Keyboard{
     }
 
     @Override
-    public Integer getEntryPointByKey(String key) {
+    public int getEntryPointByKey(String key) {
         return alphabetToEntryNum.get(key);
     }
 
@@ -44,6 +44,11 @@ public class KeyboardImp implements Keyboard{
     @Override
     public String toString(){
         return this.alphabetToEntryNum.toString();
+    }
+
+    @Override
+    public int getKeyboardSize(){
+        return this.alphabetToEntryNum.size();
     }
 
 }

@@ -25,6 +25,7 @@ public class MachineParts {
         this.keyboard = saveKeyboard(cteMachine.getABC());
         this.idToRotor = saveRotors(cteMachine.getCTERotors());
         this.idToReflector = saveReflectors(cteMachine.getCTEReflectors());
+        this.minRotorCount = cteMachine.getRotorsCount();
     }
 
     private Keyboard saveKeyboard(String abc){
@@ -87,5 +88,29 @@ public class MachineParts {
             }
         }
         return res;
+    }
+
+    public Rotor getRotor(int id){
+        return this.idToRotor.get(id);
+    }
+
+    public Map<Integer, Rotor> getAllRotors(){
+        return this.idToRotor;
+    }
+
+    public int getRotorCount(){
+        return this.minRotorCount;
+    }
+
+    public Map<Integer, Reflector> getAllReflectors(){
+        return this.idToReflector;
+    }
+
+    public Reflector getReflector(int id){
+        return this.idToReflector.get(id);
+    }
+
+    public Keyboard getKeyboard() {
+        return keyboard;
     }
 }

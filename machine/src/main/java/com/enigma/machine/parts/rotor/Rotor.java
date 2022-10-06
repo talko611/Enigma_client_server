@@ -10,4 +10,5 @@ public interface Rotor {
     void reset();
     void setOffset(String letter);
     String toString();
+    int getId();
 }

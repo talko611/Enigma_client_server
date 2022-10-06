@@ -16,4 +16,8 @@ public class Uboat extends User{
     public void setBattlefieldId(UUID battlefieldId) {
         this.battlefieldId = battlefieldId;
     }
+
+    public UUID getBattlefieldId(){
+        return this.battlefieldId;
+    }
 }

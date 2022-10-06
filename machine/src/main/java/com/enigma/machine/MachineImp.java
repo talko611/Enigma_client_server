@@ -6,6 +6,8 @@ import com.enigma.machine.parts.plugBoard.PlugBoard;
 import com.enigma.machine.parts.reflector.Reflector;
 import com.enigma.machine.parts.rotor.Rotor;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 public class MachineImp implements Machine{
@@ -13,6 +15,9 @@ public class MachineImp implements Machine{
     private Reflector reflector;
     private PlugBoard plugBoard;
     private Keyboard keyboard;
+
+    private String initialConfiguration;
+    private String currentConfiguration;
 
     public MachineImp(){
         this.rotors = null;
@@ -58,6 +63,7 @@ public class MachineImp implements Machine{
         this.rotors = rotors;
     }
 
+    @Override
     public List<Rotor> getRotors() {
         return rotors;
     }
@@ -83,7 +89,77 @@ public class MachineImp implements Machine{
         this.keyboard = keyboard;
     }
 
+    @Override
     public Keyboard getKeyboard(){return this.keyboard;}
+
+    @Override
+    public int getKeyboardSize(){
+        return this.keyboard.getKeyboardSize();
+    }
+
+    @Override
+    public void setConfiguration(){
+        this.initialConfiguration = this.currentConfiguration = buildConfiguration();
+    }
+
+    @Override
+    public void updateConfiguration(){
+        this.currentConfiguration = buildConfiguration();
+    }
+
+    @Override
+    public String getCurrentConfiguration() {
+        return currentConfiguration;
+    }
+
+    private String buildConfiguration(){
+        StringBuilder builder = new StringBuilder();
+        buildRotorsConfigurationPart(builder);
+        buildOffsetsConfigurationPart(builder);
+        buildPlugsConfigurationPart(builder);
+        return builder.toString();
+    }
+
+    private void buildRotorsConfigurationPart(StringBuilder builder){
+        builder.append("<");
+        this.rotors.forEach(rotor -> builder.append(rotor.getId()).append(","));
+        builder.deleteCharAt(builder.toString().length() -1);
+        builder.append(">");
+    }
+
+    private void buildOffsetsConfigurationPart(StringBuilder builder){
+        builder.append("<");
+        this.rotors.forEach(rotor -> builder.append(rotor.getCurrentOffset())
+                .append("(")
+                .append(rotor.getNotchStepsToZero())
+                .append("),")
+        );
+        builder.deleteCharAt(builder.toString().length() -1);
+        builder.append(">");
+    }
+
+    private void buildPlugsConfigurationPart(StringBuilder builder){
+        if(!this.plugBoard.getAllPlugs().isEmpty()){
+            Map<String, Boolean> isLetterAdded = this.plugBoard
+                    .getAllPlugs()
+                    .keySet()
+                    .stream()
+                    .collect(Collectors
+                            .toMap(i -> i, i->false));
+            builder.append("<");
+            String first, second;
+            for (Map.Entry<String, String> entry : this.plugBoard.getAllPlugs().entrySet()){
+                first = entry.getKey();
+                second = entry.getValue();
+                if(!isLetterAdded.get(first) && !isLetterAdded.get(second)){
+                    builder.append(first).append("|").append(second).append(",");
+                    isLetterAdded.replace(first,true);
+                    isLetterAdded.replace(second,true);
+                }
+            }
+            builder.deleteCharAt(builder.toString().length() -1).append(">");
+        }
+    }
 
 }
 

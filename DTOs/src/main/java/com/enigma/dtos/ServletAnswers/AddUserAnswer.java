@@ -1,27 +1,18 @@
-package com.enigma.dtos;
+package com.enigma.dtos.ServletAnswers;
 
 import java.util.UUID;
 
-public class LogInAnswer {
+public class AddUserAnswer {
     private boolean isSuccess;
     private String message;
-
     private UUID id;
 
-    public boolean isSuccess() {
-        return isSuccess;
-    }
-
-    public String getMessage() {
-        return message;
+    public UUID getId() {
+        return id;
     }
 
     public void setId(UUID id) {
         this.id = id;
-    }
-
-    public UUID getId() {
-        return id;
     }
 
     public void setSuccess(boolean success) {
@@ -30,5 +21,13 @@ public class LogInAnswer {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public boolean isSuccess() {
+        return isSuccess;
+    }
+
+    public String getMessage() {
+        return message;
     }
 }

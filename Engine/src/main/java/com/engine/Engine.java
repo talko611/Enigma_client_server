@@ -1,14 +1,28 @@
 package com.engine;
 
-import com.enigma.dtos.LoadFileAnswer;
-import com.enigma.dtos.LogInAnswer;
+import com.engine.enigmaParts.EnigmaParts;
+import com.engine.enigmaParts.machineParts.MachineParts;
+import com.enigma.dtos.ClientDataTransfer.EncryptMessageData;
+import com.enigma.dtos.EngineAnswers.InputOperationAnswer;
+import com.enigma.machine.Machine;
 
+import javax.xml.bind.JAXBException;
 import java.io.InputStream;
-import java.util.UUID;
+import java.util.InputMismatchException;
 
 public interface Engine {
-    LogInAnswer uBoatLogIn(String name);
-    LogInAnswer agentLogIn(String name);
-    LogInAnswer allieLogIn(String name);
-    LoadFileAnswer loadGame(UUID uBoatId, InputStream fileData);
+    EnigmaParts loadGame( InputStream fileData) throws JAXBException, InputMismatchException;
+
+    InputOperationAnswer manualConfigRotors(Machine machine, MachineParts machineParts, String rotorConfigLine);
+
+    InputOperationAnswer manualConfigPlugBoard(Machine machine, String plugBoardConfigLine);
+
+    InputOperationAnswer manualConfigReflector(Machine machine,MachineParts machineParts, String reflectorNum);
+
+    InputOperationAnswer manualConfigOffsets(Machine machine, String offsetsConfigLine);
+
+    InputOperationAnswer autoConfig(Machine machine, MachineParts machineParts);
+
+    EncryptMessageData encryptDecrypt(String src, Machine machine);
+
 }

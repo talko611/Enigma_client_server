@@ -1,20 +1,25 @@
 package com.engine.users;
 
+import com.engine.battlefield.Battlefield;
+
 import java.util.*;
 
 public class UserManager {
     private Map<UUID,Uboat> uBoats;
     private Map<UUID, Allie> allies;
     private Map<UUID, Agent> agents;
+    private Map<UUID, Battlefield> battlefields;
 
     private static final Object uBoatsLock = new Object();
     private static final Object alliesLock = new Object();
     private static final Object agentsLock =new Object();
+    private static final Object battlefieldLock = new Object();
 
     public UserManager(){
         this.uBoats = new HashMap<>();
         this.agents = new HashMap<>();
         this.allies = new HashMap<>();
+        this.battlefields = new HashMap<>();
     }
 
     public boolean isUBoatExists(String userName){
@@ -86,5 +91,27 @@ public class UserManager {
         return agents.get(id);
     }
 
+    public Battlefield getBattlefieldById(UUID id){
+        return battlefields.get(id);
+    }
+
+    public UUID addNewBattlefield(String battlefieldName){
+        synchronized (battlefieldLock){
+            Battlefield battlefield = new Battlefield(battlefieldName);
+            this.battlefields.put(battlefield.getId(), battlefield);
+            return battlefield.getId();
+        }
+    }
+
+    public boolean isBattlefieldExists(String name){
+        synchronized (battlefieldLock){
+            for(Battlefield battlefield : battlefields.values()){
+                if(battlefield.getName().equals(name)){
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
 
 }

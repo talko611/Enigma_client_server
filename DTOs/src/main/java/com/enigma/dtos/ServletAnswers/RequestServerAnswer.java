@@ -1,6 +1,6 @@
-package com.enigma.dtos;
+package com.enigma.dtos.ServletAnswers;
 
-public class LoadFileAnswer {
+public class RequestServerAnswer {
     private boolean isSuccess;
     private String message;
 

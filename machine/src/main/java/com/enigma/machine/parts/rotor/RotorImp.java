@@ -100,5 +100,10 @@ public class RotorImp implements Rotor {
                 +"\nLetter to entry point: " + this.letterToEntryPoint.toString()
                 +"\nMapping:" + this.inputToOutput.toString();
     }
+
+    @Override
+    public int getId(){
+        return this.id;
+    }
 }
 

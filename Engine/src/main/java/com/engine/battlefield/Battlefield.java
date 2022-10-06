@@ -9,15 +9,26 @@ import java.util.UUID;
 public class Battlefield {
     private final String name;
     private final UUID id;
-    EnigmaParts enigmaParts;
-    Machine machine;
-    String encryptedMessage;
+    private EnigmaParts enigmaParts;
+    private Machine machine;
+    private String encryptedMessage;
+    private String decryptedMessage;
+    private String messageInitialConfiguration;
+
 
 
     public Battlefield(String name){
         this.name = name;
         this.id = UUID.randomUUID();
         this.machine = new MachineImp();
+    }
+
+    public void setDecryptedMessage(String decryptedMessage) {
+        this.decryptedMessage = decryptedMessage;
+    }
+
+    public String getDecryptedMessage() {
+        return decryptedMessage;
     }
 
     public void setEnigmaParts(EnigmaParts enigmaParts) {
@@ -50,5 +61,11 @@ public class Battlefield {
 
     public String getEncryptedMessage() {
         return encryptedMessage;
+    }
+    public String getMessageInitialConfiguration() {
+        return messageInitialConfiguration;
+    }
+    public void setMessageInitialConfiguration(String messageInitialConfiguration) {
+        this.messageInitialConfiguration = messageInitialConfiguration;
     }
 }

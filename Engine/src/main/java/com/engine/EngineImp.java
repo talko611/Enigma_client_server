@@ -1,113 +1,70 @@
 package com.engine;
 
-import com.engine.battlefield.Battlefield;
+import com.engine.configuration.Configurator;
 import com.engine.enigmaParts.EnigmaParts;
-import com.engine.enums.UserType;
-import com.engine.users.Uboat;
-import com.engine.users.UserManager;
+import com.engine.enigmaParts.machineParts.MachineParts;
 import com.engine.xmlReader.XmlReader;
-import com.enigma.dtos.LoadFileAnswer;
-import com.enigma.dtos.LogInAnswer;
+import com.enigma.dtos.ClientDataTransfer.EncryptMessageData;
+import com.enigma.dtos.EngineAnswers.InputOperationAnswer;
+import com.enigma.machine.Machine;
 
 import javax.xml.bind.JAXBException;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.InputMismatchException;
-import java.util.Map;
-import java.util.UUID;
 
 public class EngineImp implements Engine{
-    private XmlReader xmlReader;
-    private final UserManager userManager;
-    private final Map<UUID, Battlefield> battlefields;
+    private final XmlReader xmlReader;
+    private Configurator configurator;
+
 
     public EngineImp(){
         this.xmlReader = new XmlReader();
-        this.userManager = new UserManager();
-        this.battlefields = new HashMap<>();
-
+        this.configurator = new Configurator();
     }
 
     @Override
-    public LogInAnswer uBoatLogIn(String name){
-        LogInAnswer answer = new LogInAnswer();
-
-        if(this.userManager.isUBoatExists(name)){
-            answer.setSuccess(false);
-            answer.setMessage("User name is already taken, please select a different name");
-        }else{
-            answer.setSuccess(true);
-            answer.setId(this.userManager.addNewUBoat(name));
-            answer.setMessage("User is logged in");
+    public EnigmaParts loadGame( InputStream fileData) throws JAXBException, InputMismatchException {
+        synchronized (xmlReader) {
+           return xmlReader.load(fileData);
         }
-        return answer;
     }
 
     @Override
-    public LogInAnswer agentLogIn(String name){
-        LogInAnswer answer = new LogInAnswer();
-        if(this.userManager.isAgentExists(name)){
-            answer.setSuccess(false);
-            answer.setMessage("Username is already taken. Please select different name");
-        }else{
-            answer.setSuccess(true);
-            answer.setId(this.userManager.addNewAgent(name));
-            answer.setMessage("User is logged in");
-        }
-        return answer;
+    public InputOperationAnswer manualConfigRotors(Machine machine, MachineParts machineParts, String rotorConfigLine){
+        if(machine.getRotors()!= null)  machine.reset();
+        return this.configurator.manualConfigRotors(rotorConfigLine,machineParts, machine );
     }
 
     @Override
-    public LogInAnswer allieLogIn(String name){
-        LogInAnswer answer = new LogInAnswer();
-        if(this.userManager.isAllieExists(name)){
-            answer.setSuccess(false);
-            answer.setMessage("Username is already taken. Please select different name");
-        }else{
-            answer.setSuccess(true);
-            answer.setId(this.userManager.addNewAllie(name));
-            answer.setMessage("User is logged in");
-        }
-        return answer;
+    public InputOperationAnswer manualConfigOffsets(Machine machine, String offsetsConfigLine){
+        return this.configurator.manualConfigRotorsOffsets(offsetsConfigLine,machine);
     }
 
-    public LoadFileAnswer loadGame(UUID uBoatId, InputStream fileData){
-        LoadFileAnswer answer = new LoadFileAnswer();
-        synchronized (xmlReader){
-            try{
-                if(!isUserExists(uBoatId,UserType.U_BOAT)){
-                    answer.setSuccess(false);
-                    answer.setMessage("Error - Unknown User");
-                    return answer;
-                }
-                Uboat uboat = this.userManager.getUBoatById(uBoatId);
-                EnigmaParts parts = xmlReader.load(fileData);
-                Battlefield battlefield = new Battlefield(parts.getBattlefieldParts().getName());
-                battlefield.setEnigmaParts(parts);
-                battlefields.put(battlefield.getId(), battlefield);
-                uboat.setBattlefieldId(battlefield.getId());
-                uboat.setBelongToBattlefield(true);
-                answer.setSuccess(true);
-                answer.setMessage("Battlefield is loaded");
-            }catch (JAXBException | InputMismatchException e){
-                answer.setSuccess(false);
-                answer.setMessage(e.getMessage());
-            }
-        }
-        return answer;
+    @Override
+    public InputOperationAnswer manualConfigReflector(Machine machine,MachineParts machineParts, String reflectorNum){
+        return this.configurator.manualConfigReflector(reflectorNum,machine,machineParts);
     }
 
-    private boolean isUserExists(UUID id, UserType type){
-        switch (type){
-            case AGENT:
-                return userManager.getAgentById(id) != null;
-            case ALLIE:
-                return userManager.getAllieById(id) != null;
-            case U_BOAT:
-                return userManager.getUBoatById(id) != null;
-            default:
-                return false;
+    @Override
+    public InputOperationAnswer manualConfigPlugBoard(Machine machine, String plugBoardConfigLine){
+        return this.configurator.manualConfigPlugBoard(plugBoardConfigLine, machine);
+    }
+
+    public InputOperationAnswer autoConfig(Machine machine, MachineParts machineParts){
+        if (machine.getRotors() != null) machine.reset();
+        return configurator.autoConfigMachine(machineParts, machine);
+    }
+    @Override
+    public EncryptMessageData encryptDecrypt(String src, Machine machine){
+        src = src.toUpperCase();
+        StringBuilder builder = new StringBuilder();
+        EncryptMessageData encryptedData = new EncryptMessageData();
+        for(int i = 0; i < src.length(); ++i ){
+            builder.append(machine.encryptDecrypt(String.valueOf(src.charAt(i))));
         }
+        machine.updateConfiguration();
+        encryptedData.setMessage(builder.toString());
+        return encryptedData;
     }
 
 
