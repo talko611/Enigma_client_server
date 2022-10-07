@@ -17,6 +17,9 @@
     <modules>
         <module>machine</module>
         <module>Engine</module>
+        <module>Server</module>
+        <module>DTOs</module>
+        <module>UBoatApp</module>
     </modules>
 
 </project>

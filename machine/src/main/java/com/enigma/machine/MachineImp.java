@@ -112,6 +112,11 @@ public class MachineImp implements Machine{
         return currentConfiguration;
     }
 
+    @Override
+    public String getInitialConfiguration() {
+        return initialConfiguration;
+    }
+
     private String buildConfiguration(){
         StringBuilder builder = new StringBuilder();
         buildRotorsConfigurationPart(builder);

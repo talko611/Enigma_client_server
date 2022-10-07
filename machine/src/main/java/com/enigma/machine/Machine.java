@@ -20,4 +20,5 @@ public interface Machine {
     void setConfiguration();
     void updateConfiguration();
     String getCurrentConfiguration();
+    String getInitialConfiguration();
 }

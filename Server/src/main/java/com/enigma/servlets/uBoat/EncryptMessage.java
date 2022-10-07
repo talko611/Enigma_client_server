@@ -34,7 +34,7 @@ public class EncryptMessage extends HttpServlet {
                 Machine machine = battlefield.getMachine();
                 Gson gson = new Gson();
                 EncryptMessageData data = gson.fromJson(req.getReader(), EncryptMessageData.class);
-                synchronized (machine){
+                synchronized (battlefield.getMachine()){
                     if(isLettersAreValid(data.getMessage(), machine.getKeyboard()) &&
                             isAllWordAreInDic(battlefield.getEnigmaParts().getDmParts().getDictionary(), data.getMessage())){
                         battlefield.setEncryptedMessage(data.getMessage());

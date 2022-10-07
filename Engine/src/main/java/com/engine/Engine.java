@@ -1,9 +1,11 @@
 package com.engine;
 
+import com.engine.battlefield.Battlefield;
 import com.engine.enigmaParts.EnigmaParts;
 import com.engine.enigmaParts.machineParts.MachineParts;
 import com.enigma.dtos.ClientDataTransfer.EncryptMessageData;
 import com.enigma.dtos.EngineAnswers.InputOperationAnswer;
+import com.enigma.dtos.ServletAnswers.MachineDetailsAnswer;
 import com.enigma.machine.Machine;
 
 import javax.xml.bind.JAXBException;
@@ -24,5 +26,7 @@ public interface Engine {
     InputOperationAnswer autoConfig(Machine machine, MachineParts machineParts);
 
     EncryptMessageData encryptDecrypt(String src, Machine machine);
+
+    MachineDetailsAnswer getDetails(Machine machine, MachineParts machineParts);
 
 }

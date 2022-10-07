@@ -35,7 +35,7 @@ public class ConfigMachine extends HttpServlet {
                 resp.setStatus(401);
             }else{
                 Engine engine = ServletsUtils.getEngine(getServletContext());
-                synchronized (battlefield){
+                synchronized (battlefield.getMachine()){
                     InputOperationAnswer configurationAnswer = engine.autoConfig(battlefield.getMachine(), battlefield.getEnigmaParts().getMachineParts());
                     if(configurationAnswer.isSuccess()){
                         answer.setSuccess(true);

@@ -1,11 +1,13 @@
 package com.engine;
 
+import com.engine.battlefield.Battlefield;
 import com.engine.configuration.Configurator;
 import com.engine.enigmaParts.EnigmaParts;
 import com.engine.enigmaParts.machineParts.MachineParts;
 import com.engine.xmlReader.XmlReader;
 import com.enigma.dtos.ClientDataTransfer.EncryptMessageData;
 import com.enigma.dtos.EngineAnswers.InputOperationAnswer;
+import com.enigma.dtos.ServletAnswers.MachineDetailsAnswer;
 import com.enigma.machine.Machine;
 
 import javax.xml.bind.JAXBException;
@@ -65,6 +67,24 @@ public class EngineImp implements Engine{
         machine.updateConfiguration();
         encryptedData.setMessage(builder.toString());
         return encryptedData;
+    }
+
+    @Override
+    public MachineDetailsAnswer getDetails(Machine machine,MachineParts machineParts){
+        MachineDetailsAnswer answer = new MachineDetailsAnswer();
+        if(machine.getRotors() != null){
+            answer.setConfig(true);
+            answer.setCurrentConfig(machine.getCurrentConfiguration());
+            answer.setInitialConfig(machine.getInitialConfiguration());
+        }else{
+            answer.setInitialConfig("UnAvailable");
+            answer.setCurrentConfig("Unavailable");
+            answer.setConfig(false);
+        }
+        answer.setReflectorsNum(String.valueOf(machineParts.getAllReflectors().size()));
+        answer.setUsedVsAvailRotors(machine.getRotors() == null ? "0" : machine.getRotors().size()
+                +"/" + machineParts.getAllRotors().size());
+        return answer;
     }
 
 
