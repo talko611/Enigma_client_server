@@ -1,4 +1,4 @@
-package com.enigma.login;
+package com.enigma.login_screen;
 
 import com.enigma.Utils.UBoatAppUtils;
 import com.enigma.dtos.ServletAnswers.LogInAnswer;

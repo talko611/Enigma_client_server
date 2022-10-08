@@ -1,16 +1,14 @@
 package com.engine.users;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class Uboat extends User{
-    private Map<UUID, Allie> allies;
+    private List<Allie> allies;
     private UUID battlefieldId;
 
     public Uboat(String name){
         super(name);
-        this.allies = new HashMap<>();
+        this.allies = new ArrayList<>();
     }
 
     public void setBattlefieldId(UUID battlefieldId) {
@@ -19,5 +17,13 @@ public class Uboat extends User{
 
     public UUID getBattlefieldId(){
         return this.battlefieldId;
+    }
+
+    public List<Allie> getAllies() {
+        return allies;
+    }
+
+    public void addAllie(Allie allie){
+        allies.add(allie);
     }
 }

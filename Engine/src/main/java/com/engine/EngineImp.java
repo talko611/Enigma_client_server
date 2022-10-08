@@ -77,13 +77,13 @@ public class EngineImp implements Engine{
             answer.setCurrentConfig(machine.getCurrentConfiguration());
             answer.setInitialConfig(machine.getInitialConfiguration());
         }else{
-            answer.setInitialConfig("UnAvailable");
-            answer.setCurrentConfig("Unavailable");
+            answer.setInitialConfig("unavailable");
+            answer.setCurrentConfig("unavailable");
             answer.setConfig(false);
         }
         answer.setReflectorsNum(String.valueOf(machineParts.getAllReflectors().size()));
-        answer.setUsedVsAvailRotors(machine.getRotors() == null ? "0" : machine.getRotors().size()
-                +"/" + machineParts.getAllRotors().size());
+        String usedRotors = machine.getRotors() == null ? "0" : String.valueOf(machine.getRotors().size());
+        answer.setUsedVsAvailRotors(usedRotors + "/" + machineParts.getAllRotors().size());
         return answer;
     }
 

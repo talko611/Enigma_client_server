@@ -1,7 +1,7 @@
 package com.enigma;
 
-import com.enigma.login.LoginController;
-import com.enigma.main.MainController;
+import com.enigma.login_screen.LoginController;
+import com.enigma.main_screen.MainController;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -11,7 +11,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.UUID;
 
 public class FrameController {
 

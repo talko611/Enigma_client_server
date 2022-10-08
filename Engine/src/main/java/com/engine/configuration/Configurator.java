@@ -131,6 +131,7 @@ public class Configurator {
                 return new InputOperationAnswer(false, e.getMessage());
             }
         }
+        machine.setConfiguration();
         return new InputOperationAnswer(true, "plugBoard configuration passed successfully!");
     }
 

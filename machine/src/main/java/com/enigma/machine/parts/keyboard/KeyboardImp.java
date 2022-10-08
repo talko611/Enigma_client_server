@@ -1,5 +1,6 @@
 package com.enigma.machine.parts.keyboard;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +50,13 @@ public class KeyboardImp implements Keyboard{
     @Override
     public int getKeyboardSize(){
         return this.alphabetToEntryNum.size();
+    }
+
+    @Override
+    public List<String> getAllKeys(){
+        List<String> keys = new ArrayList<>();
+        alphabetToEntryNum.forEach((ch, entry) ->keys.add(ch));
+        return keys;
     }
 
 }

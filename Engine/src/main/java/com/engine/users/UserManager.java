@@ -114,4 +114,10 @@ public class UserManager {
         }
     }
 
+    public void removeBattlefieldById(UUID battlefieldId){
+        synchronized (battlefieldLock){
+            battlefields.remove(battlefieldId);
+        }
+    }
+
 }

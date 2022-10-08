@@ -3,6 +3,7 @@ package com.enigma.servlets.uBoat;
 import com.engine.Engine;
 import com.engine.battlefield.Battlefield;
 import com.engine.enigmaParts.EnigmaParts;
+import com.engine.users.Allie;
 import com.engine.users.Uboat;
 import com.engine.users.UserManager;
 import com.enigma.dtos.ServletAnswers.LoadFileAnswer;
@@ -20,6 +21,7 @@ import javax.xml.bind.JAXBException;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.UUID;
 
 @WebServlet("/UBoat/load-file")
@@ -43,11 +45,17 @@ public class LoadBattlefield extends HttpServlet {
                 for(Part part: parts){
                     enigmaParts = engine.loadGame(part.getInputStream());
                 }
-                if(!userManager.isBattlefieldExists(enigmaParts.getBattlefieldParts().getName())){
+                Uboat uboat = userManager.getUBoatById(clientId);
+                String battlefieldName = enigmaParts.getBattlefieldParts().getName();
+                if(!userManager.isBattlefieldExists(battlefieldName)){
                     setNewBattlefield(enigmaParts, userManager, clientId);
                     answer.setSuccess(true);
                     answer.setMessage("Battlefield is loaded");
                     resp.setStatus(200);
+                }else if(uboat.getBattlefieldId()!= null &&
+                        userManager.getBattlefieldById(uboat.getBattlefieldId()).getName().equals(battlefieldName)){
+                    answer.setSuccess(true);
+                    answer.setMessage("Already inside battlefield");
                 }
                 else{
                     answer.setSuccess(false);
@@ -74,7 +82,24 @@ public class LoadBattlefield extends HttpServlet {
         battlefield.setEnigmaParts(enigmaParts);
         battlefield.getMachine().setKeyboard(battlefield.getEnigmaParts().getMachineParts().getKeyboard());
         Uboat uboat = userManager.getUBoatById(clientId);
+        deleteOldBattlefield(uboat, userManager);
+        freeAllAllies(uboat);
         uboat.setBelongToBattlefield(true);
         uboat.setBattlefieldId(battlefieldId);
+    }
+
+    private void deleteOldBattlefield(Uboat uboat, UserManager userManager){
+        if(uboat.getBattlefieldId() != null){
+            userManager.removeBattlefieldById(uboat.getBattlefieldId());
+        }
+    }
+
+    private void freeAllAllies(Uboat uboat){
+        List<Allie> allieList = uboat.getAllies();
+        for(Allie allie : allieList){
+            allie.setBelongToBattlefield(false);
+            allie.setBattlefieldId(null);
+        }
+        allieList.clear();
     }
 }
