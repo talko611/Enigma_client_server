@@ -33,21 +33,21 @@ public class EncryptMessage extends HttpServlet {
             }else{
                 Machine machine = battlefield.getMachine();
                 Gson gson = new Gson();
-                EncryptMessageData data = gson.fromJson(req.getReader(), EncryptMessageData.class);
+                EncryptMessageData clientData = gson.fromJson(req.getReader(), EncryptMessageData.class);
                 synchronized (battlefield.getMachine()){
-                    if(isLettersAreValid(data.getMessage(), machine.getKeyboard()) &&
-                            isAllWordAreInDic(battlefield.getEnigmaParts().getDmParts().getDictionary(), data.getMessage())){
-                        battlefield.setEncryptedMessage(data.getMessage());
+                    if(isLettersAreValid(clientData.getSource(), machine.getKeyboard()) &&
+                            isAllWordAreInDic(battlefield.getEnigmaParts().getDmParts().getDictionary(), clientData.getSource())){
+                        battlefield.setEncryptedMessage(clientData.getSource());
                         battlefield.setMessageInitialConfiguration(machine.getCurrentConfiguration());
-                        data = ServletsUtils.getEngine(getServletContext()).encryptDecrypt(data.getMessage(), machine);
-                        battlefield.setDecryptedMessage(data.getMessage());
+                        clientData = ServletsUtils.getEngine(getServletContext()).encryptDecrypt(clientData, machine);
+                        battlefield.setDecryptedMessage(clientData.getEncrypted());
+                        clientData.setMessage("Message decrypted successfully!");
                         resp.setStatus(200);
-                        data.setMessage("Message decrypted successfully!");
                     }else{
                         resp.setStatus(401);
-                        data.setMessage("Message contains invalid characters or words that are not in the game dictionary");
+                        clientData.setMessage("Message contains invalid characters or words that are not in the game dictionary");
                     }
-                    resp.getWriter().println(gson.toJson(data));
+                    resp.getWriter().println(gson.toJson(clientData));
                 }
             }
         }catch (NullPointerException e){

@@ -127,18 +127,22 @@ public class MachineImp implements Machine{
 
     private void buildRotorsConfigurationPart(StringBuilder builder){
         builder.append("<");
-        this.rotors.forEach(rotor -> builder.append(rotor.getId()).append(","));
+        for(int i = rotors.size() -1 ; i >=0 ;--i){
+            builder.append(rotors.get(i).getId()).append(",");
+        }
         builder.deleteCharAt(builder.toString().length() -1);
         builder.append(">");
     }
 
     private void buildOffsetsConfigurationPart(StringBuilder builder){
         builder.append("<");
-        this.rotors.forEach(rotor -> builder.append(rotor.getCurrentOffset())
-                .append("(")
-                .append(rotor.getNotchStepsToZero())
-                .append("),")
-        );
+        for(int i = rotors.size() -1; i >= 0; --i){
+            Rotor current = rotors.get(i);
+            builder.append(current.getCurrentOffset())
+                    .append("(")
+                    .append(current.getNotchStepsToZero())
+                    .append("),");
+        }
         builder.deleteCharAt(builder.toString().length() -1);
         builder.append(">");
     }

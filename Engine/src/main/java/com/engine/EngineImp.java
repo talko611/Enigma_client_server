@@ -57,15 +57,16 @@ public class EngineImp implements Engine{
         return configurator.autoConfigMachine(machineParts, machine);
     }
     @Override
-    public EncryptMessageData encryptDecrypt(String src, Machine machine){
-        src = src.toUpperCase();
+    public EncryptMessageData encryptDecrypt(EncryptMessageData src, Machine machine){
+        String sourceMessage = src.getSource().toUpperCase();
         StringBuilder builder = new StringBuilder();
         EncryptMessageData encryptedData = new EncryptMessageData();
-        for(int i = 0; i < src.length(); ++i ){
-            builder.append(machine.encryptDecrypt(String.valueOf(src.charAt(i))));
+        for(int i = 0; i < sourceMessage.length(); ++i ){
+            builder.append(machine.encryptDecrypt(String.valueOf(sourceMessage.charAt(i))));
         }
         machine.updateConfiguration();
-        encryptedData.setMessage(builder.toString());
+        encryptedData.setEncrypted(builder.toString());
+        encryptedData.setCurrentMachineConfiguration(machine.getCurrentConfiguration());
         return encryptedData;
     }
 

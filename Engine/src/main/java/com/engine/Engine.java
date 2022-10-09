@@ -25,7 +25,7 @@ public interface Engine {
 
     InputOperationAnswer autoConfig(Machine machine, MachineParts machineParts);
 
-    EncryptMessageData encryptDecrypt(String src, Machine machine);
+    EncryptMessageData encryptDecrypt(EncryptMessageData src, Machine machine);
 
     MachineDetailsAnswer getDetails(Machine machine, MachineParts machineParts);
 

@@ -19,7 +19,14 @@ public class MachineDetailsController {
     @FXML private Label currConfigurationAns;
     @FXML private Label userMessageLb;
 
-    public void bindToUiAdapter(UiAdapter uiAdapter){
+    private UiAdapter uiAdapter;
+
+    public void setUiAdapter(UiAdapter uiAdapter) {
+        this.uiAdapter = uiAdapter;
+        bindToUiAdapter();
+    }
+
+    private void bindToUiAdapter(){
         uiAdapter.isLoadedProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue){
                 getMachineDetails();
@@ -28,7 +35,7 @@ public class MachineDetailsController {
         uiAdapter.isConfigureProperty().addListener((observable, oldValue, newValue) -> {
             getMachineDetails();
         });
-        uiAdapter.currentConfigProperty().bind(currConfigurationAns.textProperty());
+        currConfigurationAns.textProperty().bind(uiAdapter.currentConfigProperty());
     }
 
     private void getMachineDetails(){
@@ -62,9 +69,8 @@ public class MachineDetailsController {
                     usedVsAvailAns.setText(answer.getUsedVsAvailRotors());
                     reflectorNumAns.setText(answer.getReflectorsNum());
                     initConfigurationAns.setText(answer.getInitialConfig());
-                    currConfigurationAns.setText(answer.getCurrentConfig());
+                    uiAdapter.setCurrentConfig(answer.getCurrentConfig());
                 });
-
             }
         });
 

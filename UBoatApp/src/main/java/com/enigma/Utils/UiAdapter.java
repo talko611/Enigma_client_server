@@ -7,11 +7,13 @@ public class UiAdapter {
     private SimpleBooleanProperty isLoaded;
     private SimpleBooleanProperty isConfigure;
     private SimpleStringProperty currentConfig;
+    private SimpleBooleanProperty isInActiveGame;
 
     public UiAdapter(){
         this.currentConfig = new SimpleStringProperty();
         this.isConfigure = new SimpleBooleanProperty(false);
         this.isLoaded = new SimpleBooleanProperty(false);
+        this.isInActiveGame = new SimpleBooleanProperty(false);
     }
 
 
@@ -37,5 +39,17 @@ public class UiAdapter {
 
     public void setCurrentConfig(String currentConfig) {
         this.currentConfig.set(currentConfig);
+    }
+
+    public void setIsInActiveGame(boolean isInActiveGame) {
+        this.isInActiveGame.set(isInActiveGame);
+    }
+
+    public boolean isIsInActiveGame() {
+        return isInActiveGame.get();
+    }
+
+    public SimpleBooleanProperty isInActiveGameProperty() {
+        return isInActiveGame;
     }
 }

@@ -3,6 +3,7 @@ package com.enigma.main_screen;
 import com.enigma.Utils.UBoatAppUtils;
 import com.enigma.Utils.UiAdapter;
 import com.enigma.dtos.ServletAnswers.LoadFileAnswer;
+import com.enigma.main_screen.contest_component.ContestDataController;
 import com.enigma.main_screen.machine_component.configuration_component.ConfigurationController;
 import com.enigma.main_screen.machine_component.machine_details_component.MachineDetailsController;
 import com.google.gson.Gson;
@@ -30,6 +31,8 @@ public class MainController {
     @FXML private MachineDetailsController machineDetailsComponentController;
     @FXML private ScrollPane configurationComponent;
     @FXML private ConfigurationController configurationComponentController;
+    @FXML private ScrollPane contestDataComponent;
+    @FXML private ContestDataController contestDataComponentController;
 
     private Stage primaryStage;
     private UiAdapter uiAdapter;
@@ -40,8 +43,9 @@ public class MainController {
         machineTab.disableProperty().bind(uiAdapter.isLoadedProperty().not());
         contestTab.disableProperty().bind(uiAdapter.isConfigureProperty().not());
 
-        machineDetailsComponentController.bindToUiAdapter(uiAdapter);
-        configurationComponentController.setUiAdapter(this.uiAdapter);
+        machineDetailsComponentController.setUiAdapter(uiAdapter);
+        configurationComponentController.setUiAdapter(uiAdapter);
+        contestDataComponentController.setUiAdapter(uiAdapter);
     }
 
     public void setPrimaryStage(Stage primaryStage) {
