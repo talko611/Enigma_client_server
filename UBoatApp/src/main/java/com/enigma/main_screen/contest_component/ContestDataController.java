@@ -116,6 +116,7 @@ public class ContestDataController {
         Gson gson = new Gson();
         EncryptMessageData data = new EncryptMessageData();
         data.setSource(srcMessageTb.getText());
+        uiAdapter.setSrcMessage(srcMessageTb.getText());
         HttpUrl.Builder urlBuilder = HttpUrl.parse(UBoatAppUtils.APP_URL + UBoatAppUtils.ENCRYPT_RESOURCE).newBuilder();
         urlBuilder.addQueryParameter("id", UBoatAppUtils.CLIENT_ID.toString());
         RequestBody body = RequestBody.create(MediaType.parse("application/json"), gson.toJson(data));

@@ -27,7 +27,7 @@ public class GetBattlefields extends HttpServlet {
             List<Battlefield> availableBattlefields = userManager.getAllAvailableBattlefields();
             List<Pair<UUID, String>> answerData = availableBattlefields
                     .stream()
-                    .map(battlefield -> new Pair(battlefield.getId(), battlefield.getName()))
+                    .map(battlefield -> new Pair<UUID, String>(battlefield.getId(), battlefield.getName()))
                     .collect(Collectors.toList());
 
             GetBattlefieldsAnswer answer = new GetBattlefieldsAnswer();

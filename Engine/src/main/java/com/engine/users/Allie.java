@@ -7,6 +7,7 @@ import java.util.UUID;
 public class Allie extends User{
     private UUID battlefieldId;
     private final List<Agent> agentList;
+    private int taskSize;
     public Allie(String name){
         super(name);
         this.agentList = new ArrayList<>();

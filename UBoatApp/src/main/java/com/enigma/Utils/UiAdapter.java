@@ -8,6 +8,7 @@ public class UiAdapter {
     private SimpleBooleanProperty isConfigure;
     private SimpleStringProperty currentConfig;
     private SimpleBooleanProperty isInActiveGame;
+    private String srcMessage;
 
     public UiAdapter(){
         this.currentConfig = new SimpleStringProperty();
@@ -51,5 +52,13 @@ public class UiAdapter {
 
     public SimpleBooleanProperty isInActiveGameProperty() {
         return isInActiveGame;
+    }
+
+    public String getSrcMessage() {
+        return srcMessage;
+    }
+
+    public void setSrcMessage(String srcMessage) {
+        this.srcMessage = srcMessage;
     }
 }

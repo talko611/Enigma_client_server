@@ -37,10 +37,8 @@ public class EncryptMessage extends HttpServlet {
                 synchronized (battlefield.getMachine()){
                     if(isLettersAreValid(clientData.getSource(), machine.getKeyboard()) &&
                             isAllWordAreInDic(battlefield.getEnigmaParts().getDmParts().getDictionary(), clientData.getSource())){
-                        battlefield.setEncryptedMessage(clientData.getSource());
-                        battlefield.setMessageInitialConfiguration(machine.getCurrentConfiguration());
                         clientData = ServletsUtils.getEngine(getServletContext()).encryptDecrypt(clientData, machine);
-                        battlefield.setDecryptedMessage(clientData.getEncrypted());
+                        battlefield.setEncryptedMessage(clientData.getEncrypted());
                         clientData.setMessage("Message decrypted successfully!");
                         resp.setStatus(200);
                     }else{
