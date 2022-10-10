@@ -103,6 +103,17 @@ public class UserManager {
         }
     }
 
+    public List<Battlefield> getAllAvailableBattlefields(){
+        List<Battlefield> battlefieldList = new ArrayList<>();
+        synchronized (battlefieldLock){
+            battlefields.values().forEach(battlefield -> {
+                if(!battlefield.isGameStarted())
+                    battlefieldList.add(battlefield);
+            });
+        }
+        return battlefieldList;
+    }
+
     public boolean isBattlefieldExists(String name){
         synchronized (battlefieldLock){
             for(Battlefield battlefield : battlefields.values()){
@@ -116,6 +127,7 @@ public class UserManager {
 
     public void removeBattlefieldById(UUID battlefieldId){
         synchronized (battlefieldLock){
+            battlefields.get(battlefieldId).freeAllies();
             battlefields.remove(battlefieldId);
         }
     }

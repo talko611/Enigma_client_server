@@ -1,4 +1,4 @@
-package com.enigma.servlets.uBoat;
+package com.enigma.servlets.allie;
 
 import com.engine.users.UserManager;
 import com.enigma.dtos.ServletAnswers.LogInAnswer;
@@ -12,26 +12,24 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-@WebServlet(name = "logInUBoat", urlPatterns = "/UBoat/LogIn")
-public class LogInServlet extends HttpServlet {
+@WebServlet("/Allie/LogIn")
+public class LogIn extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String name = req.getParameter("name");
+        String clientName = req.getParameter("name");
         UserManager userManager = ServletsUtils.getUserManager(getServletContext());
         synchronized (this){
             LogInAnswer answer = new LogInAnswer();
-            if(!userManager.isUBoatExists(name)){
-                answer.setId(userManager.addNewUBoat(name));
+            if(!userManager.isAgentExists(clientName)){
+                answer.setId(userManager.addNewAllie(clientName));
                 answer.setMessage("New user created");
                 answer.setSuccess(true);
-            }
-            else{
+            }else {
                 answer.setSuccess(false);
                 answer.setMessage("Username is already taken");
             }
             Gson gson = new Gson();
             resp.getWriter().println(gson.toJson(answer));
         }
-
     }
 }

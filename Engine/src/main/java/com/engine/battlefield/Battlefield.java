@@ -1,19 +1,24 @@
 package com.engine.battlefield;
 
 import com.engine.enigmaParts.EnigmaParts;
+import com.engine.users.Allie;
 import com.enigma.machine.Machine;
 import com.enigma.machine.MachineImp;
 
+import java.util.List;
 import java.util.UUID;
 
 public class Battlefield {
     private final String name;
     private final UUID id;
+    private UUID UBoatId;
+    private List<Allie> teams;
     private EnigmaParts enigmaParts;
     private Machine machine;
     private String encryptedMessage;
     private String decryptedMessage;
     private String messageInitialConfiguration;
+    private boolean isGameStarted;
 
 
 
@@ -68,4 +73,37 @@ public class Battlefield {
     public void setMessageInitialConfiguration(String messageInitialConfiguration) {
         this.messageInitialConfiguration = messageInitialConfiguration;
     }
+
+    public void setUBoatId(UUID UBoatId) {
+        this.UBoatId = UBoatId;
+    }
+
+    public void setTeams(List<Allie> teams) {
+        this.teams = teams;
+    }
+
+    public UUID getUBoatId() {
+        return UBoatId;
+    }
+
+    public List<Allie> getTeams() {
+        return teams;
+    }
+
+    public synchronized void addNewAllie(Allie allie){
+        teams.add(allie);
+    }
+
+    public boolean isGameStarted() {
+        return isGameStarted;
+    }
+
+    public void setGameStarted(boolean gameStarted) {
+        isGameStarted = gameStarted;
+    }
+
+    public void freeAllies(){
+        teams.forEach(Allie::exitGame);
+    }
+
 }

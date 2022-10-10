@@ -36,6 +36,7 @@ public class LoadBattlefield extends HttpServlet {
             UUID clientId = UUID.fromString( req.getParameter("id"));
             Engine engine = ServletsUtils.getEngine(getServletContext());
             UserManager userManager = ServletsUtils.getUserManager(getServletContext());
+            //Check if got more than 1 file
             if(parts.size() != 1){
                 answer.setMessage("Cannot handle request more then one file uploaded");
                 answer.setSuccess(false);
@@ -47,16 +48,21 @@ public class LoadBattlefield extends HttpServlet {
                 }
                 Uboat uboat = userManager.getUBoatById(clientId);
                 String battlefieldName = enigmaParts.getBattlefieldParts().getName();
+
+                //Case this battlefield is not exists
                 if(!userManager.isBattlefieldExists(battlefieldName)){
                     setNewBattlefield(enigmaParts, userManager, clientId);
                     answer.setSuccess(true);
                     answer.setMessage("Battlefield is loaded");
                     resp.setStatus(200);
-                }else if(uboat.getBattlefieldId()!= null &&
+                }
+                //Case client already uploaded this battlefield
+                else if(uboat.getBattlefieldId()!= null &&
                         userManager.getBattlefieldById(uboat.getBattlefieldId()).getName().equals(battlefieldName)){
                     answer.setSuccess(true);
                     answer.setMessage("Already inside battlefield");
                 }
+                //Case this battlefield is already uploaded by different uBoat
                 else{
                     answer.setSuccess(false);
                     answer.setMessage("Battlefield is already exists");
@@ -65,9 +71,7 @@ public class LoadBattlefield extends HttpServlet {
 
             }
         }catch (NullPointerException e){
-         //redirect to log in page
-            answer.setMessage("need to redirect to login page");
-            answer.setSuccess(false);
+         //Todo - redirect to login page
         }catch (JAXBException | InputMismatchException e){
             resp.setStatus(400);
             answer.setSuccess(false);
@@ -80,10 +84,10 @@ public class LoadBattlefield extends HttpServlet {
         UUID battlefieldId = userManager.addNewBattlefield(enigmaParts.getBattlefieldParts().getName());
         Battlefield battlefield = userManager.getBattlefieldById(battlefieldId);
         battlefield.setEnigmaParts(enigmaParts);
+        battlefield.setUBoatId(clientId);
         battlefield.getMachine().setKeyboard(battlefield.getEnigmaParts().getMachineParts().getKeyboard());
         Uboat uboat = userManager.getUBoatById(clientId);
         deleteOldBattlefield(uboat, userManager);
-        freeAllAllies(uboat);
         uboat.setBelongToBattlefield(true);
         uboat.setBattlefieldId(battlefieldId);
     }
@@ -94,12 +98,4 @@ public class LoadBattlefield extends HttpServlet {
         }
     }
 
-    private void freeAllAllies(Uboat uboat){
-        List<Allie> allieList = uboat.getAllies();
-        for(Allie allie : allieList){
-            allie.setBelongToBattlefield(false);
-            allie.setBattlefieldId(null);
-        }
-        allieList.clear();
-    }
 }
