@@ -132,4 +132,15 @@ public class UserManager {
         }
     }
 
+    public Map<UUID, Allie> getAllies() {
+        synchronized (alliesLock){
+            return allies;
+        }
+    }
+
+    public Map<UUID, Battlefield> getBattlefields() {
+        return battlefields;
+    }
+
+    public static Object getBattlefieldLock(){return battlefieldLock;}
 }

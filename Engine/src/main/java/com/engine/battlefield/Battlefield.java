@@ -5,6 +5,7 @@ import com.engine.users.Allie;
 import com.enigma.machine.Machine;
 import com.enigma.machine.MachineImp;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,6 +26,7 @@ public class Battlefield {
         this.name = name;
         this.id = UUID.randomUUID();
         this.machine = new MachineImp();
+        this.teams = new ArrayList<>();
     }
 
     public void setEnigmaParts(EnigmaParts enigmaParts) {

@@ -12,7 +12,6 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
 <VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.enigma.main_component.dashboard_tab_component.DashboardController">
    <children>
       <HBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="500.0" VBox.vgrow="ALWAYS">
@@ -29,12 +28,13 @@
                   </Label>
                   <ScrollPane fitToHeight="true" fitToWidth="true" focusTraversable="false" VBox.vgrow="ALWAYS">
                      <content>
-                        <TableView focusTraversable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="400.0" prefWidth="500.0">
+                        <TableView fx:id="battlefieldTb" focusTraversable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="400.0" prefWidth="500.0">
                           <columns>
-                            <TableColumn prefWidth="62.0" text="Name" />
-                            <TableColumn minWidth="50.0" prefWidth="112.0" text="Uboat Name" />
-                              <TableColumn prefWidth="75.0" text="Game Status" />
-                              <TableColumn minWidth="50.0" prefWidth="75.0" text="Participants Status" />
+                            <TableColumn fx:id="nameCol" prefWidth="62.0" text="Name" />
+                            <TableColumn fx:id="uBoatCol" minWidth="50.0" prefWidth="112.0" text="Uboat Name" />
+                              <TableColumn fx:id="gameStatCol" prefWidth="75.0" text="Game Status" />
+                              <TableColumn fx:id="participantsStatCol" minWidth="50.0" prefWidth="75.0" text="Participants Status" />
+                              <TableColumn fx:id="decryptionLevelCol" minWidth="50.0" prefWidth="75.0" text="Decryption Level" />
                           </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
