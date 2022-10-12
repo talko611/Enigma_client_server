@@ -55,28 +55,29 @@ public class UserManager {
         return false;
     }
 
-    public UUID addNewAllie(String name){
+    public Allie addNewAllie(String name){
+        Allie allie = new Allie(name);
         synchronized (alliesLock){
-            Allie allie = new Allie(name);
             allies.put(allie.getId(), allie);
-            return allie.getId();
         }
+        return allie;
     }
 
-    public UUID addNewAgent(String name){
+    public Agent addNewAgent(String name, int numOfWorkers){
+        Agent agent = new Agent(name);
+        agent.setNumOfThreads(numOfWorkers);
         synchronized (agentsLock){
-            Agent agent = new Agent(name);
             agents.put(agent.getId(), agent);
-            return agent.getId();
         }
+        return agent;
     }
 
-    public UUID addNewUBoat(String name){
+    public Uboat addNewUBoat(String name){
+        Uboat uboat = new Uboat(name);
         synchronized (uBoatsLock){
-            Uboat uboat = new Uboat(name);
             uBoats.put(uboat.getId(), uboat);
-            return uboat.getId();
         }
+        return uboat;
     }
 
     public Uboat getUBoatById(UUID id){
@@ -143,4 +144,13 @@ public class UserManager {
     }
 
     public static Object getBattlefieldLock(){return battlefieldLock;}
+    public static Object getAlliesLock(){
+        return alliesLock;
+    }
+
+    public static Object getAgentsLock(){return agentsLock;}
+
+    public static Object getuBoatsLock(){
+        return uBoatsLock;
+    }
 }

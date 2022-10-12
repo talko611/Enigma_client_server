@@ -6,15 +6,15 @@ import java.util.UUID;
 
 
 public class GetMapOfData<T> {
-    private Map<UUID,T> listOfUsers;
+    private Map<UUID,T> data;
     private String message;
 
     public GetMapOfData(){
-        listOfUsers = new HashMap<>();
+        data = new HashMap<>();
     }
 
-    public Map<UUID, ?> getListOfUsers() {
-        return listOfUsers;
+    public Map<UUID, ?> getData() {
+        return data;
     }
 
     public String getMessage() {
@@ -26,10 +26,10 @@ public class GetMapOfData<T> {
     }
 
     public void addUser(UUID id, T user){
-        listOfUsers.put(id, user);
+        data.put(id, user);
     }
 
-    public void setListOfUsers(Map<UUID, T> listOfUsers) {
-        this.listOfUsers = listOfUsers;
+    public void setData(Map<UUID, T> data) {
+        this.data = data;
     }
 }

@@ -1,8 +1,13 @@
 package com.enigma.main_component.dashboard_tab_component;
 
-import com.enigma.dtos.ServletAnswers.GameDetailsObject;
+import com.enigma.dtos.ServletAnswers.RequestServerAnswer;
+import com.enigma.dtos.dataObjects.GameDetailsObject;
 import com.enigma.dtos.ServletAnswers.GetMapOfData;
-import com.enigma.main_component.tasks.GetMyAgentsTask;
+import com.enigma.main_component.tasks.GetBattlefieldsTask;
+import com.enigma.main_component.tasks.GetMyAgentTask;
+import com.enigma.utiles.AppUtils;
+import com.squareup.okhttp.*;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -11,7 +16,10 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -31,9 +39,11 @@ public class DashboardController {
     @FXML private Button readyButtonClicked;
 
     private Consumer<GetMapOfData<GameDetailsObject>> updateBattlefieldTable;
+    private Consumer<List<String>> updateAgents;
     private SimpleBooleanProperty isInActiveGame;
     private Map<UUID, GameDetailsObject> battlefieldMap;
     private ObservableList<UiBattlefield> uiBattlefieldList;
+    private UUID chosenBattlefield;
     @FXML void initialize(){
         //Battlefields table set up
         nameCol.setCellValueFactory(new PropertyValueFactory<>("battlefieldName"));
@@ -46,7 +56,7 @@ public class DashboardController {
 
         updateBattlefieldTable = (data) ->{
             uiBattlefieldList.clear();
-            battlefieldMap = (Map<UUID, GameDetailsObject>) data.getListOfUsers();
+            battlefieldMap = (Map<UUID, GameDetailsObject>) data.getData();
             battlefieldMap.forEach((key,value)->{
                 uiBattlefieldList.add(new UiBattlefield(value.getBattlefieldName(),
                                                         value.getuBoatName(),
@@ -56,10 +66,28 @@ public class DashboardController {
             });
             battlefieldTb.setItems(uiBattlefieldList);
         };
+        updateAgents = (agents)->{
+            agentsList.getItems().clear();
+            agentsList.getItems().addAll(agents);
+        };
+    }
+
+    @FXML
+    void clickOnTable(MouseEvent event) {
+       ObservableList<UiBattlefield> observableList = battlefieldTb.getSelectionModel().getSelectedItems();
+       for(Map.Entry<UUID, GameDetailsObject> object : battlefieldMap.entrySet()){
+           if(object.getValue().getBattlefieldName().equals(observableList.get(0).battlefieldName.get())){
+               chosenBattlefield = object.getKey();
+               battlefieldNameTb.setText(object.getValue().getBattlefieldName());
+           }
+       }
     }
     @FXML
     void joinButtonClicked(ActionEvent event) {
-
+        if(validateJoinRequest()){
+            joinButton.disableProperty().set(true);
+            launchRequest();
+        }
     }
 
     @FXML
@@ -73,13 +101,66 @@ public class DashboardController {
     }
 
     private void bindComponent(){
-        new Thread(new GetMyAgentsTask(updateBattlefieldTable, isInActiveGame)).start();
+        new Thread(new GetBattlefieldsTask(updateBattlefieldTable, isInActiveGame)).start();
+        new Thread(new GetMyAgentTask(updateAgents, isInActiveGame)).start();
         isInActiveGame.addListener((observable, oldValue, newValue) -> {
             if(!newValue){
-                new Thread(new GetMyAgentsTask(updateBattlefieldTable, isInActiveGame)).start();
+                new Thread(new GetBattlefieldsTask(updateBattlefieldTable, isInActiveGame)).start();
+                new Thread(new GetMyAgentTask(updateAgents, isInActiveGame)).start();
             }
         });
     }
+
+    private boolean validateJoinRequest(){
+        boolean answer = true;
+        try{
+            if(chosenBattlefield == null){
+                userMessage.setText("Please choose battlefield first");
+                answer = false;
+            } else if (Long.parseLong(taskSizeTb.getText()) <= 0) {
+                answer = false;
+                userMessage.setText("Please enter only positive number in task size box");
+            }
+        }catch (NumberFormatException e){
+            answer = false;
+            userMessage.setText("Please enter only positive number in task size box");
+        }
+        return answer;
+    }
+
+    private void launchRequest(){
+        HttpUrl.Builder urlBuilder  = HttpUrl.parse(AppUtils.APP_URL + AppUtils.JOIN_BATTLEFIELD_RESOURCE).newBuilder();
+        urlBuilder.addQueryParameter("id", AppUtils.CLIENT_ID.toString())
+                .addQueryParameter("battlefield", chosenBattlefield.toString())
+                .addQueryParameter("taskSize", String.valueOf(Long.parseLong(taskSizeTb.getText())));
+        Request request = new Request.Builder().url(urlBuilder.build()).build();
+        Call call = AppUtils.CLIENT.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                if(e!=null){
+                    System.out.println(e.getMessage());
+                    System.out.println(e.getCause());
+                    System.out.println(e.getStackTrace());
+                }
+                Platform.runLater(()->{
+                    userMessage.setText("Cannot fulfill request please try again ");
+                    joinButton.disableProperty().set(false);
+                });
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                RequestServerAnswer answer = AppUtils.GSON_SERVICE.fromJson(response.body().charStream(), RequestServerAnswer.class);
+                Platform.runLater(()->{
+                    userMessage.setText(answer.getMessage());
+                    joinButton.disableProperty().set(false);
+                    //Todo -  update property of is join
+                });
+            }
+        });
+    }
+
 
     public static class UiBattlefield{
         private SimpleStringProperty battlefieldName;

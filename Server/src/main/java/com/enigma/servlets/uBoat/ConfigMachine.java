@@ -4,7 +4,7 @@ import com.engine.Engine;
 import com.engine.battlefield.Battlefield;
 import com.engine.enigmaParts.machineParts.MachineParts;
 import com.engine.users.UserManager;
-import com.enigma.dtos.ClientDataTransfer.ManualConfigStrings;
+import com.enigma.dtos.dataObjects.ManualConfigStrings;
 import com.enigma.dtos.EngineAnswers.InputOperationAnswer;
 import com.enigma.dtos.ServletAnswers.RequestServerAnswer;
 import com.enigma.machine.Machine;
@@ -18,7 +18,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @WebServlet("/UBoat/Config")
 public class ConfigMachine extends HttpServlet {

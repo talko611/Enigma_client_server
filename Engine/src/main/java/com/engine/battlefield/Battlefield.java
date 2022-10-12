@@ -78,7 +78,12 @@ public class Battlefield {
     }
 
     public synchronized void addNewAllie(Allie allie){
+        allie.setBattlefieldId(null);
+        allie.setBelongToBattlefield(false);
         teams.add(allie);
+    }
+    public synchronized void removeAllie(Allie allie){
+        teams.remove(allie);
     }
 
     public boolean isGameStarted() {

@@ -1,9 +1,10 @@
 package com.engine;
 
-import com.engine.battlefield.Battlefield;
 import com.engine.enigmaParts.EnigmaParts;
 import com.engine.enigmaParts.machineParts.MachineParts;
-import com.enigma.dtos.ClientDataTransfer.EncryptMessageData;
+import com.engine.enums.DecryptionDifficulty;
+import com.enigma.dtos.EngineAnswers.CalculationOperationAnswer;
+import com.enigma.dtos.dataObjects.EncryptMessageData;
 import com.enigma.dtos.EngineAnswers.InputOperationAnswer;
 import com.enigma.dtos.ServletAnswers.MachineDetailsAnswer;
 import com.enigma.machine.Machine;
@@ -28,5 +29,7 @@ public interface Engine {
     EncryptMessageData encryptDecrypt(EncryptMessageData src, Machine machine);
 
     MachineDetailsAnswer getDetails(Machine machine, MachineParts machineParts);
+
+    CalculationOperationAnswer calculateNumberOfTasks(DecryptionDifficulty difficulty, long taskSize, MachineParts machineParts, int rotorCount);
 
 }

@@ -2,7 +2,7 @@ package com.enigma.servlets.allie;
 
 import com.engine.battlefield.Battlefield;
 import com.engine.users.UserManager;
-import com.enigma.dtos.ServletAnswers.GameDetailsObject;
+import com.enigma.dtos.dataObjects.GameDetailsObject;
 import com.enigma.dtos.ServletAnswers.GetMapOfData;
 import com.enigma.servlets.ServletsUtils;
 import com.google.gson.Gson;
@@ -26,7 +26,7 @@ public class GetBattlefields extends HttpServlet {
                 Map<UUID, Battlefield> battlefieldMap = userManager.getBattlefields();
                 synchronized (UserManager.getBattlefieldLock()){
                     GetMapOfData<GameDetailsObject> responseBody = buildResponseBody(battlefieldMap, userManager);
-                    if(responseBody.getListOfUsers().isEmpty())
+                    if(responseBody.getData().isEmpty())
                         responseBody.setMessage("No battlefields are loaded yet!");
                     Gson gson = new Gson();
                     resp.getWriter().println(gson.toJson(responseBody));

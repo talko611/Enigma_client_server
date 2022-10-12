@@ -1,4 +1,4 @@
-package com.enigma.dtos.ServletAnswers;
+package com.enigma.dtos.dataObjects;
 
 import java.util.UUID;
 

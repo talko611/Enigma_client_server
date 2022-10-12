@@ -1,4 +1,4 @@
-package com.enigma.dtos.ClientDataTransfer;
+package com.enigma.dtos.dataObjects;
 
 public class EncryptMessageData {
     private String message;

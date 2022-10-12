@@ -21,7 +21,7 @@ public class LogIn extends HttpServlet {
         synchronized (this){
             LogInAnswer answer = new LogInAnswer();
             if(!userManager.isAllieExists(clientName)){
-                answer.setId(userManager.addNewAllie(clientName));
+                answer.setId(userManager.addNewAllie(clientName).getId());
                 answer.setMessage("New user created");
                 answer.setSuccess(true);
             }else {

@@ -14,6 +14,7 @@ import java.io.IOException;
 
 @WebServlet(name = "logInUBoat", urlPatterns = "/UBoat/LogIn")
 public class LogIn extends HttpServlet {
+    private final Gson gson = new Gson();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String name = req.getParameter("name");
@@ -21,7 +22,7 @@ public class LogIn extends HttpServlet {
         synchronized (this){
             LogInAnswer answer = new LogInAnswer();
             if(!userManager.isUBoatExists(name)){
-                answer.setId(userManager.addNewUBoat(name));
+                answer.setId(userManager.addNewUBoat(name).getId());
                 answer.setMessage("New user created");
                 answer.setSuccess(true);
             }
@@ -29,7 +30,6 @@ public class LogIn extends HttpServlet {
                 answer.setSuccess(false);
                 answer.setMessage("Username is already taken");
             }
-            Gson gson = new Gson();
             resp.getWriter().println(gson.toJson(answer));
         }
     }

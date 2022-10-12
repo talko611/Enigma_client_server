@@ -28,7 +28,7 @@
                   </Label>
                   <ScrollPane fitToHeight="true" fitToWidth="true" focusTraversable="false" VBox.vgrow="ALWAYS">
                      <content>
-                        <TableView fx:id="battlefieldTb" focusTraversable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="400.0" prefWidth="500.0">
+                        <TableView fx:id="battlefieldTb" focusTraversable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#clickOnTable" prefHeight="400.0" prefWidth="500.0">
                           <columns>
                             <TableColumn fx:id="nameCol" prefWidth="62.0" text="Name" />
                             <TableColumn fx:id="uBoatCol" minWidth="50.0" prefWidth="112.0" text="Uboat Name" />

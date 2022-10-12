@@ -2,7 +2,7 @@ package com.enigma.servlets.uBoat;
 
 import com.engine.battlefield.Battlefield;
 import com.engine.users.UserManager;
-import com.enigma.dtos.ClientDataTransfer.EncryptMessageData;
+import com.enigma.dtos.dataObjects.EncryptMessageData;
 import com.enigma.machine.Machine;
 import com.enigma.machine.parts.keyboard.Keyboard;
 import com.enigma.servlets.ServletsUtils;

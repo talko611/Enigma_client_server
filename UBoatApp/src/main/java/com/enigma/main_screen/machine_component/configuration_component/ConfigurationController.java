@@ -2,10 +2,9 @@ package com.enigma.main_screen.machine_component.configuration_component;
 
 import com.enigma.Utils.UBoatAppUtils;
 import com.enigma.Utils.UiAdapter;
-import com.enigma.dtos.ClientDataTransfer.ManualConfigStrings;
+import com.enigma.dtos.dataObjects.ManualConfigStrings;
 import com.enigma.dtos.ServletAnswers.MachinePartsAnswer;
 import com.enigma.dtos.ServletAnswers.RequestServerAnswer;
-import com.enigma.main_screen.machine_component.machine_details_component.MachineDetailsController;
 import com.google.gson.Gson;
 import com.squareup.okhttp.*;
 import javafx.application.Platform;
@@ -15,8 +14,6 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.function.Consumer;
 
 public class ConfigurationController {
 

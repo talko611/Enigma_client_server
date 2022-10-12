@@ -1,11 +1,13 @@
 package com.engine;
 
-import com.engine.battlefield.Battlefield;
+import com.engine.DM_operations.utils.DmService;
 import com.engine.configuration.Configurator;
 import com.engine.enigmaParts.EnigmaParts;
 import com.engine.enigmaParts.machineParts.MachineParts;
+import com.engine.enums.DecryptionDifficulty;
 import com.engine.xmlReader.XmlReader;
-import com.enigma.dtos.ClientDataTransfer.EncryptMessageData;
+import com.enigma.dtos.EngineAnswers.CalculationOperationAnswer;
+import com.enigma.dtos.dataObjects.EncryptMessageData;
 import com.enigma.dtos.EngineAnswers.InputOperationAnswer;
 import com.enigma.dtos.ServletAnswers.MachineDetailsAnswer;
 import com.enigma.machine.Machine;
@@ -17,11 +19,13 @@ import java.util.InputMismatchException;
 public class EngineImp implements Engine{
     private final XmlReader xmlReader;
     private Configurator configurator;
+    private DmService dmService;
 
 
     public EngineImp(){
         this.xmlReader = new XmlReader();
         this.configurator = new Configurator();
+        this.dmService = new DmService();
     }
 
     @Override
@@ -85,6 +89,20 @@ public class EngineImp implements Engine{
         answer.setReflectorsNum(String.valueOf(machineParts.getAllReflectors().size()));
         String usedRotors = machine.getRotors() == null ? "0" : String.valueOf(machine.getRotors().size());
         answer.setUsedVsAvailRotors(usedRotors + "/" + machineParts.getAllRotors().size());
+        return answer;
+    }
+
+    @Override
+    public CalculationOperationAnswer calculateNumberOfTasks(DecryptionDifficulty difficulty, long taskSize, MachineParts machineParts, int rotorCount){
+        CalculationOperationAnswer<Long> answer = new CalculationOperationAnswer<>();
+        try{
+            answer.setData(this.dmService.calculateNumberOfTasks(difficulty, taskSize, machineParts,rotorCount));
+            answer.setSuccess(true);
+            answer.setMessage("Operation passed");
+        }catch (InputMismatchException e){
+            answer.setSuccess(false);
+            answer.setMessage(e.getMessage());
+        }
         return answer;
     }
 

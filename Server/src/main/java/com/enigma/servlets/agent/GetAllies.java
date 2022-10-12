@@ -17,12 +17,12 @@ import java.util.UUID;
 
 @WebServlet("/Agent/get_allies")
 public class GetAllies extends HttpServlet {
+    private final Gson gson = new Gson();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         UserManager userManager = ServletsUtils.getUserManager(getServletContext());
         Map<UUID, Allie> allieMap = userManager.getAllies();
         GetMapOfData<String> answer = new GetMapOfData<>();
-        Gson gson = new Gson();
         allieMap.forEach((id, allie)-> answer.addUser(id, allie.getName()));
         answer.setMessage("Success");
         resp.getWriter().println(gson.toJson(answer));

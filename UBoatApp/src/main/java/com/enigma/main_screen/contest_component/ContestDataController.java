@@ -2,7 +2,7 @@ package com.enigma.main_screen.contest_component;
 
 import com.enigma.Utils.UBoatAppUtils;
 import com.enigma.Utils.UiAdapter;
-import com.enigma.dtos.ClientDataTransfer.EncryptMessageData;
+import com.enigma.dtos.dataObjects.EncryptMessageData;
 import com.enigma.main_screen.contest_component.trie_data_structure.Trie;
 import com.google.gson.Gson;
 import com.squareup.okhttp.*;
