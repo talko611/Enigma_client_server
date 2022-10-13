@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@WebServlet("/Allie/Get_agents")
+@WebServlet("/allie/get_agents")
 public class GetAgents extends HttpServlet {
     private final Gson gson = new Gson();
 

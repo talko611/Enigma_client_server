@@ -8,6 +8,7 @@ public class Allie extends User{
     private UUID battlefieldId;
     private final List<Agent> agentList;
     private long taskSize;
+    private long numberOfTasks;
     public Allie(String name){
         super(name);
         this.agentList = new ArrayList<>();
@@ -23,7 +24,6 @@ public class Allie extends User{
 
     public void exitGame(){
         battlefieldId = null;
-        super.setBelongToBattlefield(false);
         super.setReadyToPlay(false);
     }
 
@@ -37,5 +37,17 @@ public class Allie extends User{
 
     public UUID getBattlefieldId() {
         return battlefieldId;
+    }
+
+    public long getTaskSize() {
+        return taskSize;
+    }
+
+    public long getNumberOfTasks() {
+        return numberOfTasks;
+    }
+
+    public void setNumberOfTasks(long numberOfTasks) {
+        this.numberOfTasks = numberOfTasks;
     }
 }

@@ -69,33 +69,56 @@
             <Insets top="5.0" />
          </VBox.margin>
       </HBox>
-      <HBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefWidth="600.0" VBox.vgrow="ALWAYS">
+      <HBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefWidth="600.0" VBox.vgrow="ALWAYS">
          <children>
-            <VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="600.0" HBox.hgrow="ALWAYS">
+            <VBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="600.0" HBox.hgrow="ALWAYS">
                <children>
                   <HBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="600.0" VBox.vgrow="ALWAYS">
                      <children>
-                        <Label text="Battlefield Name">
-                           <HBox.margin>
-                              <Insets right="5.0" />
-                           </HBox.margin>
-                        </Label>
-                        <TextField fx:id="battlefieldNameTb" focusTraversable="false">
-                           <HBox.margin>
-                              <Insets right="10.0" />
-                           </HBox.margin>
-                        </TextField>
-                        <Label text="Task Size">
-                           <HBox.margin>
-                              <Insets right="5.0" />
-                           </HBox.margin>
-                        </Label>
-                        <TextField fx:id="taskSizeTb" focusTraversable="false">
-                           <HBox.margin>
-                              <Insets right="15.0" />
-                           </HBox.margin>
-                        </TextField>
-                        <Button fx:id="joinButton" focusTraversable="false" mnemonicParsing="false" onAction="#joinButtonClicked" text="Join" />
+                        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="300.0">
+                           <children>
+                              <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                                 <children>
+                                    <Label text="Battlefield Name">
+                                       <HBox.margin>
+                                          <Insets right="5.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                    <TextField fx:id="battlefieldNameTb" focusTraversable="false">
+                                       <HBox.margin>
+                                          <Insets />
+                                       </HBox.margin>
+                                    </TextField>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets bottom="10.0" />
+                                 </VBox.margin>
+                              </HBox>
+                              <Button fx:id="joinButton" focusTraversable="false" mnemonicParsing="false" onAction="#joinButtonClicked" text="Join" />
+                           </children>
+                        </VBox>
+                        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="300.0">
+                           <children>
+                              <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                                 <children>
+                                    <Label text="Task Size">
+                                       <HBox.margin>
+                                          <Insets right="5.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                    <TextField fx:id="taskSizeTb" focusTraversable="false">
+                                       <HBox.margin>
+                                          <Insets />
+                                       </HBox.margin>
+                                    </TextField>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets bottom="10.0" />
+                                 </VBox.margin>
+                              </HBox>
+                              <Button fx:id="setButton" mnemonicParsing="false" onAction="#setTaskSizeClicked" text="Set" />
+                           </children>
+                        </VBox>
                      </children>
                      <VBox.margin>
                         <Insets bottom="10.0" />
@@ -104,7 +127,7 @@
                   <Label fx:id="userMessage" />
                   <HBox alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="600.0" VBox.vgrow="ALWAYS">
                      <children>
-                        <Button fx:id="readyButtonClicked" focusTraversable="false" mnemonicParsing="false" onAction="#readyButtonClicked" text="Ready" />
+                        <Button fx:id="readyButton" focusTraversable="false" mnemonicParsing="false" onAction="#readyButtonClicked" text="Ready" />
                      </children>
                      <VBox.margin>
                         <Insets right="10.0" />

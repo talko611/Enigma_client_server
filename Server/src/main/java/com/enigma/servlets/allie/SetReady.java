@@ -12,7 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.UUID;
 
-@WebServlet("/Allie/Set_ready")
+@WebServlet("/allie/set_ready")
 public class SetReady extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -21,8 +21,12 @@ public class SetReady extends HttpServlet {
             UserManager userManager = ServletsUtils.getUserManager(getServletContext());
             Allie user = userManager.getAllieById(userId);
             //TODO - redirect if user is not found
-            user.setReadyToPlay(true);
-            resp.setStatus(200);
+            if(user.getBattlefieldId() != null && user.getTaskSize() > 0){
+                user.setReadyToPlay(true);
+                resp.setStatus(200);
+            }else {
+                resp.setStatus(401);
+            }
         }catch (NullPointerException e){
             //Todo - redirect to login page
         }

@@ -31,8 +31,10 @@ public class LoginController {
             call.enqueue(new Callback() {
                 @Override
                 public void onFailure(Request request, IOException e) {
-                    message.setText("An error has occurred");
-                    message.setVisible(true);
+                    Platform.runLater(()->{
+                        message.setText("An error has occurred");
+                        message.setVisible(true);
+                    });
                 }
 
                 @Override

@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
 
-@WebServlet("/Allie/Get_battlefields")
+@WebServlet("/allie/get_battlefields")
 public class GetBattlefields extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

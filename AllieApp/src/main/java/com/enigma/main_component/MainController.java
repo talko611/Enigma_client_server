@@ -1,6 +1,7 @@
 package com.enigma.main_component;
 
 import com.enigma.main_component.dashboard_tab_component.DashboardController;
+import com.enigma.utiles.UiAdapter;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
@@ -15,14 +16,14 @@ public class MainController {
     @FXML private VBox dashboardComponent;
     @FXML private DashboardController dashboardComponentController;
 
-    private SimpleBooleanProperty isInActiveGame;
     private BorderPane frameComponent;
+    private UiAdapter uiAdapter;
 
 
     @FXML
     void initialize(){
-        isInActiveGame = new SimpleBooleanProperty();
-        dashboardComponentController.setIsInActiveGame(isInActiveGame);
+        this.uiAdapter = new UiAdapter();
+        dashboardComponentController.setUiAdapter(uiAdapter);
     }
 
     public void setFrameComponent(BorderPane frameComponent) {

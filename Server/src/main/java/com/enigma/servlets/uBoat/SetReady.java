@@ -27,4 +27,5 @@ public class SetReady extends HttpServlet {
             //TODO - redirect to login page
         }
     }
+
 }

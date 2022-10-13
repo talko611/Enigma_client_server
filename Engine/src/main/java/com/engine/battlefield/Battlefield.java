@@ -14,7 +14,6 @@ public class Battlefield {
     private final UUID id;
     private UUID UBoatId;
     private List<Allie> teams;
-    private int numOfNeededTeams;
     private EnigmaParts enigmaParts;
     private Machine machine;
     private String encryptedMessage;
@@ -78,8 +77,6 @@ public class Battlefield {
     }
 
     public synchronized void addNewAllie(Allie allie){
-        allie.setBattlefieldId(null);
-        allie.setBelongToBattlefield(false);
         teams.add(allie);
     }
     public synchronized void removeAllie(Allie allie){

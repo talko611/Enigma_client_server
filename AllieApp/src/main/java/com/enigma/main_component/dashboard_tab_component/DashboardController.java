@@ -6,9 +6,9 @@ import com.enigma.dtos.ServletAnswers.GetMapOfData;
 import com.enigma.main_component.tasks.GetBattlefieldsTask;
 import com.enigma.main_component.tasks.GetMyAgentTask;
 import com.enigma.utiles.AppUtils;
+import com.enigma.utiles.UiAdapter;
 import com.squareup.okhttp.*;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -35,12 +35,14 @@ public class DashboardController {
     @FXML private TextField battlefieldNameTb;
     @FXML private TextField taskSizeTb;
     @FXML private Button joinButton;
+    @FXML private Button readyButton;
+    @FXML private Button setButton;
     @FXML private Label userMessage;
-    @FXML private Button readyButtonClicked;
+
 
     private Consumer<GetMapOfData<GameDetailsObject>> updateBattlefieldTable;
     private Consumer<List<String>> updateAgents;
-    private SimpleBooleanProperty isInActiveGame;
+    private UiAdapter uiAdapter;
     private Map<UUID, GameDetailsObject> battlefieldMap;
     private ObservableList<UiBattlefield> uiBattlefieldList;
     private UUID chosenBattlefield;
@@ -84,9 +86,11 @@ public class DashboardController {
     }
     @FXML
     void joinButtonClicked(ActionEvent event) {
-        if(validateJoinRequest()){
+        if(chosenBattlefield != null){
             joinButton.disableProperty().set(true);
-            launchRequest();
+            launchJoinRequest();
+        }else{
+            userMessage.setText("Please choose battlefield first");
         }
     }
 
@@ -95,54 +99,71 @@ public class DashboardController {
 
     }
 
-    public void setIsInActiveGame(SimpleBooleanProperty isInActiveGame) {
-        this.isInActiveGame = isInActiveGame;
-        bindComponent();
-    }
-
-    private void bindComponent(){
-        new Thread(new GetBattlefieldsTask(updateBattlefieldTable, isInActiveGame)).start();
-        new Thread(new GetMyAgentTask(updateAgents, isInActiveGame)).start();
-        isInActiveGame.addListener((observable, oldValue, newValue) -> {
-            if(!newValue){
-                new Thread(new GetBattlefieldsTask(updateBattlefieldTable, isInActiveGame)).start();
-                new Thread(new GetMyAgentTask(updateAgents, isInActiveGame)).start();
+    @FXML
+    void setTaskSizeClicked(ActionEvent event) {
+        try {
+            long taskSize = Long.parseLong(taskSizeTb.getText());
+            if(taskSize > 0){
+                launchSetTaskSizeRequest(taskSize);
             }
-        });
-    }
-
-    private boolean validateJoinRequest(){
-        boolean answer = true;
-        try{
-            if(chosenBattlefield == null){
-                userMessage.setText("Please choose battlefield first");
-                answer = false;
-            } else if (Long.parseLong(taskSizeTb.getText()) <= 0) {
-                answer = false;
-                userMessage.setText("Please enter only positive number in task size box");
-            }
+            userMessage.setText("Please enter only positive whole number");
         }catch (NumberFormatException e){
-            answer = false;
-            userMessage.setText("Please enter only positive number in task size box");
+            userMessage.setText("Please enter only positive whole number");
         }
-        return answer;
+
     }
 
-    private void launchRequest(){
-        HttpUrl.Builder urlBuilder  = HttpUrl.parse(AppUtils.APP_URL + AppUtils.JOIN_BATTLEFIELD_RESOURCE).newBuilder();
-        urlBuilder.addQueryParameter("id", AppUtils.CLIENT_ID.toString())
-                .addQueryParameter("battlefield", chosenBattlefield.toString())
-                .addQueryParameter("taskSize", String.valueOf(Long.parseLong(taskSizeTb.getText())));
+    private void launchSetTaskSizeRequest(long taskSize){
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(AppUtils.APP_URL + AppUtils.SET_TASK_SIZE).newBuilder();
+        urlBuilder.addQueryParameter("id", AppUtils.CLIENT_ID.toString()).addQueryParameter("taskSize", String.valueOf(taskSize));
         Request request = new Request.Builder().url(urlBuilder.build()).build();
         Call call = AppUtils.CLIENT.newCall(request);
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Request request, IOException e) {
-                if(e!=null){
-                    System.out.println(e.getMessage());
-                    System.out.println(e.getCause());
-                    System.out.println(e.getStackTrace());
-                }
+                Platform.runLater(()->{
+                    userMessage.setText("Couldn't complete request" );
+                });
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                RequestServerAnswer answer = AppUtils.GSON_SERVICE.fromJson(response.body().charStream(), RequestServerAnswer.class);
+                Platform.runLater(()->{
+                    uiAdapter.setIsTaskSet(answer.isSuccess());
+                    userMessage.setText(answer.getMessage());
+                });
+            }
+        });
+    }
+
+    public void setUiAdapter(UiAdapter uiAdapter) {
+        this.uiAdapter = uiAdapter;
+        bindComponent();
+    }
+
+    private void bindComponent(){
+        new Thread(new GetBattlefieldsTask(updateBattlefieldTable, uiAdapter.isInActiveGameProperty())).start();
+        new Thread(new GetMyAgentTask(updateAgents, uiAdapter.isInActiveGameProperty())).start();
+        uiAdapter.isInActiveGameProperty().addListener((observable, oldValue, newValue) -> {
+            if(!newValue){
+                new Thread(new GetBattlefieldsTask(updateBattlefieldTable, uiAdapter.isInActiveGameProperty())).start();
+                new Thread(new GetMyAgentTask(updateAgents, uiAdapter.isInActiveGameProperty())).start();
+            }
+        });
+        readyButton.disableProperty().bind(uiAdapter.isJoinToGameProperty().not().or(uiAdapter.isTaskSetProperty().not()));
+        setButton.disableProperty().bind(uiAdapter.isJoinToGameProperty().not());
+    }
+
+    private void launchJoinRequest(){
+        HttpUrl.Builder urlBuilder  = HttpUrl.parse(AppUtils.APP_URL + AppUtils.JOIN_BATTLEFIELD_RESOURCE).newBuilder();
+        urlBuilder.addQueryParameter("id", AppUtils.CLIENT_ID.toString())
+                .addQueryParameter("battlefield", chosenBattlefield.toString());
+        Request request = new Request.Builder().url(urlBuilder.build()).build();
+        Call call = AppUtils.CLIENT.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
                 Platform.runLater(()->{
                     userMessage.setText("Cannot fulfill request please try again ");
                     joinButton.disableProperty().set(false);
@@ -155,7 +176,7 @@ public class DashboardController {
                 Platform.runLater(()->{
                     userMessage.setText(answer.getMessage());
                     joinButton.disableProperty().set(false);
-                    //Todo -  update property of is join
+                    uiAdapter.setIsJoinToGame(answer.isSuccess());
                 });
             }
         });

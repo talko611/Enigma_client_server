@@ -88,7 +88,6 @@ public class LoadBattlefield extends HttpServlet {
         battlefield.getMachine().setKeyboard(battlefield.getEnigmaParts().getMachineParts().getKeyboard());
         Uboat uboat = userManager.getUBoatById(clientId);
         deleteOldBattlefield(uboat, userManager);
-        uboat.setBelongToBattlefield(true);
         uboat.setBattlefieldId(battlefieldId);
     }
 
