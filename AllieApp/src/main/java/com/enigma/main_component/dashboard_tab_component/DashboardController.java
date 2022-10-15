@@ -181,7 +181,7 @@ public class DashboardController {
         });
         readyButton.disableProperty().bind(uiAdapter.isJoinToGameProperty().not().or(uiAdapter.isTaskSetProperty().not()));
         joinButton.disableProperty().bind(uiAdapter.isJoinToGameProperty());
-        setButton.disableProperty().bind(uiAdapter.isTaskSetProperty());
+        setButton.disableProperty().bind(uiAdapter.isTaskSetProperty().or(uiAdapter.isJoinToGameProperty().not()));
     }
 
     private void launchJoinRequest(){

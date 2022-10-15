@@ -25,16 +25,16 @@ public class GetMyAgentTask implements Runnable{
 
     @Override
     public void run() {
-        System.out.println("Get my agent thread is up");
+        System.out.println("Allie App: Get my agent thread is up");
         while(!isInActiveGame.get()){
             try {
                 Thread.sleep(2000);
                 getAgents();
             } catch (InterruptedException e) {
-                System.out.println("Get My Agent thread is interrupted");
+                System.out.println("Allie app: Get My Agent thread is interrupted");
             }
         }
-        System.out.println("Get my agents thread is going down");
+        System.out.println("Allie app: Get my agents thread is going down");
     }
 
     private void getAgents(){

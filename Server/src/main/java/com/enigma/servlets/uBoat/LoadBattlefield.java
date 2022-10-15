@@ -52,7 +52,7 @@ public class LoadBattlefield extends HttpServlet {
                     if(!userManager.isBattlefieldExists(battlefieldName)){
                         setNewBattlefield(enigmaParts, userManager, clientId);
                         answer.setSuccess(true);
-                        answer.setMessage("Battlefield is loaded");
+                        answer.setMessage(battlefieldName);
                         resp.setStatus(200);
                     }
                     //Case client already uploaded this battlefield

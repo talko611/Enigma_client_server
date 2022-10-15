@@ -24,14 +24,16 @@ public class GetBattlefieldsTask implements Runnable {
 
     @Override
     public void run() {
+        System.out.println("Allie app: get battlefields thread is up");
         while(!isActiveGame.get()){
             try{
                 Thread.sleep(2000);
                 getAllBattlefields();
             }catch (InterruptedException e){
-                System.out.println("Get battlefield thread interrupted");
+                System.out.println("Allie app: get battlefield thread interrupted");
             }
         }
+        System.out.println("Allie app: get battlefield thread is going down");
     }
 
     private void getAllBattlefields(){

@@ -25,14 +25,16 @@ public class GetActiveAllies implements Runnable{
 
     @Override
     public void run() {
+        System.out.println("Agent app: get allies thread is up");
         while (!isLoggedIn.get()){
             try{
                 Thread.sleep(3000);
                 getAllies();
             }catch (InterruptedException e){
-                System.out.println("Get allies thread was interrupted");
+                System.out.println("Agent app: Get allies thread was interrupted");
             }
         }
+        System.out.println("Agent app: get allies thread is going down");
     }
     private void getAllies(){
         HttpUrl.Builder urlBuilder = HttpUrl.parse(AppUtils.APP_URL + AppUtils.GET_ALLIES_RESOURCE ).newBuilder();

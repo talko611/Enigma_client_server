@@ -42,7 +42,7 @@ public class EncryptMessage extends HttpServlet {
                         resp.setStatus(200);
                     }else{
                         resp.setStatus(401);
-                        clientData.setMessage("Message contains invalid characters or words that are not in the game dictionary");
+                        clientData.setMessage("Message contains invalid characters or words");
                     }
                     resp.getWriter().println(GSON_SERVICE.toJson(clientData));
                 }

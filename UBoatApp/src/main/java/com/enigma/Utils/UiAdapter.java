@@ -8,6 +8,7 @@ public class UiAdapter {
     private SimpleBooleanProperty isConfigure;
     private SimpleStringProperty currentConfig;
     private SimpleBooleanProperty isInActiveGame;
+    private SimpleStringProperty battlefieldName;
     private String srcMessage;
 
     public UiAdapter(){
@@ -15,6 +16,19 @@ public class UiAdapter {
         this.isConfigure = new SimpleBooleanProperty(false);
         this.isLoaded = new SimpleBooleanProperty(false);
         this.isInActiveGame = new SimpleBooleanProperty(false);
+        this.battlefieldName = new SimpleStringProperty();
+    }
+
+    public String getBattlefieldName() {
+        return battlefieldName.get();
+    }
+
+    public void setBattlefieldName(String battlefieldName) {
+        this.battlefieldName.set(battlefieldName);
+    }
+
+    public SimpleStringProperty battlefieldNameProperty() {
+        return battlefieldName;
     }
 
     public boolean isIsLoaded() {

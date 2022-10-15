@@ -88,8 +88,13 @@ public class MainController {
                 Platform.runLater(()->{
                     uiAdapter.setIsLoaded(answer.isSuccess());
                     loadFileButton.disableProperty().set(answer.isSuccess());
-                    loadFileAnswerLabel.setText(answer.getMessage());
                     uiAdapter.setIsConfigure(false);
+                    if(answer.isSuccess()){
+                        uiAdapter.setBattlefieldName(answer.getMessage());
+                        loadFileAnswerLabel.setText("Battlefield loaded");
+                    }else{
+                        loadFileAnswerLabel.setText(answer.getMessage());
+                    }
                 });
             }
         });
