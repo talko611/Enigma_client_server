@@ -1,6 +1,6 @@
 package com.enigma.main_screen;
 
-import com.enigma.Utils.UBoatAppUtils;
+import com.enigma.Utils.AppUtils;
 import com.enigma.Utils.UiAdapter;
 import com.enigma.dtos.ServletAnswers.LoadFileAnswer;
 import com.enigma.main_screen.contest_component.ContestDataController;
@@ -22,7 +22,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class MainController {
-    @FXML private Button LoadFileButton;
+    @FXML private Button loadFileButton;
     @FXML private Label loadFileAnswerLabel;
     @FXML private Tab machineTab;
     @FXML private Tab machineDetailsTab;
@@ -64,26 +64,30 @@ public class MainController {
         sendLoadFileRequest(selectedFile);
     }
     private void sendLoadFileRequest(File fileToUpload){
+        loadFileButton.disableProperty().set(true);
         RequestBody body = new MultipartBuilder()
                 .type(MultipartBuilder.FORM)
                 .addFormDataPart("File",fileToUpload.getName(),RequestBody.create(MediaType.parse("application/octet-stream"),fileToUpload))
                 .build();
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(UBoatAppUtils.APP_URL + UBoatAppUtils.UPLOAD_FILE_RESOURCE).newBuilder();
-        urlBuilder.addQueryParameter("id",UBoatAppUtils.CLIENT_ID.toString());
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(AppUtils.APP_URL + AppUtils.UPLOAD_FILE_RESOURCE).newBuilder();
+        urlBuilder.addQueryParameter("id", AppUtils.CLIENT_ID.toString());
         Request request = new Request.Builder().url(urlBuilder.build()).method("POST",body).build();
-        Call call = UBoatAppUtils.HTTP_CLIENT.newCall(request);
+        Call call = AppUtils.HTTP_CLIENT.newCall(request);
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Request request, IOException e) {
-                System.out.println("Something went wrong..");
+                Platform.runLater(()->{
+                    loadFileAnswerLabel.setText("Something went wrong please try to load again");
+                    loadFileButton.disableProperty().set(false);
+                });
             }
 
             @Override
             public void onResponse(Response response) throws IOException {
-                Gson gson = new Gson();
-                LoadFileAnswer answer = gson.fromJson(response.body().charStream(), LoadFileAnswer.class);
+                LoadFileAnswer answer = AppUtils.GSON_SERVICE.fromJson(response.body().charStream(), LoadFileAnswer.class);
                 Platform.runLater(()->{
                     uiAdapter.setIsLoaded(answer.isSuccess());
+                    loadFileButton.disableProperty().set(answer.isSuccess());
                     loadFileAnswerLabel.setText(answer.getMessage());
                     uiAdapter.setIsConfigure(false);
                 });
@@ -93,7 +97,7 @@ public class MainController {
 
     @FXML
     void configTabClicked(){
-        if(uiAdapter.isLoadedProperty().get()){
+        if(uiAdapter.isIsLoaded()){
             configurationComponentController.initComponent(true);
         }
     }

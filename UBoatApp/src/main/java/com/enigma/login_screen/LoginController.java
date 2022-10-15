@@ -1,8 +1,7 @@
 package com.enigma.login_screen;
 
-import com.enigma.Utils.UBoatAppUtils;
+import com.enigma.Utils.AppUtils;
 import com.enigma.dtos.ServletAnswers.LogInAnswer;
-import com.google.gson.Gson;
 import com.squareup.okhttp.*;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -24,10 +23,10 @@ public class LoginController {
     @FXML
     void loginClicked(ActionEvent event) {
         if(!nameField.textProperty().isEmpty().get()){
-            HttpUrl.Builder urlBuilder = HttpUrl.parse(UBoatAppUtils.APP_URL + UBoatAppUtils.LOGIN_RESOURCE).newBuilder();
+            HttpUrl.Builder urlBuilder = HttpUrl.parse(AppUtils.APP_URL + AppUtils.LOGIN_RESOURCE).newBuilder();
             urlBuilder.addQueryParameter("name", nameField.getText());
             Request request = new Request.Builder().url(urlBuilder.build()).build();
-            Call call = UBoatAppUtils.HTTP_CLIENT.newCall(request);
+            Call call = AppUtils.HTTP_CLIENT.newCall(request);
             call.enqueue(new Callback() {
                 @Override
                 public void onFailure(Request request, IOException e) {
@@ -39,13 +38,12 @@ public class LoginController {
 
                 @Override
                 public void onResponse(Response response) throws IOException {
-                    Gson gson = new Gson();
-                    LogInAnswer answer = gson.fromJson(response.body().charStream(),LogInAnswer.class);
+                    LogInAnswer answer = AppUtils.GSON_SERVICE.fromJson(response.body().charStream(),LogInAnswer.class);
                     Platform.runLater(()->loginBt.disableProperty().set(false));
                     if(answer.isSuccess()){
                         Platform.runLater(() -> {
                             isLoginSuccessful.set(true);
-                            UBoatAppUtils.setClientId(answer.getId());
+                            AppUtils.CLIENT_ID = answer.getId();
                             message.visibleProperty().set(false);
                         });
                     }else {

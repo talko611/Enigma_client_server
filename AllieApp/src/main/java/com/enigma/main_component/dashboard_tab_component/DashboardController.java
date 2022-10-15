@@ -87,7 +87,7 @@ public class DashboardController {
     @FXML
     void joinButtonClicked(ActionEvent event) {
         if(chosenBattlefield != null){
-            joinButton.disableProperty().set(true);
+
             launchJoinRequest();
         }else{
             userMessage.setText("Please choose battlefield first");
@@ -96,7 +96,35 @@ public class DashboardController {
 
     @FXML
     void readyButtonClicked(ActionEvent event) {
+        launchSetReadyRequest();
+    }
 
+    private void launchSetReadyRequest(){
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(AppUtils.APP_URL + AppUtils.SET_READY_RESOURCE).newBuilder();
+        urlBuilder.addQueryParameter("id", AppUtils.CLIENT_ID.toString());
+        Request request = new Request.Builder().url(urlBuilder.build()).build();
+        Call call = AppUtils.CLIENT.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                Platform.runLater(()->{
+                    userMessage.setText("Could not preform request please try again");
+                });
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                if(response.code() == 200){
+                    Platform.runLater(()->{
+                        uiAdapter.setIsReady(true);
+                    });
+                }else{
+                    Platform.runLater(()->{
+                        userMessage.setText("Cannot fulfill request please check you sign to battlefield and set task size");
+                    });
+                }
+            }
+        });
     }
 
     @FXML
@@ -152,7 +180,8 @@ public class DashboardController {
             }
         });
         readyButton.disableProperty().bind(uiAdapter.isJoinToGameProperty().not().or(uiAdapter.isTaskSetProperty().not()));
-        setButton.disableProperty().bind(uiAdapter.isJoinToGameProperty().not());
+        joinButton.disableProperty().bind(uiAdapter.isJoinToGameProperty());
+        setButton.disableProperty().bind(uiAdapter.isTaskSetProperty());
     }
 
     private void launchJoinRequest(){
@@ -166,7 +195,6 @@ public class DashboardController {
             public void onFailure(Request request, IOException e) {
                 Platform.runLater(()->{
                     userMessage.setText("Cannot fulfill request please try again ");
-                    joinButton.disableProperty().set(false);
                 });
             }
 
@@ -175,7 +203,6 @@ public class DashboardController {
                 RequestServerAnswer answer = AppUtils.GSON_SERVICE.fromJson(response.body().charStream(), RequestServerAnswer.class);
                 Platform.runLater(()->{
                     userMessage.setText(answer.getMessage());
-                    joinButton.disableProperty().set(false);
                     uiAdapter.setIsJoinToGame(answer.isSuccess());
                 });
             }

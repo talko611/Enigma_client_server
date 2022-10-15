@@ -1,7 +1,7 @@
 package com.enigma.servlets.allie;
 
 import com.engine.Engine;
-import com.engine.battlefield.Battlefield;
+import com.engine.users.battlefield.Battlefield;
 import com.engine.users.Allie;
 import com.engine.users.UserManager;
 import com.enigma.dtos.EngineAnswers.CalculationOperationAnswer;
@@ -13,7 +13,6 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.apache.commons.lang3.SerializationUtils;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -38,7 +37,7 @@ public class SetTaskSize extends HttpServlet {
                         battlefield.getMachine().getRotors().size());
                 if(calcNumOfTasks.isSuccess()){
                     user.setTaskSize(taskSize);
-                    user.setNumberOfTasks(calcNumOfTasks.getData());
+                    user.setNumOfTasks(calcNumOfTasks.getData());
                     answer.setSuccess(true);
                     answer.setMessage("Task size is set");
                 }

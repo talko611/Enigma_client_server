@@ -26,7 +26,7 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Button fx:id="LoadFileButton" contentDisplay="CENTER" focusTraversable="false" mnemonicParsing="false" onAction="#loadFileClicked" text="Load File" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="CENTER" GridPane.vgrow="NEVER" />
+                  <Button fx:id="loadFileButton" contentDisplay="CENTER" focusTraversable="false" mnemonicParsing="false" onAction="#loadFileClicked" text="Load File" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="CENTER" GridPane.vgrow="NEVER" />
                   <Label fx:id="loadFileAnswerLabel" alignment="CENTER" text="No file is loaded" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="LEFT">
                      <GridPane.margin>
                         <Insets left="10.0" />

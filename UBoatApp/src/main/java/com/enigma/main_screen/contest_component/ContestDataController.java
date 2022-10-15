@@ -1,6 +1,6 @@
 package com.enigma.main_screen.contest_component;
 
-import com.enigma.Utils.UBoatAppUtils;
+import com.enigma.Utils.AppUtils;
 import com.enigma.Utils.UiAdapter;
 import com.enigma.dtos.dataObjects.EncryptMessageData;
 import com.enigma.main_screen.contest_component.trie_data_structure.Trie;
@@ -85,11 +85,11 @@ public class ContestDataController {
     }
 
     private void loadDictionary(){
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(UBoatAppUtils.APP_URL + UBoatAppUtils.DICTIONARY_RESOURCE).newBuilder();
-        urlBuilder.addQueryParameter("id", UBoatAppUtils.CLIENT_ID.toString());
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(AppUtils.APP_URL + AppUtils.DICTIONARY_RESOURCE).newBuilder();
+        urlBuilder.addQueryParameter("id", AppUtils.CLIENT_ID.toString());
         Request request = new Request.Builder()
                 .url(urlBuilder.build()).build();
-        Call call = UBoatAppUtils.HTTP_CLIENT.newCall(request);
+        Call call = AppUtils.HTTP_CLIENT.newCall(request);
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Request request, IOException e) {
@@ -117,13 +117,13 @@ public class ContestDataController {
         EncryptMessageData data = new EncryptMessageData();
         data.setSource(srcMessageTb.getText());
         uiAdapter.setSrcMessage(srcMessageTb.getText());
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(UBoatAppUtils.APP_URL + UBoatAppUtils.ENCRYPT_RESOURCE).newBuilder();
-        urlBuilder.addQueryParameter("id", UBoatAppUtils.CLIENT_ID.toString());
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(AppUtils.APP_URL + AppUtils.ENCRYPT_RESOURCE).newBuilder();
+        urlBuilder.addQueryParameter("id", AppUtils.CLIENT_ID.toString());
         RequestBody body = RequestBody.create(MediaType.parse("application/json"), gson.toJson(data));
         Request request = new Request.Builder()
                 .url(urlBuilder.build())
                 .method("POST", body).build();
-        Call call = UBoatAppUtils.HTTP_CLIENT.newCall(request);
+        Call call = AppUtils.HTTP_CLIENT.newCall(request);
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Request request, IOException e) {

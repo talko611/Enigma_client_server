@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
 
-@WebServlet("/Agent/get_allies")
+@WebServlet("/agent/get_allies")
 public class GetAllies extends HttpServlet {
     private final Gson gson = new Gson();
     @Override

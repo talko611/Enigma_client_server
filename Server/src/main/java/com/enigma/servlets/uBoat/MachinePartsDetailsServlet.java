@@ -1,10 +1,9 @@
 package com.enigma.servlets.uBoat;
 
-import com.engine.battlefield.Battlefield;
+import com.engine.users.battlefield.Battlefield;
 import com.engine.enigmaParts.machineParts.MachineParts;
 import com.engine.users.UserManager;
 import com.enigma.dtos.ServletAnswers.MachinePartsAnswer;
-import com.enigma.machine.parts.keyboard.Keyboard;
 import com.enigma.machine.parts.reflector.Reflector;
 import com.enigma.machine.parts.rotor.Rotor;
 import com.enigma.servlets.ServletsUtils;
@@ -21,8 +20,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-@WebServlet("/UBoat/getMachineParts")
+@WebServlet("/uBoat/get_machine_parts")
 public class MachinePartsDetailsServlet extends HttpServlet {
+    private final Gson GSON_SERVICE = new Gson();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try{
@@ -30,15 +30,14 @@ public class MachinePartsDetailsServlet extends HttpServlet {
             UserManager userManager = ServletsUtils.getUserManager(getServletContext());
             Battlefield battlefield = userManager.getBattlefieldById(userManager.getUBoatById(clientId).getBattlefieldId());
             MachinePartsAnswer answer = new MachinePartsAnswer();
-            synchronized (battlefield.getMachine()){
+            synchronized (battlefield){
                 MachineParts parts = battlefield.getEnigmaParts().getMachineParts();
                 answer.setRotorIds(getRotorsIds(parts.getAllRotors()));
                 answer.setReflectorIds(getReflectorsIds(parts.getAllReflectors()));
                 answer.setKeyboardChars(parts.getKeyboard().getAllKeys());
                 answer.setRotorsCount(parts.getRotorCount());
             }
-            Gson gson = new Gson();
-            resp.getWriter().println(gson.toJson(answer));
+            resp.getWriter().println(GSON_SERVICE.toJson(answer));
         }catch (NullPointerException e){
             //Todo - redirect to login page
         }

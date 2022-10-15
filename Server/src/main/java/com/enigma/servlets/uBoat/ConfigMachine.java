@@ -1,7 +1,7 @@
 package com.enigma.servlets.uBoat;
 
 import com.engine.Engine;
-import com.engine.battlefield.Battlefield;
+import com.engine.users.battlefield.Battlefield;
 import com.engine.enigmaParts.machineParts.MachineParts;
 import com.engine.users.UserManager;
 import com.enigma.dtos.dataObjects.ManualConfigStrings;
@@ -19,8 +19,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.UUID;
 
-@WebServlet("/UBoat/Config")
+@WebServlet("/uBoat/config")
 public class ConfigMachine extends HttpServlet {
+    private final Gson GSON_SERVICE = new Gson();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try{
@@ -34,28 +35,28 @@ public class ConfigMachine extends HttpServlet {
                 resp.setStatus(401);
             }else{
                 Engine engine = ServletsUtils.getEngine(getServletContext());
-                synchronized (battlefield.getMachine()){
-                    InputOperationAnswer configurationAnswer = engine.autoConfig(battlefield.getMachine(), battlefield.getEnigmaParts().getMachineParts());
-                    if(configurationAnswer.isSuccess()){
-                        answer.setSuccess(true);
-                        answer.setMessage("Machine is configure");
-                        resp.setStatus(200);
-                    }else {
-                        answer.setSuccess(false);
-                        answer.setMessage(configurationAnswer.getMessage());
-                        resp.setStatus(401);
-                    }
+                InputOperationAnswer configurationAnswer;
+                synchronized (battlefield) {
+                    configurationAnswer = engine.autoConfig(battlefield.getMachine(), battlefield.getEnigmaParts().getMachineParts());
+                }
+                if(configurationAnswer.isSuccess()){
+                    answer.setSuccess(true);
+                    answer.setMessage("Machine is configure");
+                    resp.setStatus(200);
+                }else {
+                    answer.setSuccess(false);
+                    answer.setMessage(configurationAnswer.getMessage());
+                    resp.setStatus(401);
                 }
             }
-            Gson gson = new Gson();
-            resp.getWriter().println(gson.toJson(answer));
+            resp.getWriter().println(GSON_SERVICE.toJson(answer));
         }catch (NullPointerException e){
             //Todo - redirect to login page
         }
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         try{
             UUID clientId = UUID.fromString(req.getParameter("id"));
             UserManager userManager = ServletsUtils.getUserManager(getServletContext());
@@ -66,12 +67,13 @@ public class ConfigMachine extends HttpServlet {
                 answer.setMessage("Battlefield is not loaded");
                 resp.setStatus(400);
             }else{
-                Engine engine = ServletsUtils.getEngine(getServletContext());
-                Gson gson = new Gson();
-                ManualConfigStrings configStrings = gson.fromJson(req.getReader(),ManualConfigStrings.class);
-                InputOperationAnswer configurationAnswer = manualConfigMachine(configStrings,
-                        battlefield.getMachine(),
-                        battlefield.getEnigmaParts().getMachineParts());
+                ManualConfigStrings configStrings = GSON_SERVICE.fromJson(req.getReader(),ManualConfigStrings.class);
+                InputOperationAnswer configurationAnswer;
+                synchronized (battlefield){
+                    configurationAnswer = manualConfigMachine(configStrings,
+                            battlefield.getMachine(),
+                            battlefield.getEnigmaParts().getMachineParts());
+                }
                 if(configurationAnswer.isSuccess()){
                     answer.setSuccess(true);
                     answer.setMessage("Machine is configure successfully");
@@ -82,7 +84,7 @@ public class ConfigMachine extends HttpServlet {
                     answer.setMessage(configurationAnswer.getMessage());
                     resp.setStatus(400);
                 }
-                resp.getWriter().println(gson.toJson(answer));
+                resp.getWriter().println(GSON_SERVICE.toJson(answer));
             }
         }catch (NullPointerException e){
             //Todo - redirect to login page

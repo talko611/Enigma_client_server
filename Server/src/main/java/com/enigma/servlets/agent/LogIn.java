@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.UUID;
 
-@WebServlet("/Agent/LogIn")
+@WebServlet("/agent/login")
 public class LogIn extends HttpServlet {
     private final Gson gsonService = new Gson();
     @Override

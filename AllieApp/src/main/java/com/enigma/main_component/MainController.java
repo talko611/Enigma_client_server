@@ -24,6 +24,11 @@ public class MainController {
     void initialize(){
         this.uiAdapter = new UiAdapter();
         dashboardComponentController.setUiAdapter(uiAdapter);
+        uiAdapter.isReadyProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue){
+                mainTabPane.getSelectionModel().select(contestTab);
+            }
+        });
     }
 
     public void setFrameComponent(BorderPane frameComponent) {

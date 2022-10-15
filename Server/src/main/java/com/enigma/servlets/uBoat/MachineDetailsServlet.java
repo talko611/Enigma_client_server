@@ -1,7 +1,7 @@
 package com.enigma.servlets.uBoat;
 
 import com.engine.Engine;
-import com.engine.battlefield.Battlefield;
+import com.engine.users.battlefield.Battlefield;
 import com.engine.users.UserManager;
 import com.enigma.dtos.ServletAnswers.MachineDetailsAnswer;
 import com.enigma.servlets.ServletsUtils;
@@ -16,8 +16,9 @@ import java.io.IOException;
 import java.util.UUID;
 
 
-@WebServlet("/UBoat/getDetails")
+@WebServlet("/uBoat/get_details")
 public class MachineDetailsServlet extends HttpServlet {
+    private final Gson GSON_SERVICE = new Gson();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try{
@@ -26,11 +27,10 @@ public class MachineDetailsServlet extends HttpServlet {
             UserManager userManager = ServletsUtils.getUserManager(getServletContext());
             Battlefield battlefield = userManager.getBattlefieldById(userManager.getUBoatById(clientId).getBattlefieldId());
             MachineDetailsAnswer answer;
-            synchronized (battlefield.getMachine()){
+            synchronized (battlefield){
                 answer = engine.getDetails(battlefield.getMachine(), battlefield.getEnigmaParts().getMachineParts());
             }
-            Gson gson = new Gson();
-            resp.getWriter().println(gson.toJson(answer));
+            resp.getWriter().println(GSON_SERVICE.toJson(answer));
         }catch (NullPointerException e){
             //Todo-redirect
         }

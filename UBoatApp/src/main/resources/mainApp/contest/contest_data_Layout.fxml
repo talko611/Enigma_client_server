@@ -121,16 +121,26 @@
                            <content>
                               <ScrollPane fitToHeight="true" fitToWidth="true">
                                  <content>
-                                    <TableView fx:id="teamsTable" focusTraversable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                      <columns>
-                                        <TableColumn editable="false" prefWidth="75.0" sortable="false" text="Team Name" />
-                                        <TableColumn editable="false" prefWidth="75.0" sortable="false" text="Number Of Agents" />
-                                          <TableColumn editable="false" prefWidth="75.0" sortable="false" text="Task Size" />
-                                      </columns>
-                                       <columnResizePolicy>
-                                          <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                                       </columnResizePolicy>
-                                    </TableView>
+                                    <HBox alignment="CENTER">
+                                       <children>
+                                          <TableView fx:id="teamsTable" focusTraversable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                            <columns>
+                                              <TableColumn editable="false" prefWidth="75.0" sortable="false" text="Team Name" />
+                                              <TableColumn editable="false" prefWidth="75.0" sortable="false" text="Number Of Agents" />
+                                                <TableColumn editable="false" prefWidth="75.0" sortable="false" text="Task Size" />
+                                            </columns>
+                                             <columnResizePolicy>
+                                                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                             </columnResizePolicy>
+                                          </TableView>
+                                          <TableView prefHeight="200.0" prefWidth="200.0">
+                                            <columns>
+                                              <TableColumn prefWidth="75.0" text="C1" />
+                                              <TableColumn prefWidth="75.0" text="C2" />
+                                            </columns>
+                                          </TableView>
+                                       </children>
+                                    </HBox>
                                  </content>
                               </ScrollPane>
                            </content>

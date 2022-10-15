@@ -1,6 +1,6 @@
 package com.engine.users;
 
-import com.engine.battlefield.Battlefield;
+import com.engine.users.battlefield.Battlefield;
 
 import java.util.*;
 
@@ -81,19 +81,27 @@ public class UserManager {
     }
 
     public Uboat getUBoatById(UUID id){
-        return uBoats.get(id);
+        synchronized (uBoatsLock){
+            return uBoats.get(id);
+        }
     }
 
     public Allie getAllieById(UUID id){
-        return allies.get(id);
+        synchronized (alliesLock){
+            return allies.get(id);
+        }
     }
 
     public Agent getAgentById(UUID id){
-        return agents.get(id);
+        synchronized (agentsLock){
+            return agents.get(id);
+        }
     }
 
     public Battlefield getBattlefieldById(UUID id){
-        return battlefields.get(id);
+        synchronized (battlefieldLock){
+            return battlefields.get(id);
+        }
     }
 
     public UUID addNewBattlefield(String battlefieldName){
@@ -104,6 +112,7 @@ public class UserManager {
         }
     }
 
+    //Todo - check if this function is relevant
     public List<Battlefield> getAllAvailableBattlefields(){
         List<Battlefield> battlefieldList = new ArrayList<>();
         synchronized (battlefieldLock){
@@ -140,7 +149,9 @@ public class UserManager {
     }
 
     public Map<UUID, Battlefield> getBattlefields() {
-        return battlefields;
+        synchronized (battlefieldLock){
+            return battlefields;
+        }
     }
 
     public static Object getBattlefieldLock(){return battlefieldLock;}

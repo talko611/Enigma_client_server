@@ -17,7 +17,7 @@ import java.util.UUID;
 
 @WebServlet("/allie/get_agents")
 public class GetAgents extends HttpServlet {
-    private final Gson gson = new Gson();
+    private final Gson GSON_SERVICE = new Gson();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -31,7 +31,7 @@ public class GetAgents extends HttpServlet {
             synchronized (user){
                 List<String> agentNames = new ArrayList<>();
                 user.getAgentList().forEach((agent)-> agentNames.add(agent.getName()));
-                resp.getWriter().println(gson.toJson(agentNames));
+                resp.getWriter().println(GSON_SERVICE.toJson(agentNames));
             }
         }catch (NullPointerException e){
             //TODO - redirect to login page

@@ -1,4 +1,4 @@
-package com.engine.battlefield;
+package com.engine.users.battlefield;
 
 import com.engine.enigmaParts.EnigmaParts;
 import com.engine.users.Allie;
@@ -76,7 +76,7 @@ public class Battlefield {
         return teams;
     }
 
-    public synchronized void addNewAllie(Allie allie){
+    public void addNewAllie(Allie allie){
         teams.add(allie);
     }
     public synchronized void removeAllie(Allie allie){

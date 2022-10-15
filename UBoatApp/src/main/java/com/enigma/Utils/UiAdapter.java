@@ -17,6 +17,17 @@ public class UiAdapter {
         this.isInActiveGame = new SimpleBooleanProperty(false);
     }
 
+    public boolean isIsLoaded() {
+        return isLoaded.get();
+    }
+
+    public boolean isIsConfigure() {
+        return isConfigure.get();
+    }
+
+    public String getCurrentConfig() {
+        return currentConfig.get();
+    }
 
     public SimpleBooleanProperty isLoadedProperty() {
         return isLoaded;

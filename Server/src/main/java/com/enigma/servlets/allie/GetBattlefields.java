@@ -1,6 +1,6 @@
 package com.enigma.servlets.allie;
 
-import com.engine.battlefield.Battlefield;
+import com.engine.users.battlefield.Battlefield;
 import com.engine.users.UserManager;
 import com.enigma.dtos.dataObjects.GameDetailsObject;
 import com.enigma.dtos.ServletAnswers.GetMapOfData;
@@ -17,6 +17,7 @@ import java.util.UUID;
 
 @WebServlet("/allie/get_battlefields")
 public class GetBattlefields extends HttpServlet {
+    private final Gson GSON_SERVICE = new Gson();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try{
@@ -28,8 +29,7 @@ public class GetBattlefields extends HttpServlet {
                     GetMapOfData<GameDetailsObject> responseBody = buildResponseBody(battlefieldMap, userManager);
                     if(responseBody.getData().isEmpty())
                         responseBody.setMessage("No battlefields are loaded yet!");
-                    Gson gson = new Gson();
-                    resp.getWriter().println(gson.toJson(responseBody));
+                    resp.getWriter().println(GSON_SERVICE.toJson(responseBody));
                 }
             }else{
                 throw new NullPointerException("User is not exist");
@@ -49,7 +49,6 @@ public class GetBattlefields extends HttpServlet {
             object.setParticipantsStatus(battlefield.getTeams().size() + "/" + battlefield.getEnigmaParts().getBattlefieldParts().getNumOfAllies());
             object.setGameStatus(battlefield.isGameStarted()? "Active" : "Awaiting");
             body.addUser(id, object);
-
         });
         return body;
     }

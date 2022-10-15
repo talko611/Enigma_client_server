@@ -1,6 +1,6 @@
 package com.enigma.main_screen.machine_component.configuration_component;
 
-import com.enigma.Utils.UBoatAppUtils;
+import com.enigma.Utils.AppUtils;
 import com.enigma.Utils.UiAdapter;
 import com.enigma.dtos.dataObjects.ManualConfigStrings;
 import com.enigma.dtos.ServletAnswers.MachinePartsAnswer;
@@ -59,11 +59,11 @@ public class ConfigurationController {
     void autoConfig(ActionEvent event) {
         uiAdapter.setIsConfigure(false);
         HttpUrl.Builder urlBuilder = HttpUrl
-                .parse(UBoatAppUtils.APP_URL + UBoatAppUtils.CONFIGURATION_RESOURCE)
+                .parse(AppUtils.APP_URL + AppUtils.CONFIGURATION_RESOURCE)
                 .newBuilder();
-        urlBuilder.addQueryParameter("id", UBoatAppUtils.CLIENT_ID.toString());
+        urlBuilder.addQueryParameter("id", AppUtils.CLIENT_ID.toString());
         Request request = new Request.Builder().url(urlBuilder.build()).build();
-        Call call = UBoatAppUtils.HTTP_CLIENT.newCall(request);
+        Call call = AppUtils.HTTP_CLIENT.newCall(request);
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Request request, IOException e) {
@@ -99,16 +99,16 @@ public class ConfigurationController {
         Gson gson = new Gson();
         ManualConfigStrings bodyData = createRequestBody();
         HttpUrl.Builder urlBuilder = HttpUrl
-                .parse(UBoatAppUtils.APP_URL + UBoatAppUtils.CONFIGURATION_RESOURCE)
+                .parse(AppUtils.APP_URL + AppUtils.CONFIGURATION_RESOURCE)
                 .newBuilder();
-        urlBuilder.addQueryParameter("id", UBoatAppUtils.CLIENT_ID.toString());
+        urlBuilder.addQueryParameter("id", AppUtils.CLIENT_ID.toString());
         RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), gson.toJson(bodyData));
         Request request = new Request.Builder()
                 .url(urlBuilder.build())
                 .method("POST", requestBody)
                 .addHeader("Content-Type", "application/json")
                 .build();
-        Call call = UBoatAppUtils.HTTP_CLIENT.newCall(request);
+        Call call = AppUtils.HTTP_CLIENT.newCall(request);
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Request request, IOException e) {
@@ -131,12 +131,12 @@ public class ConfigurationController {
 
 
     private void getParts(){
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(UBoatAppUtils.APP_URL + UBoatAppUtils.MACHINE_PARTS_DETAILS_RESOURCE).newBuilder();
-        urlBuilder.addQueryParameter("id", UBoatAppUtils.CLIENT_ID.toString());
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(AppUtils.APP_URL + AppUtils.MACHINE_PARTS_DETAILS_RESOURCE).newBuilder();
+        urlBuilder.addQueryParameter("id", AppUtils.CLIENT_ID.toString());
         Request request = new Request.Builder()
                 .url(urlBuilder.build())
                 .build();
-        Call call = UBoatAppUtils.HTTP_CLIENT.newCall(request);
+        Call call = AppUtils.HTTP_CLIENT.newCall(request);
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Request request, IOException e) {

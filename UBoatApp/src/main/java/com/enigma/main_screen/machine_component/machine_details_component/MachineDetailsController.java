@@ -1,6 +1,6 @@
 package com.enigma.main_screen.machine_component.machine_details_component;
 
-import com.enigma.Utils.UBoatAppUtils;
+import com.enigma.Utils.AppUtils;
 import com.enigma.Utils.UiAdapter;
 import com.enigma.dtos.ServletAnswers.MachineDetailsAnswer;
 import com.google.gson.Gson;
@@ -40,24 +40,25 @@ public class MachineDetailsController {
 
     private void getMachineDetails(){
         HttpUrl.Builder urlBuilder = HttpUrl
-                .parse(UBoatAppUtils.APP_URL + UBoatAppUtils.MACHINE_DETAILS_RESOURCE)
+                .parse(AppUtils.APP_URL + AppUtils.MACHINE_DETAILS_RESOURCE)
                 .newBuilder();
-        urlBuilder.addQueryParameter("id", UBoatAppUtils.CLIENT_ID.toString());
+        urlBuilder.addQueryParameter("id", AppUtils.CLIENT_ID.toString());
         Request request = new Request.Builder()
                 .url(urlBuilder.build())
                 .build();
-        Call call = UBoatAppUtils.HTTP_CLIENT.newCall(request);
+        Call call = AppUtils.HTTP_CLIENT.newCall(request);
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Request request, IOException e) {
-                userMessageLb.setVisible(true);
-                userMessageLb.setText("Something went wrong please try again");
+                Platform.runLater(()->{
+                    userMessageLb.setVisible(true);
+                    userMessageLb.setText("Something went wrong please try again");
+                });
             }
 
             @Override
             public void onResponse(Response response) throws IOException {
-                Gson gson = new Gson();
-                MachineDetailsAnswer answer = gson.fromJson(response.body().charStream(), MachineDetailsAnswer.class);
+                MachineDetailsAnswer answer = AppUtils.GSON_SERVICE.fromJson(response.body().charStream(), MachineDetailsAnswer.class);
                 Platform.runLater(()->{
                     if(!answer.isConfig()){
                         userMessageLb.setText("Machine is not configured yet");

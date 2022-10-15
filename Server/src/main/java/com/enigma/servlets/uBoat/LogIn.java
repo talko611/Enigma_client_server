@@ -12,9 +12,9 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-@WebServlet(name = "logInUBoat", urlPatterns = "/UBoat/LogIn")
+@WebServlet(name = "logInUBoat", urlPatterns = "/uBoat/login")
 public class LogIn extends HttpServlet {
-    private final Gson gson = new Gson();
+    private final Gson GSON_SERVICE = new Gson();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String name = req.getParameter("name");
@@ -30,7 +30,7 @@ public class LogIn extends HttpServlet {
                 answer.setSuccess(false);
                 answer.setMessage("Username is already taken");
             }
-            resp.getWriter().println(gson.toJson(answer));
+            resp.getWriter().println(GSON_SERVICE.toJson(answer));
         }
     }
 }
