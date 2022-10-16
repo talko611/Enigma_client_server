@@ -10,11 +10,12 @@ import com.enigma.dtos.ServletAnswers.MachineDetailsAnswer;
 import com.enigma.machine.Machine;
 
 import javax.xml.bind.JAXBException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.InputMismatchException;
 
 public interface Engine {
-    EnigmaParts loadGame( InputStream fileData) throws JAXBException, InputMismatchException;
+    EnigmaParts loadGame( InputStream fileData) throws JAXBException, InputMismatchException, IOException;
 
     InputOperationAnswer manualConfigRotors(Machine machine, MachineParts machineParts, String rotorConfigLine);
 

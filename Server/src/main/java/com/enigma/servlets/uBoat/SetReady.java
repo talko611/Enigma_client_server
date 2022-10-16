@@ -2,6 +2,8 @@ package com.enigma.servlets.uBoat;
 
 import com.engine.users.Uboat;
 import com.engine.users.UserManager;
+import com.engine.users.battlefield.Battlefield;
+import com.enigma.dtos.ServletAnswers.RequestServerAnswer;
 import com.enigma.servlets.ServletsUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -20,9 +22,20 @@ public class SetReady extends HttpServlet {
             UUID userId = UUID.fromString(req.getParameter("id"));
             UserManager userManager = ServletsUtils.getUserManager(getServletContext());
             Uboat user = userManager.getUBoatById(userId);
-            //TODO - redirect to login page is user is not found
-            user.setReadyToPlay(true);
-            resp.setStatus(200);
+            if(user == null){
+
+            }
+            Battlefield battlefield = userManager.getBattlefieldById(user.getBattlefieldId());
+            RequestServerAnswer answer = new RequestServerAnswer();
+            if(battlefield == null){
+                throw new NullPointerException("Something went wrong please login again");
+            }
+            synchronized (battlefield){
+                user.setReadyToPlay(true);
+                battlefield.updateActivateGame(userManager);
+            }
+            answer.setSuccess(true);
+            answer.setMessage("Ready to play");
         }catch (NullPointerException e){
             //TODO - redirect to login page
         }

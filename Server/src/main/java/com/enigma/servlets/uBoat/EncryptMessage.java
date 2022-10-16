@@ -30,14 +30,18 @@ public class EncryptMessage extends HttpServlet {
             Battlefield battlefield = userManager.getBattlefieldById(userManager.getUBoatById(clientId).getBattlefieldId());
             if(battlefield == null){
                 resp.setStatus(401);
-            }else{
+            } else if (battlefield.getMachine().getInitialConfiguration() == null) {
+                resp.setStatus(402);
+            } else{
                 Machine machine = battlefield.getMachine();
                 EncryptMessageData clientData = GSON_SERVICE.fromJson(req.getReader(), EncryptMessageData.class);
                 synchronized (battlefield){
                     if(isLettersAreValid(clientData.getSource(), machine.getKeyboard()) &&
                             isAllWordAreInDic(battlefield.getEnigmaParts().getDmParts().getDictionary(), clientData.getSource())){
+                        String currentConfiguration = machine.getCurrentConfiguration();
                         clientData = ServletsUtils.getEngine(getServletContext()).encryptDecrypt(clientData, machine);
                         battlefield.setEncryptedMessage(clientData.getEncrypted());
+                        battlefield.setMessageConfiguration(currentConfiguration);
                         clientData.setMessage("Message decrypted successfully!");
                         resp.setStatus(200);
                     }else{

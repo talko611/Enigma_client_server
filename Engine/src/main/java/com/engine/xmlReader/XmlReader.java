@@ -7,6 +7,7 @@ import com.engine.generated.*;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -15,7 +16,7 @@ import java.util.stream.IntStream;
 public class XmlReader {
     private static final int MAX_AGENTS = 50;
 
-    public EnigmaParts load(InputStream fileData) throws JAXBException, InputMismatchException {
+    public EnigmaParts load(InputStream fileData) throws JAXBException, InputMismatchException, IOException {
         //load and validate
         CTEEnigma cteEnigma = loadFile(fileData);
         CTEMachine cteMachine = cteEnigma.getCTEMachine();
@@ -31,9 +32,10 @@ public class XmlReader {
         return enigmaParts;
     }
 
-    private CTEEnigma loadFile(InputStream fileData) throws JAXBException {
+    private CTEEnigma loadFile(InputStream fileData) throws JAXBException, IOException {
         JAXBContext jaxbContext = JAXBContext.newInstance(CTEEnigma.class);
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+        fileData.close();
         return (CTEEnigma) unmarshaller.unmarshal(fileData);
     }
 

@@ -26,7 +26,7 @@ public class LogIn extends HttpServlet {
         synchronized (this){
             LogInAnswer answer = new LogInAnswer();
             if(!userManager.isAgentExists(userName)){
-                Agent newAgent = userManager.addNewAgent(userName, numOfWorkers);
+                Agent newAgent = userManager.addNewAgent(userName, numOfWorkers,allieId);
                 userManager.getAllieById(allieId).addAgent(newAgent);
                 answer.setId(newAgent.getId());
                 answer.setMessage("New agent created");

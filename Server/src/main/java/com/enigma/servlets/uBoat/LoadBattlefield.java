@@ -8,6 +8,7 @@ import com.engine.users.UserManager;
 import com.enigma.dtos.ServletAnswers.LoadFileAnswer;
 import com.enigma.servlets.ServletsUtils;
 import com.google.gson.Gson;
+import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -17,9 +18,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 
 import javax.xml.bind.JAXBException;
-import java.io.IOException;
+import java.io.*;
 import java.util.Collection;
 import java.util.InputMismatchException;
+import java.util.Scanner;
 import java.util.UUID;
 
 @WebServlet("/uBoat/load_file")
@@ -41,8 +43,10 @@ public class LoadBattlefield extends HttpServlet {
                 resp.getWriter().println(GSON_SERVICE.toJson(answer));
             }else{
                 EnigmaParts enigmaParts = null;
+                String fileContent = null;
                 for(Part part: parts){
-                    enigmaParts = engine.loadGame(part.getInputStream());
+                    fileContent = convertInputStreamToStr(part.getInputStream());
+                    enigmaParts = engine.loadGame(new ByteArrayInputStream(fileContent.getBytes()));
                 }
                 Uboat uboat = userManager.getUBoatById(clientId);
                 String battlefieldName = enigmaParts.getBattlefieldParts().getName();
@@ -50,7 +54,7 @@ public class LoadBattlefield extends HttpServlet {
                 //Case this battlefield is not exists
                 synchronized (this){
                     if(!userManager.isBattlefieldExists(battlefieldName)){
-                        setNewBattlefield(enigmaParts, userManager, clientId);
+                        setNewBattlefield(enigmaParts, userManager, clientId, fileContent);
                         answer.setSuccess(true);
                         answer.setMessage(battlefieldName);
                         resp.setStatus(200);
@@ -76,19 +80,28 @@ public class LoadBattlefield extends HttpServlet {
             resp.setStatus(400);
             answer.setSuccess(false);
             answer.setMessage(e.getMessage());
+        }catch (IOException e){
+            answer.setSuccess(false);
+            answer.setMessage("Could not close file");
         }
         resp.getWriter().println(GSON_SERVICE.toJson(answer));
     }
 
-    private synchronized void setNewBattlefield(EnigmaParts enigmaParts, UserManager userManager, UUID clientId){
+    private void setNewBattlefield(EnigmaParts enigmaParts, UserManager userManager, UUID clientId, String fileContent){
         UUID battlefieldId = userManager.addNewBattlefield(enigmaParts.getBattlefieldParts().getName());
         Battlefield battlefield = userManager.getBattlefieldById(battlefieldId);
-        battlefield.setEnigmaParts(enigmaParts);
-        battlefield.setUBoatId(clientId);
-        battlefield.getMachine().setKeyboard(battlefield.getEnigmaParts().getMachineParts().getKeyboard());
-        Uboat uboat = userManager.getUBoatById(clientId);
-        uboat.setBattlefieldId(battlefieldId);
+        synchronized (battlefield){
+            battlefield.setEnigmaParts(enigmaParts);
+            battlefield.setUBoatId(clientId);
+            battlefield.getMachine().setKeyboard(battlefield.getEnigmaParts().getMachineParts().getKeyboard());
+            battlefield.setFileContent(fileContent);
+            Uboat uboat = userManager.getUBoatById(clientId);
+            uboat.setBattlefieldId(battlefieldId);
+        }
     }
 
+    private String convertInputStreamToStr(InputStream inputStream) {
+        return new Scanner(inputStream).useDelimiter("\\Z").next();
+    }
 
 }

@@ -13,6 +13,7 @@ import com.enigma.dtos.ServletAnswers.MachineDetailsAnswer;
 import com.enigma.machine.Machine;
 
 import javax.xml.bind.JAXBException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.InputMismatchException;
 
@@ -29,7 +30,7 @@ public class EngineImp implements Engine{
     }
 
     @Override
-    public EnigmaParts loadGame( InputStream fileData) throws JAXBException, InputMismatchException {
+    public EnigmaParts loadGame( InputStream fileData) throws JAXBException, InputMismatchException, IOException {
         synchronized (xmlReader) {
            return xmlReader.load(fileData);
         }

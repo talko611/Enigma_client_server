@@ -2,6 +2,7 @@ package com.engine.users.battlefield;
 
 import com.engine.enigmaParts.EnigmaParts;
 import com.engine.users.Allie;
+import com.engine.users.UserManager;
 import com.enigma.machine.Machine;
 import com.enigma.machine.MachineImp;
 
@@ -17,6 +18,8 @@ public class Battlefield {
     private EnigmaParts enigmaParts;
     private Machine machine;
     private String encryptedMessage;
+    private String messageConfiguration;
+    private String fileContent;
     private boolean isGameStarted;
 
 
@@ -26,6 +29,22 @@ public class Battlefield {
         this.id = UUID.randomUUID();
         this.machine = new MachineImp();
         this.teams = new ArrayList<>();
+    }
+
+    public void setMessageConfiguration(String messageConfiguration) {
+        this.messageConfiguration = messageConfiguration;
+    }
+
+    public void setFileContent(String fileContent) {
+        this.fileContent = fileContent;
+    }
+
+    public String getMessageConfiguration() {
+        return messageConfiguration;
+    }
+
+    public String getFileContent() {
+        return fileContent;
     }
 
     public void setEnigmaParts(EnigmaParts enigmaParts) {
@@ -93,6 +112,19 @@ public class Battlefield {
 
     public void freeAllies(){
         teams.forEach(Allie::exitGame);
+    }
+
+    public void updateActivateGame(UserManager userManager){
+        boolean status = userManager.getUBoatById(UBoatId).isReadyToPlay();
+        if(status){
+            for(Allie allie : teams){
+                if(!allie.isReadyToPlay()){
+                    status = false;
+                    break;
+                }
+            }
+        }
+        isGameStarted = status;
     }
 
 }
