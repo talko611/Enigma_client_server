@@ -4,10 +4,10 @@ import com.enigma.dtos.ServletAnswers.GetMapOfData;
 import com.enigma.dtos.ServletAnswers.LogInAnswer;
 import com.enigma.login.tasks.GetActiveAllies;
 import com.enigma.utils.AppUtils;
+import com.enigma.utils.UiAdapter;
 import com.squareup.okhttp.*;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -29,7 +29,7 @@ public class LoginController {
     @FXML private ComboBox<Integer> workersCb;
     @FXML private Label message;
 
-    private SimpleBooleanProperty isLoggedIn;
+    private UiAdapter uiAdapter;
     private Map<String, UUID> allies;
 
     @FXML
@@ -88,18 +88,25 @@ public class LoginController {
                 LogInAnswer answer = AppUtils.GSON_SERVICE.fromJson(response.body().charStream(), LogInAnswer.class);
                 Platform.runLater(()->{
                     AppUtils.CLIENT_ID = answer.getId();
-                    isLoggedIn.set(answer.isSuccess());
+                    uiAdapter.setIsLoggedIn(answer.isSuccess());
                     message.setText(answer.getMessage());
                     loginBt.disableProperty().set(false);
+                    if(response.code() == 200)
+                        uiAdapter.setIsActive(true);
+                    if(response.code() == 206)
+                        uiAdapter.setIsActive(false);
                 });
             }
         });
 
     }
 
-    public void setIsLoggedIn(SimpleBooleanProperty isLoggedIn) {
-        this.isLoggedIn = isLoggedIn;
-        //Start get Allies thread
+    public void setUiAdapter(UiAdapter uiAdapter) {
+        this.uiAdapter = uiAdapter;
+        bindComponent();
+    }
+
+    private void bindComponent(){
         Consumer<GetMapOfData<String>> updateTeams = (answer)->{
             allies.clear();
             String value = teamsCb.getValue();
@@ -108,7 +115,7 @@ public class LoginController {
             teamsCb.getItems().addAll(allies.keySet());
             teamsCb.setValue(value);
         };
-        GetActiveAllies activeAllies = new GetActiveAllies(updateTeams, isLoggedIn);
+        GetActiveAllies activeAllies = new GetActiveAllies(updateTeams, uiAdapter.isLoggedInProperty());
         new Thread(activeAllies).start();
     }
 }

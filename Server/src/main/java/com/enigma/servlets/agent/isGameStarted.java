@@ -1,7 +1,8 @@
-package com.enigma.servlets.allie;
+package com.enigma.servlets.agent;
 
-import com.engine.users.Allie;
+import com.engine.users.Agent;
 import com.engine.users.UserManager;
+import com.enigma.dtos.ServletAnswers.RequestServerAnswer;
 import com.enigma.servlets.ServletsUtils;
 import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
@@ -11,31 +12,28 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
-@WebServlet("/allie/get_agents")
-public class GetAgents extends HttpServlet {
+@WebServlet("/agent/is_stated")
+public class isGameStarted extends HttpServlet {
     private final Gson GSON_SERVICE = new Gson();
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try{
             UUID userId = UUID.fromString(req.getParameter("id"));
             UserManager userManager = ServletsUtils.getUserManager(getServletContext());
-            Allie user = userManager.getAllieById(userId);
-            if(user == null){
-                throw new NullPointerException();
+            Agent user = userManager.getAgentById(userId);
+            RequestServerAnswer answer = new RequestServerAnswer();
+            if(user.isInActiveGame()){
+                answer.setSuccess(true);
+                answer.setMessage("Active");
+            }else {
+                answer.setMessage("Awaiting");
+                answer.setSuccess(false);
             }
-            synchronized (user){
-                List<String> agentNames = new ArrayList<>();
-                user.getActiveAgents().forEach((agent)-> agentNames.add(agent.getName()));
-                resp.getWriter().println(GSON_SERVICE.toJson(agentNames));
-            }
+            resp.getWriter().println(GSON_SERVICE.toJson(answer));
         }catch (NullPointerException e){
-            //TODO - redirect to login page
+            //Todo - redirect to login
         }
-
     }
 }

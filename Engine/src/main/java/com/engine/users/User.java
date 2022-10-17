@@ -6,6 +6,7 @@ public class User {
     private final UUID id;
     private final String name;
     private boolean isReadyToPlay;
+    private boolean isInActiveGame;
 
     public User(String name){
         this.id = UUID.randomUUID();
@@ -22,11 +23,19 @@ public class User {
     }
 
 
-    public void setReadyToPlay(boolean readyToPlay) {
+    public synchronized void setReadyToPlay(boolean readyToPlay) {
         isReadyToPlay = readyToPlay;
     }
 
-    public boolean isReadyToPlay() {
+    public synchronized boolean isReadyToPlay() {
         return isReadyToPlay;
+    }
+
+    public synchronized boolean isInActiveGame() {
+        return isInActiveGame;
+    }
+
+    public synchronized void setInActiveGame(boolean inActiveGame) {
+        isInActiveGame = inActiveGame;
     }
 }

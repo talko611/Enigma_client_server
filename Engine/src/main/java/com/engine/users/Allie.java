@@ -7,13 +7,15 @@ import java.util.concurrent.BlockingQueue;
 
 public class Allie extends User{
     private UUID battlefieldId;
-    private final List<Agent> agentList;
+    private final List<Agent> activeAgents;
+    private final List<Agent> waitingAgents;
     private long taskSize;
     private long numOfTasks;
     private BlockingQueue<?> tasks;
     public Allie(String name){
         super(name);
-        this.agentList = new ArrayList<>();
+        this.activeAgents = new ArrayList<>();
+        this.waitingAgents = new ArrayList<>();
         //Todo -create queue for allie
     }
 
@@ -21,8 +23,15 @@ public class Allie extends User{
         this.battlefieldId = battlefieldId;
     }
 
-    public  void addAgent(Agent agent){
-        agentList.add(agent);
+    public synchronized boolean addAgent(Agent agent){
+        if(isReadyToPlay()){
+            waitingAgents.add(agent);
+            return false;
+        }
+        else{
+            activeAgents.add(agent);
+            return true;
+        }
     }
 
     public void exitGame(){
@@ -32,8 +41,8 @@ public class Allie extends User{
         numOfTasks = 0;
     }
 
-    public List<Agent> getAgentList() {
-        return agentList;
+    public List<Agent> getActiveAgents() {
+        return activeAgents;
     }
 
     public void setTaskSize(long taskSize) {

@@ -14,6 +14,7 @@ public class AppUtils {
     public static final String GET_ALLIES_RESOURCE = "get_allies";
     public static final String GET_ENIGMA_PARTS_RESOURCE = "get_enigma_parts";
     public static final String SET_READY_RESOURCE = "set_ready";
+    public static final String SET_AVAILABLE_RESOURCE = "set_available";
 
 
 

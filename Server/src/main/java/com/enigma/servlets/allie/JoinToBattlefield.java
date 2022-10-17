@@ -50,7 +50,7 @@ public class JoinToBattlefield extends HttpServlet {
         if(battlefield.isGameStarted()){
             answer.setSuccess(false);
             answer.setMessage("Game already started");
-        } else if(user.getAgentList().size() == 0){
+        } else if(user.getActiveAgents().size() == 0){
             answer.setSuccess(false);
             answer.setMessage("Cannot join game without agents");
         } else if (battlefield.getTeams().size() == battlefield.getEnigmaParts().getBattlefieldParts().getNumOfAllies()) {

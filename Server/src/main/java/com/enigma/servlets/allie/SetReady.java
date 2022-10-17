@@ -15,7 +15,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @WebServlet("/allie/set_ready")
 public class SetReady extends HttpServlet {
@@ -65,7 +64,7 @@ public class SetReady extends HttpServlet {
     private boolean isAgentsReady(Allie allie){
         boolean answer = true;
         synchronized (allie){
-            for(Agent agent : allie.getAgentList()){
+            for(Agent agent : allie.getActiveAgents()){
                 if(!agent.isReadyToPlay()){
                     answer = false;
                     break;

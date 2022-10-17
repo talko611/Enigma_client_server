@@ -89,7 +89,6 @@ public class DashboardController {
     @FXML
     void joinButtonClicked(ActionEvent event) {
         if(chosenBattlefield != null){
-
             launchJoinRequest();
         }else{
             userMessage.setText("Please choose battlefield first");
@@ -122,7 +121,7 @@ public class DashboardController {
                     });
                 }else{
                     Platform.runLater(()->{
-                        userMessage.setText("Cannot fulfill request please check you sign to battlefield and set task size");
+                        userMessage.setText("Cannot fulfill request please check if you sign to battlefield and set task size");
                     });
                 }
             }

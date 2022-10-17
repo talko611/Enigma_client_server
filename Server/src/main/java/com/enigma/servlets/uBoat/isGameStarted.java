@@ -1,10 +1,9 @@
 package com.enigma.servlets.uBoat;
 
-import com.engine.users.Allie;
 import com.engine.users.Uboat;
 import com.engine.users.UserManager;
 import com.engine.users.battlefield.Battlefield;
-import com.enigma.dtos.dataObjects.AllieData;
+import com.enigma.dtos.ServletAnswers.RequestServerAnswer;
 import com.enigma.servlets.ServletsUtils;
 import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
@@ -14,40 +13,31 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
-@WebServlet("/uBoat/get_allies")
-public class GetAllies extends HttpServlet {
+@WebServlet("/uBoat/is_started")
+public class isGameStarted extends HttpServlet {
     private final Gson GSON_SERVICE = new Gson();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        try {
+        try{
             UUID userId = UUID.fromString(req.getParameter("id"));
             UserManager userManager = ServletsUtils.getUserManager(getServletContext());
             Uboat user = userManager.getUBoatById(userId);
             Battlefield battlefield = userManager.getBattlefieldById(user.getBattlefieldId());
-            List<AllieData> allieDataList;
+            RequestServerAnswer answer = new RequestServerAnswer();
             synchronized (battlefield){
-                List<Allie> allies = battlefield.getTeams();
-                allieDataList = buildResponseBody(allies);
+                if(battlefield.isGameStarted()){
+                    answer.setSuccess(true);
+                    answer.setMessage("Active");
+                }else{
+                    answer.setMessage("Awaiting");
+                    answer.setSuccess(false);
+                }
             }
-            resp.getWriter().println(GSON_SERVICE.toJson(allieDataList));
+            resp.getWriter().println(GSON_SERVICE.toJson(answer));
         }catch (NullPointerException e){
-            //Todo - redirect
+            //Todo - redirect to login
         }
-    }
-
-    private List<AllieData> buildResponseBody(List<Allie> allies){
-        List<AllieData> allieDataList = new ArrayList<>(allies.size());
-        allies.forEach(allie -> {
-            AllieData newAllie = new AllieData();
-            newAllie.setAlliName(allie.getName());
-            newAllie.setNumOfAgents(allie.getActiveAgents().size());
-            newAllie.setTaskSize(allie.getTaskSize());
-            allieDataList.add(newAllie);
-        });
-        return allieDataList;
     }
 }

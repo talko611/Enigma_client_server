@@ -1,5 +1,6 @@
 package com.enigma.servlets.agent;
 
+import com.engine.enums.AgentStatus;
 import com.engine.users.Agent;
 import com.engine.users.UserManager;
 import com.enigma.dtos.ServletAnswers.LogInAnswer;
@@ -27,7 +28,12 @@ public class LogIn extends HttpServlet {
             LogInAnswer answer = new LogInAnswer();
             if(!userManager.isAgentExists(userName)){
                 Agent newAgent = userManager.addNewAgent(userName, numOfWorkers,allieId);
-                userManager.getAllieById(allieId).addAgent(newAgent);
+                boolean flag = userManager.getAllieById(allieId).addAgent(newAgent);
+                if(flag)
+                    resp.setStatus(200);
+                else
+                    resp.setStatus(206);
+                setAgentStatus(flag, newAgent);
                 answer.setId(newAgent.getId());
                 answer.setMessage("New agent created");
                 answer.setSuccess(true);
@@ -37,6 +43,14 @@ public class LogIn extends HttpServlet {
             }
             Gson gson = new Gson();
             resp.getWriter().println(gson.toJson(answer));
+        }
+    }
+
+    private void setAgentStatus(boolean mode, Agent newAgent){
+        if (mode) {
+            newAgent.setStatus(AgentStatus.ACTIVE);
+        } else {
+            newAgent.setStatus(AgentStatus.AWAITING);
         }
     }
 }

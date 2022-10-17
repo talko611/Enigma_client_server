@@ -1,7 +1,8 @@
 package com.enigma;
 
 import com.enigma.login.LoginController;
-import javafx.beans.property.SimpleBooleanProperty;
+import com.enigma.main.MainController;
+import com.enigma.utils.UiAdapter;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -13,15 +14,16 @@ import java.net.URL;
 
 public class FrameController {
     private BorderPane frameComponent;
-    private SimpleBooleanProperty isLoggedIn;
+
+    private UiAdapter uiAdapter;
     @FXML private VBox loginComponent;
     @FXML private LoginController loginComponentController;
 
     @FXML
     void initialize(){
-        isLoggedIn = new SimpleBooleanProperty();
-        loginComponentController.setIsLoggedIn(this.isLoggedIn);
-        isLoggedIn.addListener((observable, oldValue, newValue) -> {
+        this.uiAdapter = new UiAdapter();
+        loginComponentController.setUiAdapter(this.uiAdapter);
+        uiAdapter.isLoggedInProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue){
                 FXMLLoader loader = new FXMLLoader();
                 URL url = getClass().getResource("/main/main_component_layout.fxml");
@@ -29,6 +31,8 @@ public class FrameController {
                 try {
                     Parent parent = loader.load();
                     frameComponent.setCenter(parent);
+                    MainController controller = loader.getController();
+                    controller.setUiAdapter(uiAdapter);
                 } catch (IOException e) {
                     System.out.println(e.getCause());
                     System.out.println(e.getStackTrace());
