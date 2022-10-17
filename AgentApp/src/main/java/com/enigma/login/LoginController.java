@@ -87,9 +87,9 @@ public class LoginController {
             public void onResponse(Response response) throws IOException {
                 LogInAnswer answer = AppUtils.GSON_SERVICE.fromJson(response.body().charStream(), LogInAnswer.class);
                 Platform.runLater(()->{
+                    AppUtils.CLIENT_ID = answer.getId();
                     isLoggedIn.set(answer.isSuccess());
                     message.setText(answer.getMessage());
-                    AppUtils.CLIENT_ID = answer.getId();
                     loginBt.disableProperty().set(false);
                 });
             }

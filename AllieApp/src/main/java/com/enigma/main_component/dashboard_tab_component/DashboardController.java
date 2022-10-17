@@ -77,10 +77,12 @@ public class DashboardController {
     @FXML
     void clickOnTable(MouseEvent event) {
        ObservableList<UiBattlefield> observableList = battlefieldTb.getSelectionModel().getSelectedItems();
-       for(Map.Entry<UUID, GameDetailsObject> object : battlefieldMap.entrySet()){
-           if(object.getValue().getBattlefieldName().equals(observableList.get(0).battlefieldName.get())){
-               chosenBattlefield = object.getKey();
-               battlefieldNameTb.setText(object.getValue().getBattlefieldName());
+       if(!observableList.isEmpty()){
+           for(Map.Entry<UUID, GameDetailsObject> object : battlefieldMap.entrySet()){
+               if(object.getValue().getBattlefieldName().equals(observableList.get(0).battlefieldName.get())){
+                   chosenBattlefield = object.getKey();
+                   battlefieldNameTb.setText(object.getValue().getBattlefieldName());
+               }
            }
        }
     }
