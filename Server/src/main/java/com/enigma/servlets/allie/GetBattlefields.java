@@ -47,7 +47,7 @@ public class GetBattlefields extends HttpServlet {
             object.setuBoatName(userManager.getUBoatById(battlefield.getUBoatId()).getName());
             object.setDecryptionLevel(battlefield.getEnigmaParts().getBattlefieldParts().getDifficulty().toString());
             object.setParticipantsStatus(battlefield.getTeams().size() + "/" + battlefield.getEnigmaParts().getBattlefieldParts().getNumOfAllies());
-            object.setGameStatus(battlefield.isGameStarted()? "Active" : "Awaiting");
+            object.setGameStatus(battlefield.getGameStatus());
             body.addUser(id, object);
         });
         return body;

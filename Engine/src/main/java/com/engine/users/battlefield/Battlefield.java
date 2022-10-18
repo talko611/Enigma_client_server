@@ -3,6 +3,7 @@ package com.engine.users.battlefield;
 import com.engine.enigmaParts.EnigmaParts;
 import com.engine.users.Allie;
 import com.engine.users.UserManager;
+import com.enigma.dtos.Enums.GameStatus;
 import com.enigma.machine.Machine;
 import com.enigma.machine.MachineImp;
 
@@ -20,15 +21,15 @@ public class Battlefield {
     private String encryptedMessage;
     private String messageConfiguration;
     private String fileContent;
-    private boolean isGameStarted;
-
-
+    private String winners;
+    private GameStatus gameStatus;
 
     public Battlefield(String name){
         this.name = name;
         this.id = UUID.randomUUID();
         this.machine = new MachineImp();
         this.teams = new ArrayList<>();
+        this.gameStatus = GameStatus.AWAITING;
     }
 
     public void setMessageConfiguration(String messageConfiguration) {
@@ -102,14 +103,6 @@ public class Battlefield {
         teams.remove(allie);
     }
 
-    public boolean isGameStarted() {
-        return isGameStarted;
-    }
-
-    public void setGameStarted(boolean gameStarted) {
-        isGameStarted = gameStarted;
-    }
-
     public void freeAllies(){
         teams.forEach(Allie::exitGame);
     }
@@ -124,7 +117,22 @@ public class Battlefield {
                 }
             }
         }
-        isGameStarted = status;
+        this.gameStatus = GameStatus.RUNNING;
     }
 
+    public String getWinners() {
+        return winners;
+    }
+
+    public void setWinners(String winners) {
+        this.winners = winners;
+    }
+
+    public GameStatus getGameStatus() {
+        return gameStatus;
+    }
+
+    public void setGameStatus(GameStatus gameStatus) {
+        this.gameStatus = gameStatus;
+    }
 }

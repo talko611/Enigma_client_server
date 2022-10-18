@@ -3,6 +3,7 @@ package com.enigma.servlets.allie;
 import com.engine.users.battlefield.Battlefield;
 import com.engine.users.Allie;
 import com.engine.users.UserManager;
+import com.enigma.dtos.Enums.GameStatus;
 import com.enigma.dtos.ServletAnswers.RequestServerAnswer;
 import com.enigma.servlets.ServletsUtils;
 import com.google.gson.Gson;
@@ -47,7 +48,7 @@ public class JoinToBattlefield extends HttpServlet {
     private RequestServerAnswer validateRequest(Allie user, Battlefield battlefield){
         RequestServerAnswer answer = new RequestServerAnswer();
         answer.setSuccess(true);
-        if(battlefield.isGameStarted()){
+        if(battlefield.getGameStatus() == GameStatus.RUNNING || battlefield.getGameStatus() == GameStatus.ENDING){
             answer.setSuccess(false);
             answer.setMessage("Game already started");
         } else if(user.getActiveAgents().size() == 0){

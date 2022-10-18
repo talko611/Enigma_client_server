@@ -1,6 +1,7 @@
 package com.engine.users;
 
 import com.engine.users.battlefield.Battlefield;
+import com.enigma.dtos.Enums.GameStatus;
 
 import java.util.*;
 
@@ -118,7 +119,7 @@ public class UserManager {
         List<Battlefield> battlefieldList = new ArrayList<>();
         synchronized (battlefieldLock){
             battlefields.values().forEach(battlefield -> {
-                if(!battlefield.isGameStarted())
+                if(battlefield.getGameStatus() != GameStatus.RUNNING && battlefield.getGameStatus() != GameStatus.ENDING)
                     battlefieldList.add(battlefield);
             });
         }

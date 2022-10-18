@@ -1,4 +1,4 @@
-package com.enigma.main_component.tasks;
+package com.enigma.main_component.dashboard_tab_component.tasks;
 
 import com.enigma.utiles.AppUtils;
 import com.google.gson.reflect.TypeToken;
@@ -8,7 +8,6 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
-import jdk.nashorn.internal.parser.TokenType;
 
 import java.io.IOException;
 import java.util.List;
@@ -16,17 +15,17 @@ import java.util.function.Consumer;
 
 public class GetMyAgentTask implements Runnable{
     private Consumer<List<String>> updateAgents;
-    private SimpleBooleanProperty isInActiveGame;
+    private SimpleBooleanProperty isReady;
 
-    public GetMyAgentTask(Consumer<List<String>> updateAgents, SimpleBooleanProperty isInActiveGame) {
+    public GetMyAgentTask(Consumer<List<String>> updateAgents, SimpleBooleanProperty isReady) {
         this.updateAgents = updateAgents;
-        this.isInActiveGame = isInActiveGame;
+        this.isReady = isReady;
     }
 
     @Override
     public void run() {
         System.out.println("Allie App: Get my agent thread is up");
-        while(!isInActiveGame.get()){
+        while(!isReady.get()){
             try {
                 Thread.sleep(2000);
                 getAgents();

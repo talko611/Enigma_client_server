@@ -11,7 +11,9 @@
           <Tab fx:id="dashboardTab" text="Dashboard">
               <fx:include fx:id="dashboardComponent" source="dashboard/dashboard_layout.fxml" />
             </Tab>
-          <Tab fx:id="contestTab" text="Contest" />
+            <Tab fx:id="contestTab" text="Contest">
+                <fx:include fx:id="contestComponent" source="contest/contest_component_layout.fxml" />
+            </Tab>
         </tabs>
       </TabPane>
    </content>

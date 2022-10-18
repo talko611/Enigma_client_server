@@ -33,6 +33,8 @@ public class FrameController {
                     frameComponent.setCenter(parent);
                     MainController controller = loader.getController();
                     controller.setUiAdapter(uiAdapter);
+                    controller.setNumOfWorkers(loginComponentController.getThreadsNum());
+                    controller.setTeamNameLb(loginComponentController.getTeamName());
                 } catch (IOException e) {
                     System.out.println(e.getCause());
                     System.out.println(e.getStackTrace());

@@ -47,6 +47,7 @@ public class SetReady extends HttpServlet {
                     answer.setSuccess(true);
                     answer.setMessage("Ready to play");
                 }else{
+                    resp.setStatus(401);
                     answer.setMessage("One of the agent is not acquired the machine/n please try again in a few seconds");
                     answer.setSuccess(false);
                 }

@@ -12,9 +12,11 @@ import java.util.function.Consumer;
 
 public class SetAvailableTask implements Runnable{
     private Consumer<Boolean> updateActiveStatus;
+    private Consumer<String> updateActiveLabel;
 
-    public SetAvailableTask(Consumer<Boolean> updateActiveStatus) {
+    public SetAvailableTask(Consumer<Boolean> updateActiveStatus, Consumer<String> updateActiveLabel) {
         this.updateActiveStatus = updateActiveStatus;
+        this.updateActiveLabel = updateActiveLabel;
     }
 
     @Override
@@ -38,7 +40,10 @@ public class SetAvailableTask implements Runnable{
         try {
             Response response = call.execute();
             if(response.code() == 200){
-                Platform.runLater(()->updateActiveStatus.accept(true));
+                Platform.runLater(()->{
+                    updateActiveStatus.accept(true);
+                    updateActiveLabel.accept("Active");
+                });
                 return true;
             }else {
                 return false;

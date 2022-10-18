@@ -1,13 +1,22 @@
 package com.enigma.dtos.dataObjects;
 
-import java.util.UUID;
+import com.enigma.dtos.Enums.GameStatus;
 
 public class GameDetailsObject {
     private String battlefieldName;
     private String uBoatName;
     private String decryptionLevel;
-    private String gameStatus;
+    private GameStatus gameStatus;
     private String participantsStatus;
+    private String encryptedMessage;
+
+    public void setEncryptedMessage(String encryptedMessage) {
+        this.encryptedMessage = encryptedMessage;
+    }
+
+    public String getEncryptedMessage() {
+        return encryptedMessage;
+    }
 
     public String getBattlefieldName() {
         return battlefieldName;
@@ -21,7 +30,7 @@ public class GameDetailsObject {
         return decryptionLevel;
     }
 
-    public String getGameStatus() {
+    public GameStatus getGameStatus() {
         return gameStatus;
     }
 
@@ -41,7 +50,7 @@ public class GameDetailsObject {
         this.decryptionLevel = decryptionLevel;
     }
 
-    public void setGameStatus(String gameStatus) {
+    public void setGameStatus(GameStatus gameStatus) {
         this.gameStatus = gameStatus;
     }
 

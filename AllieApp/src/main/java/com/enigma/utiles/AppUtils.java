@@ -16,6 +16,7 @@ public class AppUtils {
     public static final String JOIN_BATTLEFIELD_RESOURCE = "join";
     public static final String SET_TASK_SIZE = "set_task";
     public static final String SET_READY_RESOURCE = "set_ready";
+    public static final String GET_GAME_STATUS_RESOURCE = "get_game_status";
 
     public static void setClientId(UUID clientId) {
         CLIENT_ID = clientId;

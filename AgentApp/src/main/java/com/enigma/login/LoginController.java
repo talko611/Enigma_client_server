@@ -118,4 +118,10 @@ public class LoginController {
         GetActiveAllies activeAllies = new GetActiveAllies(updateTeams, uiAdapter.isLoggedInProperty());
         new Thread(activeAllies).start();
     }
+    public String getTeamName(){
+        return teamsCb.getValue();
+    }
+    public int getThreadsNum(){
+        return workersCb.getValue();
+    }
 }

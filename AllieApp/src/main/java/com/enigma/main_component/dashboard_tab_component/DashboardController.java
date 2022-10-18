@@ -3,8 +3,8 @@ package com.enigma.main_component.dashboard_tab_component;
 import com.enigma.dtos.ServletAnswers.RequestServerAnswer;
 import com.enigma.dtos.dataObjects.GameDetailsObject;
 import com.enigma.dtos.ServletAnswers.GetMapOfData;
-import com.enigma.main_component.tasks.GetBattlefieldsTask;
-import com.enigma.main_component.tasks.GetMyAgentTask;
+import com.enigma.main_component.dashboard_tab_component.tasks.GetBattlefieldsTask;
+import com.enigma.main_component.dashboard_tab_component.tasks.GetMyAgentTask;
 import com.enigma.utiles.AppUtils;
 import com.enigma.utiles.UiAdapter;
 import com.squareup.okhttp.*;
@@ -62,7 +62,7 @@ public class DashboardController {
             battlefieldMap.forEach((key,value)->{
                 uiBattlefieldList.add(new UiBattlefield(value.getBattlefieldName(),
                                                         value.getuBoatName(),
-                                                        value.getGameStatus(),
+                                                        value.getGameStatus().toString(),
                                                         value.getParticipantsStatus(),
                                                         value.getDecryptionLevel()));
             });
@@ -172,12 +172,12 @@ public class DashboardController {
     }
 
     private void bindComponent(){
-        new Thread(new GetBattlefieldsTask(updateBattlefieldTable, uiAdapter.isInActiveGameProperty())).start();
-        new Thread(new GetMyAgentTask(updateAgents, uiAdapter.isInActiveGameProperty())).start();
-        uiAdapter.isInActiveGameProperty().addListener((observable, oldValue, newValue) -> {
+        new Thread(new GetBattlefieldsTask(updateBattlefieldTable, uiAdapter.isReadyProperty())).start();
+        new Thread(new GetMyAgentTask(updateAgents, uiAdapter.isReadyProperty())).start();
+        uiAdapter.isReadyProperty().addListener((observable, oldValue, newValue) -> {
             if(!newValue){
-                new Thread(new GetBattlefieldsTask(updateBattlefieldTable, uiAdapter.isInActiveGameProperty())).start();
-                new Thread(new GetMyAgentTask(updateAgents, uiAdapter.isInActiveGameProperty())).start();
+                new Thread(new GetBattlefieldsTask(updateBattlefieldTable, uiAdapter.isReadyProperty())).start();
+                new Thread(new GetMyAgentTask(updateAgents, uiAdapter.isReadyProperty())).start();
             }
         });
         readyButton.disableProperty().bind(uiAdapter.isJoinToGameProperty().not().or(uiAdapter.isTaskSetProperty().not()));

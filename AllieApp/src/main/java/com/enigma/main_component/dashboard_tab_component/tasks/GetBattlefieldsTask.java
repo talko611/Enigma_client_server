@@ -1,4 +1,4 @@
-package com.enigma.main_component.tasks;
+package com.enigma.main_component.dashboard_tab_component.tasks;
 
 import com.enigma.dtos.dataObjects.GameDetailsObject;
 import com.enigma.dtos.ServletAnswers.GetMapOfData;
@@ -15,17 +15,17 @@ import java.util.function.Consumer;
 public class GetBattlefieldsTask implements Runnable {
 
     private Consumer<GetMapOfData<GameDetailsObject>> updateBattlefieldTable;
-    private SimpleBooleanProperty isActiveGame;
+    private SimpleBooleanProperty isReady;
 
-    public GetBattlefieldsTask(Consumer<GetMapOfData<GameDetailsObject>> updateBattlefieldTable, SimpleBooleanProperty isActiveGame){
+    public GetBattlefieldsTask(Consumer<GetMapOfData<GameDetailsObject>> updateBattlefieldTable, SimpleBooleanProperty isReady){
         this.updateBattlefieldTable = updateBattlefieldTable;
-        this.isActiveGame = isActiveGame;
+        this.isReady = isReady;
     }
 
     @Override
     public void run() {
         System.out.println("Allie app: get battlefields thread is up");
-        while(!isActiveGame.get()){
+        while(!isReady.get()){
             try{
                 Thread.sleep(2000);
                 getAllBattlefields();

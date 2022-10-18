@@ -24,7 +24,7 @@ public class Allie extends User{
     }
 
     public synchronized boolean addAgent(Agent agent){
-        if(isReadyToPlay()){
+        if(this.isReadyToPlay()){
             waitingAgents.add(agent);
             return false;
         }

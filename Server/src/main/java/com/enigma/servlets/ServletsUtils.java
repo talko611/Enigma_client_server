@@ -3,6 +3,8 @@ package com.enigma.servlets;
 import com.engine.Engine;
 import com.engine.EngineImp;
 import com.engine.users.UserManager;
+import com.engine.users.battlefield.Battlefield;
+import com.enigma.dtos.dataObjects.GameDetailsObject;
 import jakarta.servlet.ServletContext;
 
 public class ServletsUtils {
@@ -29,5 +31,15 @@ public class ServletsUtils {
             }
         }
         return (UserManager) servletContext.getAttribute(USER_MANAGER_ATTRIBUTE_NAME);
+    }
+    public static GameDetailsObject getGameStatus(Battlefield battlefield, UserManager userManager){
+        GameDetailsObject gameStatus = new GameDetailsObject();
+        gameStatus.setBattlefieldName(battlefield.getName());
+        gameStatus.setuBoatName(userManager.getUBoatById(battlefield.getUBoatId()).getName());
+        gameStatus.setParticipantsStatus(battlefield.getTeams().size() + "/" + battlefield.getEnigmaParts().getBattlefieldParts().getNumOfAllies());
+        gameStatus.setGameStatus(battlefield.getGameStatus());
+        gameStatus.setDecryptionLevel(battlefield.getEnigmaParts().getBattlefieldParts().getDifficulty().toString());
+        gameStatus.setEncryptedMessage(battlefield.getEncryptedMessage());
+        return gameStatus;
     }
 }
