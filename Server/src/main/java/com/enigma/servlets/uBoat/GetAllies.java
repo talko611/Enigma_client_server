@@ -27,6 +27,13 @@ public class GetAllies extends HttpServlet {
             UUID userId = UUID.fromString(req.getParameter("id"));
             UserManager userManager = ServletsUtils.getUserManager(getServletContext());
             Uboat user = userManager.getUBoatById(userId);
+            if(user == null){
+                userId = (UUID) req.getAttribute("id");
+                user = userManager.getUBoatById(userId);
+                if(user == null){
+                    throw new NullPointerException("User is not exists");
+                }
+            }
             Battlefield battlefield = userManager.getBattlefieldById(user.getBattlefieldId());
             List<AllieData> allieDataList;
             synchronized (battlefield){

@@ -2,9 +2,11 @@ package com.enigma.main_screen.contest_component;
 
 import com.enigma.Utils.AppUtils;
 import com.enigma.Utils.UiAdapter;
-import com.enigma.dtos.dataObjects.AllieData;
+import com.enigma.dtos.ServletAnswers.RequestServerAnswer;
 import com.enigma.dtos.dataObjects.EncryptMessageData;
-import com.enigma.main_screen.contest_component.tasks.GetParticipants;
+import com.enigma.dtos.dataObjects.GameDetailsObject;
+import com.enigma.main_screen.contest_component.tasks.GetGameStatusTask;
+import com.enigma.main_screen.contest_component.tasks.GetParticipantsTask;
 import com.enigma.main_screen.contest_component.trie_data_structure.Trie;
 import com.google.gson.Gson;
 import com.squareup.okhttp.*;
@@ -20,7 +22,6 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -52,6 +53,8 @@ public class ContestDataController {
     private UiAdapter uiAdapter;
     private Trie dictionary;
 
+    private Consumer<GameDetailsObject> updateGameDetails;
+
     @FXML
     void initialize(){
         this.teamNameParCol.setCellValueFactory(new PropertyValueFactory<>("teamName"));
@@ -74,18 +77,33 @@ public class ContestDataController {
 
         });
         gameStatusLb.setText("Awaiting");
+        this.updateGameDetails = gameDetailsObject -> {
+            if(gameDetailsObject.getGameStatus() != uiAdapter.getGameStatus()){
+                switch (gameDetailsObject.getGameStatus()){
+                    case AWAITING:
+                        break;
+                    case RUNNING:
+                        uiAdapter.setIsInActiveGame(true);
+                        break;
+                    case ENDING:
+                        uiAdapter.setIsGameEnded(true);
+                        uiAdapter.setIsInActiveGame(false);
+                        break;
+                }
+                gameStatusLb.setText(gameDetailsObject.getGameStatus().toString());
+                uiAdapter.setGameStatus(gameDetailsObject.getGameStatus());
+            }
+        };
     }
 
     @FXML
     void processButtonClicked(ActionEvent event) {
-        processBt.disableProperty().set(true);
-        encrypt();
-        readyBt.disableProperty().set(false);
+        launchEncryptRequest();
     }
 
     @FXML
     void readyButtonClicked(ActionEvent event) {
-        uiAdapter.setIsInActiveGame(true);
+        launchSetReadyRequest();
     }
 
     @FXML
@@ -95,52 +113,44 @@ public class ContestDataController {
 
     @FXML
     void clearButtonClicked(ActionEvent event){
-        processBt.disableProperty().set(false);
+
     }
 
     public void setUiAdapter(UiAdapter uiAdapter) {
         this.uiAdapter = uiAdapter;
-        bindToUiAdapter();
+        bindComponentToUiAdapter();
     }
 
-    private void bindToUiAdapter(){
+    private void bindComponentToUiAdapter(){
         uiAdapter.isLoadedProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue){
-                loadDictionary();
-                new Thread(new GetParticipants((data)->{
-                    uiAllies.clear();
-                    data.forEach(allieData -> this.uiAllies.add(new
-                            UiAllie(allieData.getAlliName(),allieData.getNumOfAgents(),allieData.getTaskSize())));
-                    teamsTable.setItems(uiAllies);
-                },
-                        uiAdapter.isInActiveGameProperty())).start();
+                launchGetDictionaryRequest();
+                getParticipants();
             }
         });
-        clearBt.disableProperty().bind(uiAdapter.isInActiveGameProperty());
+        uiAdapter.isReadyProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue)
+                listenToGameStatus();
+        });
+        clearBt.disableProperty().bind(uiAdapter.isInActiveGameProperty().or(uiAdapter.isEncryptedMessageProperty()).or(uiAdapter.isReadyProperty()));
+        resetMachineBt.disableProperty().bind(uiAdapter.isInActiveGameProperty().or(uiAdapter.isEncryptedMessageProperty()).or(uiAdapter.isReadyProperty()));
+        readyBt.disableProperty().bind(uiAdapter.isEncryptedMessageProperty().not().or(uiAdapter.isGameEndedProperty()).or(uiAdapter.isInActiveGameProperty()));
+        processBt.disableProperty().bind(uiAdapter.isEncryptedMessageProperty().or(uiAdapter.isGameEndedProperty()));
         configurationLb.textProperty().bind(uiAdapter.currentConfigProperty());
         battlefieldNameLb.textProperty().bind(uiAdapter.battlefieldNameProperty());
     }
 
-    private void loadDictionary(){
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(AppUtils.APP_URL + AppUtils.DICTIONARY_RESOURCE).newBuilder();
-        urlBuilder.addQueryParameter("id", AppUtils.CLIENT_ID.toString());
-        Request request = new Request.Builder()
-                .url(urlBuilder.build()).build();
-        Call call = AppUtils.HTTP_CLIENT.newCall(request);
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(Request request, IOException e) {
-                System.out.println("Something went wrong");
-                //Todo - find out better way to handle this
-            }
-
-            @Override
-            public void onResponse(Response response) throws IOException {
-                Gson gson = new Gson();
-                Set<String> dictionary = gson.fromJson(response.body().charStream(), Set.class);
-                Platform.runLater(()->setDictionary(dictionary));
-            }
-        });
+    private void listenToGameStatus(){
+        new Thread(new GetGameStatusTask(uiAdapter.isGameEndedProperty(), updateGameDetails)).start();
+    }
+    private void getParticipants(){
+        new Thread(new GetParticipantsTask((data)->{
+            uiAllies.clear();
+            data.forEach(allieData -> this.uiAllies.add(new
+                    UiAllie(allieData.getAlliName(),allieData.getNumOfAgents(),allieData.getTaskSize())));
+            teamsTable.setItems(uiAllies);
+        },
+                uiAdapter.isInActiveGameProperty())).start();
     }
 
     private void setDictionary(Set<String> words){
@@ -149,7 +159,7 @@ public class ContestDataController {
         wordList.getItems().addAll(dictionary.getAllChildren(""));
     }
 
-    private void encrypt(){
+    private void launchEncryptRequest(){
         EncryptMessageData data = new EncryptMessageData();
         data.setSource(srcMessageTb.getText());
         uiAdapter.setSrcMessage(srcMessageTb.getText());
@@ -171,6 +181,7 @@ public class ContestDataController {
                 EncryptMessageData answer = AppUtils.GSON_SERVICE.fromJson(response.body().charStream(), EncryptMessageData.class);
                 if(response.code() == 200){
                     Platform.runLater(()->{
+                        uiAdapter.setIsEncryptedMessage(true);
                         encryptedMessage.setText(answer.getEncrypted());
                         uiAdapter.setCurrentConfig(answer.getCurrentMachineConfiguration());
                         userMessage.setText(answer.getMessage());
@@ -178,9 +189,52 @@ public class ContestDataController {
                 }else{
                     Platform.runLater(()->{
                         userMessage.setText(answer.getMessage());
-                        processBt.disableProperty().set(false);
                     });
                 }
+            }
+        });
+    }
+
+    private void launchGetDictionaryRequest(){
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(AppUtils.APP_URL + AppUtils.DICTIONARY_RESOURCE).newBuilder();
+        urlBuilder.addQueryParameter("id", AppUtils.CLIENT_ID.toString());
+        Request request = new Request.Builder()
+                .url(urlBuilder.build()).build();
+        Call call = AppUtils.HTTP_CLIENT.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                System.out.println("Something went wrong");
+                //Todo - find out better way to handle this
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                Gson gson = new Gson();
+                Set<String> dictionary = gson.fromJson(response.body().charStream(), Set.class);
+                Platform.runLater(()->setDictionary(dictionary));
+            }
+        });
+    }
+
+    private void launchSetReadyRequest(){
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(AppUtils.APP_URL + AppUtils.SET_READY_RESOURCE).newBuilder();
+        urlBuilder.addQueryParameter("id", AppUtils.CLIENT_ID.toString());
+        Request request = new Request.Builder().url(urlBuilder.build()).build();
+        Call call = AppUtils.HTTP_CLIENT.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                Platform.runLater(()->userMessage.setText("Request has failed"));
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                RequestServerAnswer answer = AppUtils.GSON_SERVICE.fromJson(response.body().charStream(), RequestServerAnswer.class);
+                Platform.runLater(()->{
+                    uiAdapter.setIsReady(answer.isSuccess());
+                    userMessage.setText(answer.getMessage());
+                });
             }
         });
     }

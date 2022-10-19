@@ -31,15 +31,15 @@ public class JoinToBattlefield extends HttpServlet {
             //Todo - handle cases client is not found
             Battlefield battlefield = userManager.getBattlefieldById(battlefieldId);
             //Todo - handle cases battlefield is not found
-            RequestServerAnswer answer = validateRequest(client, battlefield);
-            if(answer.isSuccess()) {
-                synchronized (battlefield){
+            synchronized (battlefield){
+                RequestServerAnswer answer = validateRequest(client, battlefield);
+                if(answer.isSuccess()) {
                     battlefield.addNewAllie(client);
+                    client.setBattlefieldId(battlefieldId);
+                    answer.setMessage("Join to battlefield");
                 }
-                client.setBattlefieldId(battlefieldId);
-                answer.setMessage("Join to battlefield");
+                resp.getWriter().println(GSON_SERVICE.toJson(answer));
             }
-            resp.getWriter().println(GSON_SERVICE.toJson(answer));
         }catch (NullPointerException e){
             //Todo - redirect to log in page
         }

@@ -1,22 +1,75 @@
 package com.enigma.Utils;
 
+import com.enigma.dtos.Enums.GameStatus;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 
 public class UiAdapter {
     private SimpleBooleanProperty isLoaded;
     private SimpleBooleanProperty isConfigure;
+    private SimpleBooleanProperty isEncryptedMessage;
+    private SimpleBooleanProperty isReady;
+    private SimpleBooleanProperty isGameEnded;
     private SimpleStringProperty currentConfig;
     private SimpleBooleanProperty isInActiveGame;
     private SimpleStringProperty battlefieldName;
     private String srcMessage;
+    private GameStatus gameStatus;
 
     public UiAdapter(){
         this.currentConfig = new SimpleStringProperty();
-        this.isConfigure = new SimpleBooleanProperty(false);
-        this.isLoaded = new SimpleBooleanProperty(false);
-        this.isInActiveGame = new SimpleBooleanProperty(false);
+        this.isConfigure = new SimpleBooleanProperty();
+        this.isLoaded = new SimpleBooleanProperty();
+        this.isInActiveGame = new SimpleBooleanProperty();
         this.battlefieldName = new SimpleStringProperty();
+        this.isEncryptedMessage = new SimpleBooleanProperty();
+        this.isReady = new SimpleBooleanProperty();
+        this.isGameEnded = new SimpleBooleanProperty();
+        gameStatus = GameStatus.AWAITING;
+    }
+
+    public GameStatus getGameStatus() {
+        return gameStatus;
+    }
+
+    public void setGameStatus(GameStatus gameStatus) {
+        this.gameStatus = gameStatus;
+    }
+
+    public void setIsEncryptedMessage(boolean isEncryptedMessage) {
+        this.isEncryptedMessage.set(isEncryptedMessage);
+    }
+
+    public void setIsReady(boolean isReady) {
+        this.isReady.set(isReady);
+    }
+
+    public void setIsGameEnded(boolean isGameEnded) {
+        this.isGameEnded.set(isGameEnded);
+    }
+
+    public boolean isIsEncryptedMessage() {
+        return isEncryptedMessage.get();
+    }
+
+    public SimpleBooleanProperty isEncryptedMessageProperty() {
+        return isEncryptedMessage;
+    }
+
+    public boolean isIsReady() {
+        return isReady.get();
+    }
+
+    public SimpleBooleanProperty isReadyProperty() {
+        return isReady;
+    }
+
+    public boolean isIsGameEnded() {
+        return isGameEnded.get();
+    }
+
+    public SimpleBooleanProperty isGameEndedProperty() {
+        return isGameEnded;
     }
 
     public String getBattlefieldName() {

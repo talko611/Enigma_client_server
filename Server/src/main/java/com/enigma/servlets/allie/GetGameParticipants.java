@@ -1,6 +1,5 @@
-package com.enigma.servlets.agent;
+package com.enigma.servlets.allie;
 
-import com.engine.users.Agent;
 import com.engine.users.Allie;
 import com.engine.users.UserManager;
 import com.enigma.servlets.ServletsUtils;
@@ -13,24 +12,19 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.UUID;
 
-@WebServlet("/agent/set_ready")
-public class SetReady extends HttpServlet {
+@WebServlet("/allie/get_teams")
+public class GetGameParticipants extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try{
-            UUID agentId = UUID.fromString(req.getParameter("id"));
+            UUID userId = UUID.fromString(req.getParameter("id"));
             UserManager userManager = ServletsUtils.getUserManager(getServletContext());
-            Agent agent = userManager.getAgentById(agentId);
-            Allie allie = userManager.getAllieById(agent.getAllieId());
-            if(agent == null){
-                resp.setStatus(401);
-            }
-            else{
-                agent.setReadyToPlay(true);
-                resp.setStatus(200);
-            }
+            Allie user = userManager.getAllieById(userId);
+            UUID uBoatId = userManager.getBattlefieldById(user.getBattlefieldId()).getUBoatId();
+            req.setAttribute("id", uBoatId);
+            getServletContext().getRequestDispatcher("/uBoat/get_allies").forward(req, resp);
         }catch (NullPointerException e){
-            //Todo - redirect to
+            //Todo - login
         }
     }
 }

@@ -41,11 +41,11 @@ public class Allie extends User{
         numOfTasks = 0;
     }
 
-    public List<Agent> getActiveAgents() {
+    public  List<Agent> getActiveAgents() {
         return activeAgents;
     }
 
-    public void setTaskSize(long taskSize) {
+    public synchronized void setTaskSize(long taskSize) {
         this.taskSize = taskSize;
     }
 
@@ -53,15 +53,15 @@ public class Allie extends User{
         return battlefieldId;
     }
 
-    public long getTaskSize() {
+    public synchronized long getTaskSize() {
         return taskSize;
     }
 
-    public long getNumOfTasks() {
+    public synchronized long getNumOfTasks() {
         return numOfTasks;
     }
 
-    public void setNumOfTasks(long numOfTasks) {
+    public synchronized void setNumOfTasks(long numOfTasks) {
         this.numOfTasks = numOfTasks;
     }
 }

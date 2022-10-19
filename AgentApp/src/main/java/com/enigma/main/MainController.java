@@ -49,6 +49,7 @@ public class MainController {
                 case ENDING:
                     //todo end all threads
                 case RUNNING:
+                    updateGameStatusFields(gameDetailsObject);
                     uiAdapter.setIsInActiveGame(true);
                     break;
                 case AWAITING:

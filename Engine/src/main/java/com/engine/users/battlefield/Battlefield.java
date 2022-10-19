@@ -99,7 +99,7 @@ public class Battlefield {
     public void addNewAllie(Allie allie){
         teams.add(allie);
     }
-    public synchronized void removeAllie(Allie allie){
+    public void removeAllie(Allie allie){
         teams.remove(allie);
     }
 
@@ -108,16 +108,24 @@ public class Battlefield {
     }
 
     public void updateActivateGame(UserManager userManager){
-        boolean status = userManager.getUBoatById(UBoatId).isReadyToPlay();
-        if(status){
-            for(Allie allie : teams){
-                if(!allie.isReadyToPlay()){
-                    status = false;
-                    break;
+        if(teams.size() == enigmaParts.getBattlefieldParts().getNumOfAllies()){
+            if(userManager.getUBoatById(UBoatId).isReadyToPlay()){
+                if(isAllAlliesReady()){
+                    this.gameStatus = GameStatus.RUNNING;
                 }
             }
         }
-        this.gameStatus = GameStatus.RUNNING;
+    }
+
+    private boolean isAllAlliesReady(){
+        boolean answer = true;
+        for(Allie allie : teams){
+            if(!allie.isReadyToPlay()){
+                answer = false;
+                break;
+            }
+        }
+        return answer;
     }
 
     public String getWinners() {

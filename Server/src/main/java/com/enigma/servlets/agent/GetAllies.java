@@ -21,9 +21,11 @@ public class GetAllies extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         UserManager userManager = ServletsUtils.getUserManager(getServletContext());
-        Map<UUID, Allie> allieMap = userManager.getAllies();
         GetMapOfData<String> answer = new GetMapOfData<>();
-        allieMap.forEach((id, allie)-> answer.addUser(id, allie.getName()));
+        synchronized (UserManager.getAlliesLock()){
+            Map<UUID, Allie> allieMap = userManager.getAllies();
+            allieMap.forEach((id, allie)-> answer.addUser(id, allie.getName()));
+        }
         answer.setMessage("Success");
         resp.getWriter().println(gson.toJson(answer));
     }

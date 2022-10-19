@@ -14,11 +14,11 @@ import java.io.IOException;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class GetParticipants implements Runnable{
+public class GetParticipantsTask implements Runnable{
     private Consumer<List<AllieData>> updateTeams;
     private SimpleBooleanProperty isInActiveGame;
 
-    public GetParticipants(Consumer<List<AllieData>> updateTeams, SimpleBooleanProperty isInActiveGame) {
+    public GetParticipantsTask(Consumer<List<AllieData>> updateTeams, SimpleBooleanProperty isInActiveGame) {
         this.updateTeams = updateTeams;
         this.isInActiveGame = isInActiveGame;
     }
@@ -38,7 +38,7 @@ public class GetParticipants implements Runnable{
     }
 
     private void getParticipants(){
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(AppUtils.APP_URL + AppUtils.GRT_ALLIES_RESOURCE).newBuilder();
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(AppUtils.APP_URL + AppUtils.GET_ALLIES_RESOURCE).newBuilder();
         urlBuilder.addQueryParameter("id", AppUtils.CLIENT_ID.toString());
         Request request = new Request.Builder().url(urlBuilder.build()).build();
         Call call = AppUtils.HTTP_CLIENT.newCall(request);

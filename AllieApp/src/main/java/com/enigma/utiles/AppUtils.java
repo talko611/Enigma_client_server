@@ -17,6 +17,7 @@ public class AppUtils {
     public static final String SET_TASK_SIZE = "set_task";
     public static final String SET_READY_RESOURCE = "set_ready";
     public static final String GET_GAME_STATUS_RESOURCE = "get_game_status";
+    public static final String GET_PARTICIPANTS_RESOURCE = "get_teams";
 
     public static void setClientId(UUID clientId) {
         CLIENT_ID = clientId;

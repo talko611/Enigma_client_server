@@ -10,6 +10,7 @@ public class Agent extends User{
     private AgentStatus status;
     public Agent(String name){
         super(name);
+        this.status = AgentStatus.AWAITING;
     }
 
     public void setAllieId(UUID allieId) {
@@ -20,19 +21,19 @@ public class Agent extends User{
         return AllieId;
     }
 
-    public int getNumOfThreads() {
+    public synchronized int getNumOfThreads() {
         return numOfThreads;
     }
 
-    public void setNumOfThreads(int numOfThreads) {
+    public synchronized void setNumOfThreads(int numOfThreads) {
         this.numOfThreads = numOfThreads;
     }
 
-    public AgentStatus getStatus() {
+    public synchronized AgentStatus getStatus() {
         return status;
     }
 
-    public void setStatus(AgentStatus status) {
+    public synchronized void setStatus(AgentStatus status) {
         this.status = status;
     }
 }

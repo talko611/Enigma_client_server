@@ -34,12 +34,9 @@ public class SetReady extends HttpServlet {
             if(battlefield == null){
                 answer.setSuccess(false);
                 answer.setMessage("Please sign in to battlefield first");
-                resp.getWriter().println(GSON_SERVICE.toJson(answer));
-                return;
-            }
-
-            if( allie.getTaskSize() > 0){
-                if(!isAgentsReady(allie)){
+                resp.setStatus(401);
+            } else if( allie.getTaskSize() > 0){
+                if(isAgentsReady(allie)){
                     synchronized (battlefield){
                         allie.setReadyToPlay(true);
                         battlefield.updateActivateGame(userManager);
