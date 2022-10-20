@@ -4,7 +4,7 @@ import com.enigma.dtos.ServletAnswers.RequestServerAnswer;
 import com.enigma.dtos.dataObjects.GameDetailsObject;
 import com.enigma.dtos.ServletAnswers.GetMapOfData;
 import com.enigma.main_component.dashboard_tab_component.tasks.GetBattlefieldsTask;
-import com.enigma.main_component.dashboard_tab_component.tasks.GetMyAgentTask;
+import com.enigma.main_component.dashboard_tab_component.tasks.GetMyAgentsTask;
 import com.enigma.utiles.AppUtils;
 import com.enigma.utiles.UiAdapter;
 import com.squareup.okhttp.*;
@@ -19,9 +19,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class DashboardController {
@@ -143,7 +141,7 @@ public class DashboardController {
     }
 
     private void launchSetTaskSizeRequest(long taskSize){
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(AppUtils.APP_URL + AppUtils.SET_TASK_SIZE).newBuilder();
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(AppUtils.APP_URL + AppUtils.SET_TASK_SIZE_RESOURCE).newBuilder();
         urlBuilder.addQueryParameter("id", AppUtils.CLIENT_ID.toString()).addQueryParameter("taskSize", String.valueOf(taskSize));
         Request request = new Request.Builder().url(urlBuilder.build()).build();
         Call call = AppUtils.CLIENT.newCall(request);
@@ -172,12 +170,12 @@ public class DashboardController {
     }
 
     private void bindComponent(){
-        new Thread(new GetBattlefieldsTask(updateBattlefieldTable, uiAdapter.isReadyProperty())).start();
-        new Thread(new GetMyAgentTask(updateAgents, uiAdapter.isReadyProperty())).start();
+        launchGetMyAgentsTask();
+        launchGetBattlefieldsTask();
         uiAdapter.isReadyProperty().addListener((observable, oldValue, newValue) -> {
             if(!newValue){
-                new Thread(new GetBattlefieldsTask(updateBattlefieldTable, uiAdapter.isReadyProperty())).start();
-                new Thread(new GetMyAgentTask(updateAgents, uiAdapter.isReadyProperty())).start();
+                launchGetBattlefieldsTask();
+                launchGetMyAgentsTask();
             }
         });
         readyButton.disableProperty().bind(uiAdapter.isJoinToGameProperty().not().or(uiAdapter.isTaskSetProperty().not()));
@@ -210,6 +208,17 @@ public class DashboardController {
         });
     }
 
+    private void launchGetBattlefieldsTask(){
+        new Thread(new GetBattlefieldsTask(updateBattlefieldTable, uiAdapter.isReadyProperty())).start();
+    }
+
+    private void launchGetMyAgentsTask(){
+        new Thread(new GetMyAgentsTask(updateAgents, uiAdapter.isReadyProperty())).start();
+    }
+
+    public List<String> getAgentsNames(){
+        return new ArrayList<>(agentsList.getItems());
+    }
 
     public static class UiBattlefield{
         private SimpleStringProperty battlefieldName;

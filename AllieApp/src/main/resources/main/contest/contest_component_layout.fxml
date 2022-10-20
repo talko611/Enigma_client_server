@@ -15,7 +15,7 @@
    <content>
       <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0">
          <top>
-            <VBox alignment="TOP_CENTER" prefHeight="250.0" prefWidth="600.0" BorderPane.alignment="TOP_CENTER">
+            <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="600.0" BorderPane.alignment="TOP_CENTER">
                <children>
                   <Label text="Contest Status">
                      <font>
@@ -25,9 +25,9 @@
                         <Insets bottom="10.0" />
                      </VBox.margin>
                   </Label>
-                  <VBox prefHeight="50.0" prefWidth="100.0" VBox.vgrow="NEVER">
+                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="100.0" VBox.vgrow="NEVER">
                      <children>
-                        <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
+                        <HBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="600.0">
                            <children>
                               <Label text="Battlefield Name:">
                                  <HBox.margin>
@@ -60,7 +60,7 @@
                               <Insets bottom="10.0" />
                            </VBox.margin>
                         </HBox>
-                        <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
+                        <HBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="600.0">
                            <children>
                               <Label text="Teams Status:">
                                  <HBox.margin>
@@ -95,25 +95,25 @@
                         </HBox>
                      </children>
                   </VBox>
-                  <HBox alignment="TOP_CENTER" prefHeight="30.0" prefWidth="200.0">
+                  <HBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="200.0" VBox.vgrow="NEVER">
                      <children>
                         <Label text="Winners:">
                            <HBox.margin>
                               <Insets right="5.0" />
                            </HBox.margin>
                         </Label>
-                        <Label text="Label" />
+                        <Label fx:id="winnerLb" />
                      </children>
                      <VBox.margin>
                         <Insets bottom="5.0" />
                      </VBox.margin>
                   </HBox>
-                  <Button fx:id="doneBt" mnemonicParsing="false" onAction="#doneButtonClicked" prefHeight="25.0" prefWidth="50.0" text="Done" visible="false">
+                  <Button fx:id="doneBt" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#doneButtonClicked" prefHeight="20.0" prefWidth="50.0" text="Done" visible="false">
                      <VBox.margin>
                         <Insets bottom="10.0" />
                      </VBox.margin>
                   </Button>
-                  <VBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="100.0" VBox.vgrow="ALWAYS">
+                  <VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="100.0" prefWidth="100.0" VBox.vgrow="ALWAYS">
                      <children>
                         <Label text="Participants">
                            <font>
@@ -153,7 +153,7 @@
                         <Insets right="10.0" />
                      </HBox.margin>
                      <content>
-                        <VBox fx:id="agentProgressContainer" alignment="TOP_CENTER" prefHeight="300.0" prefWidth="200.0">
+                        <VBox fx:id="agentProgressContainer" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="250.0">
                            <children>
                               <Label text="Agents' Progress">
                                  <font>
@@ -167,7 +167,7 @@
                         </VBox>
                      </content>
                   </ScrollPane>
-                  <VBox alignment="TOP_CENTER" prefHeight="300.0" prefWidth="300.0" HBox.hgrow="ALWAYS">
+                  <VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefHeight="300.0" prefWidth="300.0" HBox.hgrow="ALWAYS">
                      <children>
                         <Label text="Candidates">
                            <VBox.margin>

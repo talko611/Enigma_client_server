@@ -13,11 +13,11 @@ import java.io.IOException;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class GetMyAgentTask implements Runnable{
-    private Consumer<List<String>> updateAgents;
-    private SimpleBooleanProperty isReady;
+public class GetMyAgentsTask implements Runnable{
+    private final Consumer<List<String>> updateAgents;
+    private final SimpleBooleanProperty isReady;
 
-    public GetMyAgentTask(Consumer<List<String>> updateAgents, SimpleBooleanProperty isReady) {
+    public GetMyAgentsTask(Consumer<List<String>> updateAgents, SimpleBooleanProperty isReady) {
         this.updateAgents = updateAgents;
         this.isReady = isReady;
     }
@@ -44,9 +44,7 @@ public class GetMyAgentTask implements Runnable{
         try {
             Response response = call.execute();
             List<String> agents = AppUtils.GSON_SERVICE.fromJson(response.body().charStream(), TypeToken.getParameterized(List.class, String.class).getType());
-            Platform.runLater(()->{
-                updateAgents.accept(agents);
-            });
+            Platform.runLater(()-> updateAgents.accept(agents));
         } catch (IOException e) {
             System.out.println("Get Agent request failed");
         }

@@ -5,8 +5,10 @@ import com.engine.configuration.Configurator;
 import com.engine.enigmaParts.EnigmaParts;
 import com.engine.enigmaParts.machineParts.MachineParts;
 import com.engine.enums.DecryptionDifficulty;
+import com.engine.users.Agent;
 import com.engine.xmlReader.XmlReader;
 import com.enigma.dtos.EngineAnswers.CalculationOperationAnswer;
+import com.enigma.dtos.dataObjects.DecryptionTaskData;
 import com.enigma.dtos.dataObjects.EncryptMessageData;
 import com.enigma.dtos.EngineAnswers.InputOperationAnswer;
 import com.enigma.dtos.ServletAnswers.MachineDetailsAnswer;
@@ -16,11 +18,13 @@ import javax.xml.bind.JAXBException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.InputMismatchException;
+import java.util.List;
+import java.util.concurrent.BlockingQueue;
 
 public class EngineImp implements Engine{
     private final XmlReader xmlReader;
-    private Configurator configurator;
-    private DmService dmService;
+    private final Configurator configurator;
+    private final DmService dmService;
 
 
     public EngineImp(){
@@ -107,7 +111,10 @@ public class EngineImp implements Engine{
         return answer;
     }
 
-
+    @Override
+    public Thread launchTaskProducer(String teamName, DecryptionDifficulty difficulty, List<Agent> agents, int taskSize, MachineParts machineParts, List<Integer> rotorsId, int reflectorId){
+        return dmService.launchProducer(teamName, difficulty, agents, taskSize, machineParts, rotorsId, reflectorId);
+    }
 
 
 }

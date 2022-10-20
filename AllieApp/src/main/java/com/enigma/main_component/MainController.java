@@ -29,6 +29,7 @@ public class MainController {
         this.uiAdapter = new UiAdapter();
         dashboardComponentController.setUiAdapter(uiAdapter);
         contestComponentController.setUiAdapter(uiAdapter);
+        contestComponentController.setDashboardController(dashboardComponentController);
         uiAdapter.isReadyProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue){
                 contestTab.disableProperty().set(false);

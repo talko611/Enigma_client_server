@@ -1,9 +1,15 @@
 package com.engine.DM_operations.utils;
 
+import com.engine.DM_operations.producerTask.ProduceTask;
 import com.engine.enigmaParts.machineParts.MachineParts;
 import com.engine.enums.DecryptionDifficulty;
+import com.engine.users.Agent;
+import com.enigma.dtos.dataObjects.DecryptionTaskData;
 
 import java.util.InputMismatchException;
+import java.util.List;
+import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.BlockingQueue;
 
 public class DmService {
 
@@ -35,5 +41,25 @@ public class DmService {
         }
         numberOfTasks /= taskSize;
         return numberOfTasks;
+    }
+
+    public Thread launchProducer(String teamName, DecryptionDifficulty difficulty, List<Agent> agents, int taskSize, MachineParts machineParts, List<Integer> rotorsId, int reflectorId){
+        ProduceTask produceTask = null;
+        switch (difficulty){
+            case EASY:
+                produceTask = new ProduceTask(difficulty, agents,machineParts, taskSize, rotorsId, reflectorId);
+                break;
+            case MEDIUM:
+            case HARD:
+                produceTask = new ProduceTask(difficulty, agents,machineParts, taskSize, rotorsId);
+                break;
+            case IMPOSSIBLE:
+                produceTask =  new ProduceTask(difficulty, agents,machineParts, taskSize);
+                break;
+        }
+        Thread producer = new Thread(produceTask);
+        producer.setName(teamName + " producer");
+        producer.start();
+        return producer;
     }
 }

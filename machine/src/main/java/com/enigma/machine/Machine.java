@@ -21,4 +21,5 @@ public interface Machine {
     void updateConfiguration();
     String getCurrentConfiguration();
     String getInitialConfiguration();
+    Reflector getReflector();
 }

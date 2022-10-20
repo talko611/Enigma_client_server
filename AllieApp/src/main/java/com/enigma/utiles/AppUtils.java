@@ -14,10 +14,11 @@ public class AppUtils {
     public static final String GET_BATTLEFIELDS_RESOURCE = "get_battlefields";
     public static final String GET_AGENTS_RESOURCE = "get_agents";
     public static final String JOIN_BATTLEFIELD_RESOURCE = "join";
-    public static final String SET_TASK_SIZE = "set_task";
+    public static final String SET_TASK_SIZE_RESOURCE = "set_task";
     public static final String SET_READY_RESOURCE = "set_ready";
     public static final String GET_GAME_STATUS_RESOURCE = "get_game_status";
     public static final String GET_PARTICIPANTS_RESOURCE = "get_teams";
+    public static final String START_PRODUCING_TASKS_RESOURCE = "start_producing";
 
     public static void setClientId(UUID clientId) {
         CLIENT_ID = clientId;

@@ -1,8 +1,12 @@
 package com.enigma.utils;
 
+import com.enigma.dtos.dataObjects.DecryptionTaskData;
+import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
-import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.*;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 public class AppUtils {
@@ -16,6 +20,26 @@ public class AppUtils {
     public static final String SET_READY_RESOURCE = "set_ready";
     public static final String SET_AVAILABLE_RESOURCE = "set_available";
     public static final String GET_GAME_STATUS = "get_game_status";
+    public static final String GET_TASKS_RESOURCE = "get_tasks";
+
+    public static void main(String[] args) {
+        HttpUrl.Builder builder = HttpUrl.parse(APP_URL + GET_TASKS_RESOURCE ).newBuilder();
+        Request request = new Request.Builder().url(builder.build()).build();
+        Call call = CLIENT.newCall(request);
+        try {
+            Response response = call.execute();
+            List<DecryptionTaskData> tasks = GSON_SERVICE.fromJson(response.body().charStream(), new TypeToken<List<DecryptionTaskData>>(){}.getType());
+            for(DecryptionTaskData data : tasks){
+                System.out.println(data.getRotorsId());
+                System.out.println(data.getOffsets());
+                System.out.println(data.getReflectorId());
+                System.out.println(data.getTaskSize());
+                System.out.println();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 
 

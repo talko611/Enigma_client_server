@@ -11,12 +11,12 @@ public class Allie extends User{
     private final List<Agent> waitingAgents;
     private long taskSize;
     private long numOfTasks;
-    private BlockingQueue<?> tasks;
+    private Thread producer;
+
     public Allie(String name){
         super(name);
         this.activeAgents = new ArrayList<>();
         this.waitingAgents = new ArrayList<>();
-        //Todo -create queue for allie
     }
 
     public void setBattlefieldId(UUID battlefieldId) {
@@ -63,5 +63,12 @@ public class Allie extends User{
 
     public synchronized void setNumOfTasks(long numOfTasks) {
         this.numOfTasks = numOfTasks;
+    }
+
+    public void setProducer(Thread producer) {
+        this.producer = producer;
+    }
+    public void stopProducing(){
+        this.producer.interrupt();
     }
 }
