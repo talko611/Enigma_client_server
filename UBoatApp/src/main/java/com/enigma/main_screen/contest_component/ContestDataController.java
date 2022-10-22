@@ -3,8 +3,10 @@ package com.enigma.main_screen.contest_component;
 import com.enigma.Utils.AppUtils;
 import com.enigma.Utils.UiAdapter;
 import com.enigma.dtos.ServletAnswers.RequestServerAnswer;
+import com.enigma.dtos.dataObjects.Candidate;
 import com.enigma.dtos.dataObjects.EncryptMessageData;
 import com.enigma.dtos.dataObjects.GameDetailsObject;
+import com.enigma.main_screen.contest_component.tasks.GetCandidatesTask;
 import com.enigma.main_screen.contest_component.tasks.GetGameStatusTask;
 import com.enigma.main_screen.contest_component.tasks.GetParticipantsTask;
 import com.enigma.main_screen.contest_component.trie_data_structure.Trie;
@@ -22,6 +24,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -42,7 +45,7 @@ public class ContestDataController {
     @FXML private TableColumn<?, ?> taskSizeCol;
     @FXML private Label battlefieldNameLb;
     @FXML private Label gameStatusLb;
-    @FXML private TableView<?> candidatesTb;
+    @FXML private TableView<UiCandidate> candidatesTb;
     @FXML private TableColumn<?, ?> decryptionCol;
     @FXML private TableColumn<?, ?> teamNameCanCol;
     @FXML private TableColumn<?, ?> configurationCol;
@@ -54,17 +57,18 @@ public class ContestDataController {
     private Trie dictionary;
 
     private Consumer<GameDetailsObject> updateGameDetails;
-
+    private Consumer<List<Candidate>> updateCandidates;
     @FXML
     void initialize(){
         this.teamNameParCol.setCellValueFactory(new PropertyValueFactory<>("teamName"));
         this.agentNumCol.setCellValueFactory(new PropertyValueFactory<>("agentNum"));
         this.taskSizeCol.setCellValueFactory(new PropertyValueFactory<>("taskSize"));
+        this.uiAllies = FXCollections.observableArrayList();
         this.decryptionCol.setCellValueFactory(new PropertyValueFactory<>("decryption"));
         this.teamNameCanCol.setCellValueFactory(new PropertyValueFactory<>("teamName"));
         this.configurationCol.setCellValueFactory(new PropertyValueFactory<>("configuration"));
-        this.uiAllies = FXCollections.observableArrayList();
         this.uiCandidates = FXCollections.observableArrayList();
+        this.candidatesTb.setItems(uiCandidates);
         dictionaryTb.textProperty().addListener((observable, oldValue, newValue) -> {
             wordList.getItems().clear();
             wordList.getItems().addAll(dictionary.getAllChildren(newValue.toLowerCase()));
@@ -93,6 +97,10 @@ public class ContestDataController {
                 gameStatusLb.setText(gameDetailsObject.getGameStatus().toString());
                 uiAdapter.setGameStatus(gameDetailsObject.getGameStatus());
             }
+        };
+        this.updateCandidates = candidateList -> {
+            candidateList.forEach(candidate ->
+                    uiCandidates.add(new UiCandidate(candidate.getDecryption(), candidate.getTeamName(), candidate.getConfiguration())));
         };
     }
 
@@ -132,6 +140,10 @@ public class ContestDataController {
             if(newValue)
                 listenToGameStatus();
         });
+        uiAdapter.isInActiveGameProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue)
+                launchGetCandidatesRequest();
+        });
         clearBt.disableProperty().bind(uiAdapter.isInActiveGameProperty().or(uiAdapter.isEncryptedMessageProperty()).or(uiAdapter.isReadyProperty()));
         resetMachineBt.disableProperty().bind(uiAdapter.isInActiveGameProperty().or(uiAdapter.isEncryptedMessageProperty()).or(uiAdapter.isReadyProperty()));
         readyBt.disableProperty().bind(uiAdapter.isEncryptedMessageProperty().not().or(uiAdapter.isGameEndedProperty()).or(uiAdapter.isInActiveGameProperty()));
@@ -143,6 +155,7 @@ public class ContestDataController {
     private void listenToGameStatus(){
         new Thread(new GetGameStatusTask(uiAdapter.isGameEndedProperty(), updateGameDetails)).start();
     }
+
     private void getParticipants(){
         new Thread(new GetParticipantsTask((data)->{
             uiAllies.clear();
@@ -238,6 +251,11 @@ public class ContestDataController {
             }
         });
     }
+    private void launchGetCandidatesRequest(){
+        Thread thread = new Thread(new GetCandidatesTask(uiAdapter.isGameEndedProperty(), this.updateCandidates));
+        thread.setName("Update Candidates(UBoat App)");
+        thread.start();
+    }
 
     public static class UiAllie{
         private SimpleStringProperty teamName;
@@ -292,10 +310,10 @@ public class ContestDataController {
         private SimpleStringProperty teamName;
         private SimpleStringProperty configuration;
 
-        public UiCandidate(SimpleStringProperty decryption, SimpleStringProperty teamName, SimpleStringProperty configuration) {
-            this.decryption = decryption;
-            this.teamName = teamName;
-            this.configuration = configuration;
+        public UiCandidate(String decryption, String teamName, String configuration) {
+            this.decryption = new SimpleStringProperty(decryption);
+            this.teamName = new SimpleStringProperty(teamName);
+            this.configuration = new SimpleStringProperty(configuration);
         }
 
         public void setDecryption(String decryption) {

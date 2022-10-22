@@ -37,6 +37,6 @@ public interface Engine {
 
     CalculationOperationAnswer calculateNumberOfTasks(DecryptionDifficulty difficulty, long taskSize, MachineParts machineParts, int rotorCount);
 
-    Thread launchTaskProducer(String teamName, DecryptionDifficulty difficulty, List<Agent> agents, int taskSize, MachineParts machineParts, List<Integer> rotorsId, int reflectorId);
+    Thread launchTaskProducer(String teamName, DecryptionDifficulty difficulty, List<Agent> agents, int taskSize, MachineParts machineParts, List<Integer> rotorsId, int reflectorId, String EncryptedMessage);
 
 }

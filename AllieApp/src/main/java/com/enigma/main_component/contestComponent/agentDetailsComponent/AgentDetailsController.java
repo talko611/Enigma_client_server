@@ -28,8 +28,4 @@ public class AgentDetailsController {
         this.agentProgressBar.setProgress(progress);
         this.progressBarLb.setText(progress * 100 +"%");
     }
-
-    public void setProgressBarLb(String producedCandidates){
-        this.producedCandidatesLb.setText(producedCandidates);
-    }
 }

@@ -17,6 +17,7 @@ public class AppUtils {
     public static final String SET_READY_RESOURCE = "set_ready";
     public static final String GET_ALLIES_RESOURCE = "get_allies";
     public static final String GET_GAME_STATUS_RESOURCE = "get_game_status";
+    public static final String GET_CANDIDATES_RESOURCE = "get_candidates";
     public static final OkHttpClient HTTP_CLIENT = new OkHttpClient();
     public static UUID CLIENT_ID;
     public static final Gson GSON_SERVICE = new Gson();

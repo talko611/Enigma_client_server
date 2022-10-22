@@ -4,12 +4,15 @@ import com.engine.enigmaParts.EnigmaParts;
 import com.engine.users.Allie;
 import com.engine.users.UserManager;
 import com.enigma.dtos.Enums.GameStatus;
+import com.enigma.dtos.dataObjects.Candidate;
 import com.enigma.machine.Machine;
 import com.enigma.machine.MachineImp;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class Battlefield {
     private final String name;
@@ -19,10 +22,12 @@ public class Battlefield {
     private EnigmaParts enigmaParts;
     private Machine machine;
     private String encryptedMessage;
+    private String decryptedMessage;
     private String messageConfiguration;
     private String fileContent;
     private String winners;
     private GameStatus gameStatus;
+    private BlockingQueue<Candidate> candidates;
 
     public Battlefield(String name){
         this.name = name;
@@ -30,6 +35,15 @@ public class Battlefield {
         this.machine = new MachineImp();
         this.teams = new ArrayList<>();
         this.gameStatus = GameStatus.AWAITING;
+        this.candidates = new LinkedBlockingQueue<>();
+    }
+
+    public void setDecryptedMessage(String decryptedMessage) {
+        this.decryptedMessage = decryptedMessage;
+    }
+
+    public String getDecryptedMessage() {
+        return decryptedMessage;
     }
 
     public void setMessageConfiguration(String messageConfiguration) {
@@ -142,5 +156,9 @@ public class Battlefield {
 
     public void setGameStatus(GameStatus gameStatus) {
         this.gameStatus = gameStatus;
+    }
+
+    public BlockingQueue<Candidate> getCandidates() {
+        return candidates;
     }
 }

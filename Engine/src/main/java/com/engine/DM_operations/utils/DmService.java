@@ -4,12 +4,9 @@ import com.engine.DM_operations.producerTask.ProduceTask;
 import com.engine.enigmaParts.machineParts.MachineParts;
 import com.engine.enums.DecryptionDifficulty;
 import com.engine.users.Agent;
-import com.enigma.dtos.dataObjects.DecryptionTaskData;
 
 import java.util.InputMismatchException;
 import java.util.List;
-import java.util.concurrent.BlockingDeque;
-import java.util.concurrent.BlockingQueue;
 
 public class DmService {
 
@@ -43,18 +40,18 @@ public class DmService {
         return numberOfTasks;
     }
 
-    public Thread launchProducer(String teamName, DecryptionDifficulty difficulty, List<Agent> agents, int taskSize, MachineParts machineParts, List<Integer> rotorsId, int reflectorId){
+    public Thread launchProducer(String teamName, DecryptionDifficulty difficulty, List<Agent> agents, int taskSize, MachineParts machineParts, List<Integer> rotorsId, int reflectorId, String encryptedMessage){
         ProduceTask produceTask = null;
         switch (difficulty){
             case EASY:
-                produceTask = new ProduceTask(difficulty, agents,machineParts, taskSize, rotorsId, reflectorId);
+                produceTask = new ProduceTask(difficulty, agents,machineParts, taskSize, rotorsId, reflectorId, encryptedMessage);
                 break;
             case MEDIUM:
             case HARD:
-                produceTask = new ProduceTask(difficulty, agents,machineParts, taskSize, rotorsId);
+                produceTask = new ProduceTask(difficulty, agents,machineParts, taskSize, rotorsId, encryptedMessage);
                 break;
             case IMPOSSIBLE:
-                produceTask =  new ProduceTask(difficulty, agents,machineParts, taskSize);
+                produceTask =  new ProduceTask(difficulty, agents,machineParts, taskSize, encryptedMessage);
                 break;
         }
         Thread producer = new Thread(produceTask);

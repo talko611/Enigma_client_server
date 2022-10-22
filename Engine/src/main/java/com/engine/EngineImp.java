@@ -70,12 +70,13 @@ public class EngineImp implements Engine{
         String sourceMessage = src.getSource().toUpperCase();
         StringBuilder builder = new StringBuilder();
         EncryptMessageData encryptedData = new EncryptMessageData();
+        encryptedData.setSource(sourceMessage);
         for(int i = 0; i < sourceMessage.length(); ++i ){
             builder.append(machine.encryptDecrypt(String.valueOf(sourceMessage.charAt(i))));
         }
         machine.updateConfiguration();
-        encryptedData.setEncrypted(builder.toString());
         encryptedData.setCurrentMachineConfiguration(machine.getCurrentConfiguration());
+        encryptedData.setEncrypted(builder.toString());
         return encryptedData;
     }
 
@@ -112,8 +113,8 @@ public class EngineImp implements Engine{
     }
 
     @Override
-    public Thread launchTaskProducer(String teamName, DecryptionDifficulty difficulty, List<Agent> agents, int taskSize, MachineParts machineParts, List<Integer> rotorsId, int reflectorId){
-        return dmService.launchProducer(teamName, difficulty, agents, taskSize, machineParts, rotorsId, reflectorId);
+    public Thread launchTaskProducer(String teamName, DecryptionDifficulty difficulty, List<Agent> agents, int taskSize, MachineParts machineParts, List<Integer> rotorsId, int reflectorId, String encryptedMessage){
+        return dmService.launchProducer(teamName, difficulty, agents, taskSize, machineParts, rotorsId, reflectorId,encryptedMessage);
     }
 
 

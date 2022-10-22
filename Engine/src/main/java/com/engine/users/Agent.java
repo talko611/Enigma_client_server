@@ -10,8 +10,8 @@ import java.util.concurrent.BlockingQueue;
 public class Agent extends User{
     private UUID AllieId;
     private int numOfThreads;
-    private int numOfTaskAccepted;
-    private int numOfTaskAssigned;
+    private long numOfTaskAccepted;
+    private long numOfTaskAssigned;
     private int numOfCandidatesProduced;
     private AgentStatus status;
     private final BlockingQueue<DecryptionTaskData> tasksToPreform;
@@ -49,12 +49,8 @@ public class Agent extends User{
         this.status = status;
     }
 
-    public synchronized int getNumOfTaskAccepted() {
+    public synchronized long getNumOfTaskAccepted() {
         return numOfTaskAccepted;
-    }
-
-    public synchronized int getNumOfTaskAssigned() {
-        return numOfTaskAssigned;
     }
 
     public synchronized int getNumOfCandidatesProduced() {
@@ -65,14 +61,18 @@ public class Agent extends User{
         this.numOfTaskAccepted = numOfTaskAccepted;
     }
 
-    public synchronized void setNumOfTaskAssigned(int numOfTaskAssigned) {
-        this.numOfTaskAssigned = numOfTaskAssigned;
-    }
-
     public synchronized void setNumOfCandidatesProduced(int numOfCandidatesProduced) {
         this.numOfCandidatesProduced = numOfCandidatesProduced;
     }
-    public synchronized void addOneToTaskAccepted(){
-        this.numOfTaskAccepted += 1;
+    public synchronized void addOneToTaskAssigned(){
+        this.numOfTaskAssigned += 1;
+    }
+
+    public synchronized void addToTasksAccepted(int num){
+        this.numOfTaskAccepted += num;
+    }
+
+    public synchronized long getNumOfTaskAssigned() {
+        return numOfTaskAssigned;
     }
 }

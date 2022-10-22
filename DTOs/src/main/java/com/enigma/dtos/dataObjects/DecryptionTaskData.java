@@ -7,6 +7,15 @@ public class DecryptionTaskData {
     private List<Integer> offsets;
     private int reflectorId;
     private long taskSize;
+    private String encryptedMessage;
+
+    public void setEncryptedMessage(String encryptedMessage) {
+        this.encryptedMessage = encryptedMessage;
+    }
+
+    public String getEncryptedMessage() {
+        return encryptedMessage;
+    }
 
     public List<Integer> getRotorsId() {
         return rotorsId;

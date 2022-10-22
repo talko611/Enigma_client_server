@@ -16,9 +16,10 @@ public class ProduceTask implements Runnable{
     private final MachineParts machineParts;
     private final List<Integer> rotorsIds;
     private final int reflectorId;
+    private final String encryptedMessage;
 
 
-    public ProduceTask(DecryptionDifficulty difficulty, List<Agent> agents, MachineParts machineParts, int taskSize, List<Integer> rotorsId, int reflectorId) {
+    public ProduceTask(DecryptionDifficulty difficulty, List<Agent> agents, MachineParts machineParts, int taskSize, List<Integer> rotorsId, int reflectorId, String encryptedMessage) {
         this.difficulty = difficulty;
         this.agents = agents;
         this.machineParts = machineParts;
@@ -27,24 +28,27 @@ public class ProduceTask implements Runnable{
         this.rotorsIds = rotorsId;
         this.reflectorId = reflectorId;
 
+        this.encryptedMessage = encryptedMessage;
     }
 
-    public ProduceTask(DecryptionDifficulty difficulty, List<Agent> agents, MachineParts machineParts,int taskSize, List<Integer> rotorsIds) {
+    public ProduceTask(DecryptionDifficulty difficulty, List<Agent> agents, MachineParts machineParts, int taskSize, List<Integer> rotorsIds, String encryptedMessage) {
         this.difficulty = difficulty;
         this.agents = agents;
         this.machineParts = machineParts;
         this.keyboardSize = machineParts.getKeyboard().getKeyboardSize();
         this.taskSize = taskSize;
         this.rotorsIds = rotorsIds;
+        this.encryptedMessage = encryptedMessage;
         this.reflectorId = -1;
     }
 
-    public ProduceTask(DecryptionDifficulty difficulty, List<Agent> agents, MachineParts machineParts, int taskSize) {
+    public ProduceTask(DecryptionDifficulty difficulty, List<Agent> agents, MachineParts machineParts, int taskSize, String encryptedMessage) {
         this.difficulty = difficulty;
         this.agents = agents;
         this.machineParts = machineParts;
         this.keyboardSize = machineParts.getKeyboard().getKeyboardSize();
         this.taskSize = taskSize;
+        this.encryptedMessage = encryptedMessage;
         this.rotorsIds = null;
         this.reflectorId = -1;
     }
@@ -119,9 +123,10 @@ public class ProduceTask implements Runnable{
         newTask.setRotorsId(new ArrayList<>(rotorsIds));
         newTask.setOffsets(new ArrayList<>(offsetList));
         newTask.setReflectorId(reflectorId);
+        newTask.setEncryptedMessage(encryptedMessage);
         Agent currentAgent = this.agents.get(agentNum);
         currentAgent.getTasksToPreform().put(newTask);
-        currentAgent.addOneToTaskAccepted();
+        currentAgent.addOneToTaskAssigned();
     }
 
     private void moveToNextConfiguration(List<Integer> offsetsConfiguration, int taskSize){

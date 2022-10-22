@@ -41,6 +41,7 @@ public class EncryptMessage extends HttpServlet {
                         String currentConfiguration = machine.getCurrentConfiguration();
                         clientData = ServletsUtils.getEngine(getServletContext()).encryptDecrypt(clientData, machine);
                         battlefield.setEncryptedMessage(clientData.getEncrypted());
+                        battlefield.setDecryptedMessage(clientData.getSource());
                         battlefield.setMessageConfiguration(currentConfiguration);
                         clientData.setMessage("Message decrypted successfully!");
                         resp.setStatus(200);

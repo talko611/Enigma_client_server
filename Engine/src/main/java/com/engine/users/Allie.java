@@ -1,9 +1,13 @@
 package com.engine.users;
 
+import com.enigma.dtos.dataObjects.Candidate;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.stream.Collectors;
 
 public class Allie extends User{
     private UUID battlefieldId;
@@ -12,11 +16,13 @@ public class Allie extends User{
     private long taskSize;
     private long numOfTasks;
     private Thread producer;
+    private BlockingQueue<Candidate> candidates;
 
     public Allie(String name){
         super(name);
         this.activeAgents = new ArrayList<>();
         this.waitingAgents = new ArrayList<>();
+        this.candidates = new LinkedBlockingQueue<>();
     }
 
     public void setBattlefieldId(UUID battlefieldId) {
@@ -70,5 +76,13 @@ public class Allie extends User{
     }
     public void stopProducing(){
         this.producer.interrupt();
+    }
+
+    public boolean isProducerStillRunning(){
+        return this.producer.isAlive();
+    }
+
+    public BlockingQueue<Candidate> getCandidates() {
+        return candidates;
     }
 }

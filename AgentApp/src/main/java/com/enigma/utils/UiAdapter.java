@@ -7,12 +7,26 @@ public class UiAdapter {
     private SimpleBooleanProperty isReady;
     private SimpleBooleanProperty isLoggedIn;
     private SimpleBooleanProperty isInActiveGame;
+    private SimpleBooleanProperty isGameEnded;
 
     public UiAdapter() {
         this.isActive = new SimpleBooleanProperty();
         this.isLoggedIn = new SimpleBooleanProperty();
         this.isInActiveGame = new SimpleBooleanProperty();
         this.isReady = new SimpleBooleanProperty();
+        this.isGameEnded = new SimpleBooleanProperty();
+    }
+
+    public boolean isIsGameEnded() {
+        return isGameEnded.get();
+    }
+
+    public void setIsGameEnded(boolean isGameEnded) {
+        this.isGameEnded.set(isGameEnded);
+    }
+
+    public SimpleBooleanProperty isGameEndedProperty() {
+        return isGameEnded;
     }
 
     public boolean isIsReady() {

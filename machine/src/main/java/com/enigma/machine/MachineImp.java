@@ -121,6 +121,7 @@ public class MachineImp implements Machine{
         StringBuilder builder = new StringBuilder();
         buildRotorsConfigurationPart(builder);
         buildOffsetsConfigurationPart(builder);
+        builder.append("<").append(reflector.getIdSymbol()).append(">");
         buildPlugsConfigurationPart(builder);
         return builder.toString();
     }

@@ -1,8 +1,12 @@
 package com.enigma.main_component.contestComponent;
 
+import com.enigma.dtos.dataObjects.AgentProgressObject;
 import com.enigma.dtos.dataObjects.AllieData;
+import com.enigma.dtos.dataObjects.Candidate;
 import com.enigma.dtos.dataObjects.GameDetailsObject;
 import com.enigma.main_component.contestComponent.agentDetailsComponent.AgentDetailsController;
+import com.enigma.main_component.contestComponent.tasks.GetAgentProgressTask;
+import com.enigma.main_component.contestComponent.tasks.GetCandidatesTask;
 import com.enigma.main_component.contestComponent.tasks.GetGameStatus;
 import com.enigma.main_component.contestComponent.tasks.GetParticipantsTask;
 import com.enigma.main_component.dashboard_tab_component.DashboardController;
@@ -46,23 +50,31 @@ public class ContestComponentController {
     @FXML private TableColumn<?, ?> agentNumCol;
     @FXML private TableColumn<?, ?> taskSizeCol;
     @FXML private VBox agentProgressContainer;
-    @FXML private TableView<?> candidatesTable;
+    @FXML private TableView<UiCandidate> candidatesTable;
     @FXML private TableColumn<?, ?> decryptionCol;
     @FXML private TableColumn<?, ?> configurationCol;
 
     private UiAdapter uiAdapter;
     private Consumer<GameDetailsObject> updateGameStatus;
     private Consumer<List<AllieData>> updateParticipantsList;
+    private Consumer<List<AgentProgressObject>> updateAgentProgress;
+    private Consumer<List<Candidate>> updateCandidates;
     private ObservableList<UiAllie> participants;
+    private  ObservableList<UiCandidate> candidates;
     private DashboardController dashboardController;
     private Map<String, AgentDetailsController> agentNameToComponentController;
 
     @FXML
     void initialize(){
+        this.agentNameToComponentController = new HashMap<>();
         this.teamNameCol.setCellValueFactory( new PropertyValueFactory<>("teamName"));
         this.agentNumCol.setCellValueFactory(new PropertyValueFactory<>("agentNum"));
         this.taskSizeCol.setCellValueFactory(new PropertyValueFactory<>("taskSize"));
         this.participants = FXCollections.observableArrayList();
+        this.decryptionCol.setCellValueFactory(new PropertyValueFactory<>("decryption"));
+        this.configurationCol.setCellValueFactory(new PropertyValueFactory<>("configuration"));
+        this.candidates = FXCollections.observableArrayList();
+        this.candidatesTable.setItems(candidates);
         this.updateGameStatus = (gameDetailsObject)->{
             switch (gameDetailsObject.getGameStatus()){
                 case AWAITING:
@@ -76,7 +88,6 @@ public class ContestComponentController {
                     uiAdapter.setIsGameEnded(true);
                     uiAdapter.setIsInActiveGame(false);
                     //Todo - get winner + revel done button when get
-
             }
         };
         this.updateParticipantsList = (alliDataList)->{
@@ -86,7 +97,16 @@ public class ContestComponentController {
           });
           this.participantsTable.setItems(participants);
         };
-        this.agentNameToComponentController = new HashMap<>();
+        this.updateAgentProgress = (agentProgressObjects -> {
+            agentProgressObjects.forEach(agentProgressObject -> {
+                AgentDetailsController agentDetailsController = this.agentNameToComponentController.get(agentProgressObject.getAgentName());
+                agentDetailsController.setAcceptedTasksLb(String.valueOf(agentProgressObject.getTasksAccepted()));
+                agentDetailsController.setAssignedTaskLb(String.valueOf(agentProgressObject.getTasksAssigned()));
+                agentDetailsController.setProgress(agentProgressObject.getTasksAccepted()/ (double) agentProgressObject.getTasksAssigned());
+            });
+        });
+        this.updateCandidates = (candidateList -> candidateList
+                .forEach(candidate -> this.candidates.add(new UiCandidate(candidate.getDecryption(), candidate.getConfiguration()))));
     }
 
     @FXML
@@ -118,6 +138,8 @@ public class ContestComponentController {
         uiAdapter.isInActiveGameProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue){
                 launchStartProducingTasksRequest();
+                launchGetAgentProgressTask();
+                launchGetCandidatesTask();
             }
         });
     }
@@ -181,6 +203,18 @@ public class ContestComponentController {
         });
     }
 
+    private  void launchGetAgentProgressTask(){
+        Thread thread =  new Thread(new GetAgentProgressTask(uiAdapter.isGameEndedProperty(), this.updateAgentProgress));
+        thread.setName("Get Agent Progress thread");
+        thread.start();
+    }
+
+    private void launchGetCandidatesTask(){
+        Thread thread = new Thread(new GetCandidatesTask(uiAdapter.isGameEndedProperty(), this.updateCandidates));
+        thread.setName("Get Candidates(Allie App)");
+        thread.start();
+    }
+
     public static class UiAllie{
         private SimpleStringProperty teamName;
         private SimpleIntegerProperty agentNum;
@@ -226,6 +260,40 @@ public class ContestComponentController {
 
         public SimpleLongProperty taskSizeProperty() {
             return taskSize;
+        }
+    }
+
+    public static class UiCandidate{
+        private SimpleStringProperty decryption;
+        private SimpleStringProperty configuration;
+
+        public UiCandidate(String decryption, String configuration) {
+            this.decryption = new SimpleStringProperty(decryption);
+            this.configuration = new SimpleStringProperty(configuration);
+        }
+
+        public void setDecryption(String decryption) {
+            this.decryption.set(decryption);
+        }
+
+        public void setConfiguration(String configuration) {
+            this.configuration.set(configuration);
+        }
+
+        public String getDecryption() {
+            return decryption.get();
+        }
+
+        public SimpleStringProperty decryptionProperty() {
+            return decryption;
+        }
+
+        public String getConfiguration() {
+            return configuration.get();
+        }
+
+        public SimpleStringProperty configurationProperty() {
+            return configuration;
         }
     }
 

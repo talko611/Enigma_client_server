@@ -34,7 +34,8 @@ public class StartProducing extends HttpServlet {
                         (int) user.getTaskSize(),
                         battlefield.getEnigmaParts().getMachineParts(),
                         battlefield.getMachine().getRotors().stream().map(Rotor::getId).collect(Collectors.toList()),
-                        battlefield.getMachine().getReflector().getId()));
+                        battlefield.getMachine().getReflector().getId(),
+                        battlefield.getEncryptedMessage()));
             }else{
                 resp.setStatus(401);
             }
