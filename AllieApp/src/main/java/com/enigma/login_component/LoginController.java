@@ -63,4 +63,8 @@ public class LoginController {
     public void setIsLoginSuccessful(SimpleBooleanProperty isLoginSuccessful) {
         this.isLoginSuccessful = isLoginSuccessful;
     }
+
+    public String getName(){
+        return nameField.getText();
+    }
 }

@@ -36,6 +36,7 @@ public class Battlefield {
         this.teams = new ArrayList<>();
         this.gameStatus = GameStatus.AWAITING;
         this.candidates = new LinkedBlockingQueue<>();
+        winners ="";
     }
 
     public void setDecryptedMessage(String decryptedMessage) {

@@ -64,10 +64,8 @@ public class UserManager {
         return allie;
     }
 
-    public Agent addNewAgent(String name, int numOfWorkers, UUID allieId){
-        Agent agent = new Agent(name);
-        agent.setNumOfThreads(numOfWorkers);
-        agent.setAllieId(allieId);
+    public Agent addNewAgent(String name, int numOfTasksCanAccept, UUID allieId){
+        Agent agent = new Agent(name, allieId,numOfTasksCanAccept);
         synchronized (agentsLock){
             agents.put(agent.getId(), agent);
         }

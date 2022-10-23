@@ -22,7 +22,6 @@ import java.util.concurrent.BlockingQueue;
 @WebServlet("/agent/get_tasks")
 public class GetTasks extends HttpServlet {
     private final Gson GSON_SERVICE = new Gson();
-    private static final int NUMBER_OF_TASKS = 1000;
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         List<DecryptionTaskData> tasksTaken = new ArrayList<>();
@@ -36,7 +35,7 @@ public class GetTasks extends HttpServlet {
             Allie allie = userManager.getAllieById(agent.getAllieId());
             BlockingQueue<DecryptionTaskData> assignTasks = agent.getTasksToPreform();
             if(allie.isProducerStillRunning() || !assignTasks.isEmpty()){
-                numberOfTasksTaken = assignTasks.drainTo(tasksTaken, NUMBER_OF_TASKS);
+                numberOfTasksTaken = assignTasks.drainTo(tasksTaken, agent.getNumOfTaskCanAccept());
                 agent.addToTasksAccepted(numberOfTasksTaken);
                 resp.getWriter().println(GSON_SERVICE.toJson(tasksTaken));
             }else{

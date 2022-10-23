@@ -33,6 +33,7 @@ public class MainController {
     @FXML private ConfigurationController configurationComponentController;
     @FXML private ScrollPane contestDataComponent;
     @FXML private ContestDataController contestDataComponentController;
+    @FXML private Label uBoatName;
 
     private Stage primaryStage;
     private UiAdapter uiAdapter;
@@ -98,6 +99,10 @@ public class MainController {
                 });
             }
         });
+    }
+
+    public void setName(String name){
+        this.uBoatName.setText("Hello <" + name + ">" );
     }
 
     @FXML

@@ -10,6 +10,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.awt.*;
 import java.io.IOException;
 
 public class FrameController {
@@ -17,7 +18,6 @@ public class FrameController {
     private BorderPane frameComponent;
     private SimpleBooleanProperty isLoginSuccessful;
     private Stage primaryStage;
-
     @FXML private VBox loginComponent;
     @FXML private LoginController loginComponentController;
 
@@ -32,6 +32,7 @@ public class FrameController {
                 try {
                     Parent root = loader.load();
                     MainController mainController = loader.getController();
+                    mainController.setName(loginComponentController.getName());
                     mainController.setPrimaryStage(this.primaryStage);
                     frameComponent.setCenter(root);
                 } catch (IOException e) {

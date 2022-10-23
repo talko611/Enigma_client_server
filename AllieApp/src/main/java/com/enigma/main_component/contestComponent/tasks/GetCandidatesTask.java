@@ -36,6 +36,11 @@ public class GetCandidatesTask implements Runnable{
                 System.out.println(Thread.currentThread().getName() + " was interrupted");
             }
         }
+        try {
+            launchGetCandidatesRequest();
+        } catch (IOException e) {
+            System.out.println(Thread.currentThread().getName() + " failed to fulfill request");
+        }
         System.out.println(Thread.currentThread().getName() + " is going down");
     }
 

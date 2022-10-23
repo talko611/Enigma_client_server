@@ -24,6 +24,7 @@ public class MainController {
     private UiAdapter uiAdapter;
 
 
+
     @FXML
     void initialize(){
         this.uiAdapter = new UiAdapter();
@@ -47,4 +48,9 @@ public class MainController {
     public void setFrameComponent(BorderPane frameComponent) {
         this.frameComponent = frameComponent;
     }
+
+    public void setMyName(String myName){
+        this.contestComponentController.setMyTeamNameLb(myName);
+    }
+
 }

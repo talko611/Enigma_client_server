@@ -5,19 +5,23 @@ import com.enigma.main.MainController;
 import com.enigma.utils.UiAdapter;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Parent;
+import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
 
 public class FrameController {
     private BorderPane frameComponent;
-
     private UiAdapter uiAdapter;
     @FXML private VBox loginComponent;
     @FXML private LoginController loginComponentController;
+    @FXML private HBox headerContainer;
 
     @FXML
     void initialize(){
@@ -35,6 +39,7 @@ public class FrameController {
                     controller.setUiAdapter(uiAdapter);
                     controller.setNumOfWorkers(loginComponentController.getThreadsNum());
                     controller.setTeamNameLb(loginComponentController.getTeamName());
+                    controller.setAgentNameLb(loginComponentController.getAgentName());
                 } catch (IOException e) {
                     System.out.println(e.getCause());
                     System.out.println(e.getStackTrace());
@@ -46,4 +51,5 @@ public class FrameController {
     public void setFrameComponent(BorderPane frameComponent) {
         this.frameComponent = frameComponent;
     }
+
 }

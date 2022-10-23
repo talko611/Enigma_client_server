@@ -83,6 +83,8 @@ public class ContestDataController {
         gameStatusLb.setText("Awaiting");
         this.updateGameDetails = gameDetailsObject -> {
             if(gameDetailsObject.getGameStatus() != uiAdapter.getGameStatus()){
+                gameStatusLb.setText(gameDetailsObject.getGameStatus().toString());
+                uiAdapter.setGameStatus(gameDetailsObject.getGameStatus());
                 switch (gameDetailsObject.getGameStatus()){
                     case AWAITING:
                         break;
@@ -94,8 +96,6 @@ public class ContestDataController {
                         uiAdapter.setIsInActiveGame(false);
                         break;
                 }
-                gameStatusLb.setText(gameDetailsObject.getGameStatus().toString());
-                uiAdapter.setGameStatus(gameDetailsObject.getGameStatus());
             }
         };
         this.updateCandidates = candidateList -> {

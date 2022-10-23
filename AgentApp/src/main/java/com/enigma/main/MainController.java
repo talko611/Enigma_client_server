@@ -29,6 +29,7 @@ import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 public class MainController {
+    @FXML private  Label agentNameLb;
     @FXML private Label teamNameLb;
     @FXML private Label agentStatusLb;
     @FXML private Label battlefieldNameLb;
@@ -71,16 +72,16 @@ public class MainController {
             this.dictionary = enigmaParts.getDmParts().getDictionary();
         });
         this.updateGameStatus = (gameDetailsObject -> {
+            updateGameStatusFields(gameDetailsObject);
             switch (gameDetailsObject.getGameStatus()){
                 case ENDING:
+                    this.uiAdapter.isGameEndedProperty().set(true);
                     this.executorService.shutdownNow();
                     //todo end all threads
                 case RUNNING:
-                    updateGameStatusFields(gameDetailsObject);
                     uiAdapter.setIsInActiveGame(true);
                     break;
                 case AWAITING:
-                    updateGameStatusFields(gameDetailsObject);
                     break;
             }
         });
@@ -170,6 +171,7 @@ public class MainController {
     public void setNumOfWorkers(int numOfWorkers) {
         this.numOfThreads = numOfWorkers;
     }
+    public void setAgentNameLb(String agentNameLb){this.agentNameLb.setText(agentNameLb);}
 
     public static class UiCandidate{
         private SimpleStringProperty decryption;

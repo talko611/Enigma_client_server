@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 public class DecryptionTask implements Runnable{
@@ -27,8 +27,9 @@ public class DecryptionTask implements Runnable{
     private final SimpleLongProperty taskPreformed;
     private final Consumer<Candidate> reportFoundCandidates;
     private final List<Candidate> candidatesToReportServer;
+    private final AtomicInteger numberOfTasksToExecute;
 
-    public DecryptionTask(Machine machine, String encryptedMessage, int taskSize, List<Integer> initialOffsetsPos, Set<String> dictionary, Consumer<Long> updateProgress, String teamName, SimpleLongProperty taskPreformed, Consumer<Candidate> reportFoundCandidates) {
+    public DecryptionTask(Machine machine, String encryptedMessage, int taskSize, List<Integer> initialOffsetsPos, Set<String> dictionary, Consumer<Long> updateProgress, String teamName, SimpleLongProperty taskPreformed, Consumer<Candidate> reportFoundCandidates, AtomicInteger numberOfTasksToExecute) {
         this.machine = machine;
         this.encryptedMessage = encryptedMessage;
         this.taskSize = taskSize;
@@ -38,6 +39,7 @@ public class DecryptionTask implements Runnable{
         this.teamName = teamName;
         this.taskPreformed = taskPreformed;
         this.reportFoundCandidates = reportFoundCandidates;
+        this.numberOfTasksToExecute = numberOfTasksToExecute;
         this.candidatesToReportServer = new ArrayList<>();
     }
 
@@ -58,6 +60,7 @@ public class DecryptionTask implements Runnable{
             taskPreformed.set(taskPreformed.get() + 1);
             updateProgress.accept(taskPreformed.get());
         });
+        numberOfTasksToExecute.decrementAndGet();
         updateCandidates();
     }
 

@@ -9,6 +9,15 @@ public class GameDetailsObject {
     private GameStatus gameStatus;
     private String participantsStatus;
     private String encryptedMessage;
+    private String winningTeamName;
+
+    public String getWinningTeamName() {
+        return winningTeamName;
+    }
+
+    public void setWinningTeamName(String winningTeamName) {
+        this.winningTeamName = winningTeamName;
+    }
 
     public void setEncryptedMessage(String encryptedMessage) {
         this.encryptedMessage = encryptedMessage;

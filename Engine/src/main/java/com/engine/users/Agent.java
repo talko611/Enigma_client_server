@@ -8,37 +8,35 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 public class Agent extends User{
-    private UUID AllieId;
-    private int numOfThreads;
+    private UUID allieId;
+    private int numOfTaskCanAccept;
     private long numOfTaskAccepted;
     private long numOfTaskAssigned;
     private int numOfCandidatesProduced;
     private AgentStatus status;
     private final BlockingQueue<DecryptionTaskData> tasksToPreform;
-    public Agent(String name){
+    public Agent(String name, UUID allieId, int numOfTaskCanAccept){
         super(name);
+        this.allieId = allieId;
+        this.numOfTaskCanAccept = numOfTaskCanAccept;
         this.status = AgentStatus.AWAITING;
-        this.tasksToPreform = new ArrayBlockingQueue<>(1000);
+        this.tasksToPreform = new ArrayBlockingQueue<>(numOfTaskCanAccept);
     }
 
     public BlockingQueue<DecryptionTaskData> getTasksToPreform() {
         return tasksToPreform;
     }
 
-    public void setAllieId(UUID allieId) {
-        AllieId = allieId;
-    }
-
     public UUID getAllieId() {
-        return AllieId;
+        return allieId;
     }
 
-    public synchronized int getNumOfThreads() {
-        return numOfThreads;
+    public int getNumOfTaskCanAccept() {
+        return numOfTaskCanAccept;
     }
 
-    public synchronized void setNumOfThreads(int numOfThreads) {
-        this.numOfThreads = numOfThreads;
+    public synchronized void setNumOfTaskCanAccept(int numOfTaskCanAccept) {
+        this.numOfTaskCanAccept = numOfTaskCanAccept;
     }
 
     public synchronized AgentStatus getStatus() {

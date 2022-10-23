@@ -5,11 +5,8 @@ import com.enigma.dtos.dataObjects.Candidate;
 import com.enigma.dtos.dataObjects.DecryptionTaskData;
 import com.enigma.machine.Machine;
 import com.enigma.machine.MachineImp;
-import com.enigma.machine.parts.keyboard.Keyboard;
 import com.enigma.machine.parts.keyboard.KeyboardImp;
-import com.enigma.machine.parts.plugBoard.PlugBoard;
 import com.enigma.machine.parts.plugBoard.PlugBoardImp;
-import com.enigma.machine.parts.reflector.Reflector;
 import com.enigma.machine.parts.reflector.ReflectorImp;
 import com.enigma.machine.parts.rotor.Rotor;
 import com.enigma.machine.parts.rotor.RotorImp;
@@ -28,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -41,6 +39,7 @@ public class GetDecryptionTasks implements Runnable{
     private final Set<String> dictionary;
     private final MachineParts machineParts;
     private final ExecutorService executors;
+    private final AtomicInteger numOfTasksToExecute;
 
 
 
@@ -54,6 +53,7 @@ public class GetDecryptionTasks implements Runnable{
         this.dictionary = dictionary;
         this.machineParts = machineParts;
         this.executors = executors;
+        this.numOfTasksToExecute = new AtomicInteger(0);
     }
 
     @Override
@@ -68,7 +68,9 @@ public class GetDecryptionTasks implements Runnable{
         while (!isGameEnded.get() && !finishProducing){
             try {
                 Thread.sleep(500);
-                finishProducing = getTasks();
+                if(numOfTasksToExecute.get() == 0){
+                    finishProducing = getTasks();
+                }
             } catch (InterruptedException e) {
                 System.out.println("Agent App: get tasks thread was interrupted");
             }
@@ -86,6 +88,7 @@ public class GetDecryptionTasks implements Runnable{
             if(response.code() == 200){
                 List<DecryptionTaskData> tasks = AppUtils.GSON_SERVICE.fromJson(response.body().charStream(), new TypeToken<List<DecryptionTaskData>>(){}.getType());
                 if(tasks != null){
+                    this.numOfTasksToExecute.accumulateAndGet(tasks.size(), Integer::sum);
                     launchTasksToExecutes(tasks);
                     Platform.runLater(()->{
                         tasksAssigned.set(tasksAssigned.get() + tasks.size());
@@ -125,6 +128,7 @@ public class GetDecryptionTasks implements Runnable{
                 this.updateProgress,
                 this.teamName,
                 this.tasksPreformed,
-                this.reportCandidateFound);
+                this.reportCandidateFound,
+                this.numOfTasksToExecute);
     }
 }

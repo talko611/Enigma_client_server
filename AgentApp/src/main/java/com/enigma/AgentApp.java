@@ -14,7 +14,7 @@ public class AgentApp extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         FXMLLoader loader = new FXMLLoader();
-        URL url = getClass().getResource("/agentApp_mainFrame.fxml");
+        URL url = getClass().getResource("/agent_frame_layout.fxml");
         loader.setLocation(url);
         ScrollPane root = loader.load();
         FrameController controller = loader.getController();

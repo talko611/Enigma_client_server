@@ -27,7 +27,11 @@
                   <Insets right="10.0" />
                </HBox.margin>
             </ComboBox>
-            <ComboBox fx:id="workersCb" promptText="Workers(Threads)" />
+            <ComboBox fx:id="workersCb" promptText="Workers(Threads)">
+               <HBox.margin>
+                  <Insets right="10.0" />
+               </HBox.margin></ComboBox>
+            <TextField fx:id="numberOfTasksTf" promptText="Enter number of tasks" />
          </children>
       </HBox>
       <Label fx:id="message" />

@@ -17,14 +17,26 @@
          <top>
             <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="600.0" BorderPane.alignment="TOP_CENTER">
                <children>
-                  <Label text="Contest Status">
-                     <font>
-                        <Font name="System Italic" size="18.0" />
-                     </font>
+                  <HBox alignment="TOP_CENTER">
                      <VBox.margin>
                         <Insets bottom="10.0" />
                      </VBox.margin>
-                  </Label>
+                     <children>
+                        <Label text="Team">
+                           <font>
+                              <Font name="System Italic" size="18.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets right="10.0" />
+                           </HBox.margin>
+                        </Label>
+                        <Label fx:id="myTeamNameLb">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
                   <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="100.0" VBox.vgrow="NEVER">
                      <children>
                         <HBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="600.0">

@@ -19,6 +19,9 @@ public class AgentDetailsController {
     public void setAssignedTaskLb(String assignedTasks){
         this.assignedTaskLb.setText(assignedTasks);
     }
+    public void setProducedCandidatesLb(String producedCandidates){
+        this.producedCandidatesLb.setText(producedCandidates);
+    }
 
     public void setAcceptedTasksLb(String acceptedTasks) {
         this.acceptedTasksLb.setText(acceptedTasks);

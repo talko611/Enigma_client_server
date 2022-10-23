@@ -1,6 +1,7 @@
 package com.enigma.utils;
 
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
 
 public class UiAdapter {
     private SimpleBooleanProperty isActive;
@@ -8,6 +9,7 @@ public class UiAdapter {
     private SimpleBooleanProperty isLoggedIn;
     private SimpleBooleanProperty isInActiveGame;
     private SimpleBooleanProperty isGameEnded;
+    private SimpleStringProperty myName;
 
     public UiAdapter() {
         this.isActive = new SimpleBooleanProperty();
@@ -15,6 +17,19 @@ public class UiAdapter {
         this.isInActiveGame = new SimpleBooleanProperty();
         this.isReady = new SimpleBooleanProperty();
         this.isGameEnded = new SimpleBooleanProperty();
+        this.myName = new SimpleStringProperty("<Anonymous");
+    }
+
+    public void setMyName(String myName) {
+        this.myName.set(myName);
+    }
+
+    public String getMyName() {
+        return myName.get();
+    }
+
+    public SimpleStringProperty myNameProperty() {
+        return myName;
     }
 
     public boolean isIsGameEnded() {

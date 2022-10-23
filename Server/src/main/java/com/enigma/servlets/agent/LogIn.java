@@ -22,12 +22,12 @@ public class LogIn extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String userName = req.getParameter("name");
         UUID allieId = UUID.fromString(req.getParameter("allie"));
-        int numOfWorkers = Integer.parseInt(req.getParameter("workers"));
+        int numOfTask = Integer.parseInt(req.getParameter("numOfTasks"));
         UserManager userManager = ServletsUtils.getUserManager(getServletContext());
         synchronized (this){
             LogInAnswer answer = new LogInAnswer();
             if(!userManager.isAgentExists(userName)){
-                Agent newAgent = userManager.addNewAgent(userName, numOfWorkers,allieId);
+                Agent newAgent = userManager.addNewAgent(userName, numOfTask,allieId);
                 boolean flag = userManager.getAllieById(allieId).addAgent(newAgent);
                 if(flag)
                     resp.setStatus(200);

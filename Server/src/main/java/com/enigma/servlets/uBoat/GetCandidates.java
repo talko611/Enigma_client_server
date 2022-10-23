@@ -33,8 +33,10 @@ public class GetCandidates extends HttpServlet {
             candidateList.forEach(candidate -> {
                 if(candidate.getDecryption().equalsIgnoreCase(battlefield.getDecryptedMessage()) &&
                 candidate.getConfiguration().equals(battlefield.getMessageConfiguration())){
-                    battlefield.setGameStatus(GameStatus.ENDING);
-                    battlefield.setWinners(candidate.getTeamName());
+                    synchronized (battlefield){
+                        battlefield.setGameStatus(GameStatus.ENDING);
+                        battlefield.setWinners(candidate.getTeamName());
+                    }
                 }
             });
             resp.getWriter().println(GSON_SERVICE.toJson(candidateList));

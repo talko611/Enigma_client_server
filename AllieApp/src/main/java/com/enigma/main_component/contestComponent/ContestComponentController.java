@@ -37,6 +37,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 public class ContestComponentController {
+    @FXML private Label myTeamNameLb;
     @FXML private Label battlefieldNameLb;
     @FXML private Label uBoatNameLb;
     @FXML private Label gameStatLb;
@@ -64,6 +65,7 @@ public class ContestComponentController {
     private DashboardController dashboardController;
     private Map<String, AgentDetailsController> agentNameToComponentController;
 
+
     @FXML
     void initialize(){
         this.agentNameToComponentController = new HashMap<>();
@@ -76,24 +78,25 @@ public class ContestComponentController {
         this.candidates = FXCollections.observableArrayList();
         this.candidatesTable.setItems(candidates);
         this.updateGameStatus = (gameDetailsObject)->{
+            updateGameStatusFields(gameDetailsObject);
             switch (gameDetailsObject.getGameStatus()){
                 case AWAITING:
-                    updateGameStatusFields(gameDetailsObject);
                     break;
                 case RUNNING:
-                    updateGameStatusFields(gameDetailsObject);
                     uiAdapter.setIsInActiveGame(true);
                     break;
                 case ENDING:
                     uiAdapter.setIsGameEnded(true);
                     uiAdapter.setIsInActiveGame(false);
                     //Todo - get winner + revel done button when get
+                    break;
             }
         };
         this.updateParticipantsList = (alliDataList)->{
           participants.clear();
           alliDataList.forEach(allieData -> {
-              participants.add(new UiAllie(allieData.getAlliName(), allieData.getNumOfAgents(), allieData.getTaskSize()));
+              participants.add(new UiAllie(allieData.getAlliName().equalsIgnoreCase(myTeamNameLb.getText()) ? allieData.getAlliName() + "(me)" : allieData.getAlliName()
+                      , allieData.getNumOfAgents(), allieData.getTaskSize()));
           });
           this.participantsTable.setItems(participants);
         };
@@ -102,11 +105,16 @@ public class ContestComponentController {
                 AgentDetailsController agentDetailsController = this.agentNameToComponentController.get(agentProgressObject.getAgentName());
                 agentDetailsController.setAcceptedTasksLb(String.valueOf(agentProgressObject.getTasksAccepted()));
                 agentDetailsController.setAssignedTaskLb(String.valueOf(agentProgressObject.getTasksAssigned()));
+                agentDetailsController.setProducedCandidatesLb(String.valueOf(agentProgressObject.getCandidatesProduced()));
                 agentDetailsController.setProgress(agentProgressObject.getTasksAccepted()/ (double) agentProgressObject.getTasksAssigned());
+
             });
         });
         this.updateCandidates = (candidateList -> candidateList
-                .forEach(candidate -> this.candidates.add(new UiCandidate(candidate.getDecryption(), candidate.getConfiguration()))));
+                .forEach(candidate -> {
+                    this.candidates.add(new UiCandidate(candidate.getDecryption(), candidate.getConfiguration()));
+                    this.agentNameToComponentController.get(candidate.getAgentName());
+                }));
     }
 
     @FXML
@@ -155,6 +163,7 @@ public class ContestComponentController {
         this.teamStatLb.setText(gameDetailsObject.getParticipantsStatus());
         this.difficultyLb.setText(gameDetailsObject.getDecryptionLevel());
         this.encryptedMessageLb.setText(gameDetailsObject.getEncryptedMessage() == null ? "": gameDetailsObject.getEncryptedMessage());
+        this.winnerLb.setText(gameDetailsObject.getWinningTeamName());
     }
 
     private void launchGetParticipantsTask(){
@@ -213,6 +222,10 @@ public class ContestComponentController {
         Thread thread = new Thread(new GetCandidatesTask(uiAdapter.isGameEndedProperty(), this.updateCandidates));
         thread.setName("Get Candidates(Allie App)");
         thread.start();
+    }
+
+    public void setMyTeamNameLb(String myTeamNameLb) {
+        this.myTeamNameLb.setText(myTeamNameLb);
     }
 
     public static class UiAllie{

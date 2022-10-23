@@ -34,12 +34,17 @@ public class ServletsUtils {
     }
     public static GameDetailsObject getGameStatus(Battlefield battlefield, UserManager userManager){
         GameDetailsObject gameStatus = new GameDetailsObject();
-        gameStatus.setBattlefieldName(battlefield.getName());
-        gameStatus.setuBoatName(userManager.getUBoatById(battlefield.getUBoatId()).getName());
-        gameStatus.setParticipantsStatus(battlefield.getTeams().size() + "/" + battlefield.getEnigmaParts().getBattlefieldParts().getNumOfAllies());
-        gameStatus.setGameStatus(battlefield.getGameStatus());
-        gameStatus.setDecryptionLevel(battlefield.getEnigmaParts().getBattlefieldParts().getDifficulty().toString());
-        gameStatus.setEncryptedMessage(battlefield.getEncryptedMessage());
+        synchronized (battlefield){
+            gameStatus.setBattlefieldName(battlefield.getName());
+            gameStatus.setuBoatName(userManager.getUBoatById(battlefield.getUBoatId()).getName());
+            gameStatus.setParticipantsStatus(battlefield.getTeams().size() + "/" + battlefield.getEnigmaParts().getBattlefieldParts().getNumOfAllies());
+            gameStatus.setGameStatus(battlefield.getGameStatus());
+            gameStatus.setDecryptionLevel(battlefield.getEnigmaParts().getBattlefieldParts().getDifficulty().toString());
+            gameStatus.setEncryptedMessage(battlefield.getEncryptedMessage());
+            gameStatus.setWinningTeamName(battlefield.getWinners());
+        }
+
+
         return gameStatus;
     }
 }

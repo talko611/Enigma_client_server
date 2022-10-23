@@ -28,9 +28,11 @@ public class LoginController {
     @FXML private ComboBox<String> teamsCb;
     @FXML private ComboBox<Integer> workersCb;
     @FXML private Label message;
+    @FXML private TextField numberOfTasksTf;
 
     private UiAdapter uiAdapter;
     private Map<String, UUID> allies;
+    private int numOfTasks;
 
     @FXML
     void initialize(){
@@ -42,7 +44,10 @@ public class LoginController {
     void loginClicked(ActionEvent event) {
         if(teamsCb.getItems().isEmpty()){
             message.setText("No allie online cannot login until an allie is login");
-        }else{
+        }else if(numberOfTasksTf.getText().isEmpty()){
+            message.setText("Please enter number of tasks");
+        }
+        else{
             if(validateLoginRequest()){
                 loginBt.disableProperty().set(true);
                 logIn();
@@ -63,6 +68,12 @@ public class LoginController {
             message.setText("No Allie team was chosen");
             return false;
         }
+        try {
+            this.numOfTasks = Integer.parseInt(this.numberOfTasksTf.getText());
+        }catch (NumberFormatException e){
+            message.setText("Please enter only positive whole number");
+            return false;
+        }
         return true;
     }
 
@@ -70,7 +81,7 @@ public class LoginController {
         HttpUrl.Builder urlBuilder = HttpUrl.parse(AppUtils.APP_URL + AppUtils.LOGIN_RESOURCE).newBuilder();
         urlBuilder.addQueryParameter("name", nameField.getText())
                 .addQueryParameter("allie", allies.get(teamsCb.getValue()).toString())
-                .addQueryParameter("workers", workersCb.getValue().toString());
+                .addQueryParameter("numOfTasks", String.valueOf(numOfTasks));
         Request request = new Request.Builder().url(urlBuilder.build()).build();
         Call call = AppUtils.CLIENT.newCall(request);
         call.enqueue(new Callback() {
@@ -123,5 +134,13 @@ public class LoginController {
     }
     public int getThreadsNum(){
         return workersCb.getValue();
+    }
+
+    public String getAgentName(){
+        return nameField.getText();
+    }
+
+    public int getNumOfTasks() {
+        return numOfTasks;
     }
 }
