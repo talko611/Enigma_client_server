@@ -1,5 +1,7 @@
 package com.engine.users;
 
+import com.engine.enums.AgentStatus;
+import com.engine.users.battlefield.Battlefield;
 import com.enigma.dtos.dataObjects.Candidate;
 
 import java.util.ArrayList;
@@ -40,11 +42,38 @@ public class Allie extends User{
         }
     }
 
-    public void exitGame(){
+    public synchronized void exitGame(UserManager userManager){
+        Battlefield battlefield = userManager.getBattlefieldById(this.battlefieldId);
+        if(battlefield != null){
+            battlefield.removeAllie(this);
+        }
         battlefieldId = null;
         super.setReadyToPlay(false);
+        super.setInActiveGame(false);
         taskSize = 0;
         numOfTasks = 0;
+        this.candidates.clear();
+        resetActiveAgents();
+        activateWaitingAgents();
+    }
+
+    public void resetActiveAgents(){
+        this.activeAgents.forEach(agent -> {
+            agent.setNumOfTaskAccepted(0);
+            agent.setNumOfTaskAssigned(0);
+            agent.setNumOfCandidatesProduced(0);
+            agent.getTasksToPreform().clear();
+        });
+    }
+
+    private void activateWaitingAgents(){
+        this.waitingAgents.forEach(agent -> agent.setStatus(AgentStatus.ACTIVE));
+        this.activeAgents.addAll(waitingAgents);
+        waitingAgents.clear();
+    }
+
+    public void stopProducer(){
+        this.producer.interrupt();
     }
 
     public  List<Agent> getActiveAgents() {
@@ -73,9 +102,6 @@ public class Allie extends User{
 
     public void setProducer(Thread producer) {
         this.producer = producer;
-    }
-    public void stopProducing(){
-        this.producer.interrupt();
     }
 
     public boolean isProducerStillRunning(){

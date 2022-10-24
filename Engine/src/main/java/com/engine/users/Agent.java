@@ -73,4 +73,7 @@ public class Agent extends User{
     public synchronized long getNumOfTaskAssigned() {
         return numOfTaskAssigned;
     }
+    public synchronized  void setNumOfTaskAssigned(int numOfTasksAssigned){
+        this.numOfTaskAssigned = numOfTasksAssigned;
+    }
 }

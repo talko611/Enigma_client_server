@@ -45,8 +45,15 @@ public class GetParticipantsTask implements Runnable{
         urlBuilder.addQueryParameter("id", AppUtils.CLIENT_ID.toString());
         Request request = new Request.Builder().url(urlBuilder.build()).build();
         Call call = AppUtils.CLIENT.newCall(request);
-        Response response = call.execute();
-        List<AllieData> allieDataList = AppUtils.GSON_SERVICE.fromJson(response.body().charStream(), TypeToken.getParameterized(List.class, AllieData.class).getType());
-        Platform.runLater(()->updateParticipantsList.accept(allieDataList));
+        Response response = null;
+        try {
+            response = call.execute();
+            List<AllieData> allieDataList = AppUtils.GSON_SERVICE.fromJson(response.body().charStream(), TypeToken.getParameterized(List.class, AllieData.class).getType());
+            Platform.runLater(()->updateParticipantsList.accept(allieDataList));
+        } catch (IOException e) {
+            assert response != null;
+            response.body().close();
+        }
+
     }
 }

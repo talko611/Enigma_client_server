@@ -220,6 +220,12 @@ public class DashboardController {
         return new ArrayList<>(agentsList.getItems());
     }
 
+    public void resetComponent(){
+        chosenBattlefield = null;
+        this.battlefieldNameTb.setText("");
+        this.taskSizeTb.setText("");
+    }
+
     public static class UiBattlefield{
         private SimpleStringProperty battlefieldName;
         private SimpleStringProperty uBoatName;

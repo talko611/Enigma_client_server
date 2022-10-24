@@ -27,7 +27,6 @@ public class ProduceTask implements Runnable{
         this.taskSize = taskSize;
         this.rotorsIds = rotorsId;
         this.reflectorId = reflectorId;
-
         this.encryptedMessage = encryptedMessage;
     }
 
@@ -73,6 +72,7 @@ public class ProduceTask implements Runnable{
             }
         }catch (InterruptedException e){
             System.out.println(Thread.currentThread().getName() + " is going down before finishing producing");
+            return;
         }
         System.out.println(Thread.currentThread().getName() + " finish producing");
     }

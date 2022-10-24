@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -98,7 +99,7 @@ public class GetDecryptionTasks implements Runnable{
             } else if (response.code() == 206) {
                 return true;
             }
-        } catch (IOException e) {
+        } catch (IOException | RejectedExecutionException e) {
             System.out.println("Agent App: get tasks thread request failed");
         }
         return false;

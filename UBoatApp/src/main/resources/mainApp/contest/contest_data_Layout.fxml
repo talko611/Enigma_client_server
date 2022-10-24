@@ -98,7 +98,8 @@
                                  <HBox.margin>
                                     <Insets right="10.0" />
                                  </HBox.margin></Button>
-                              <Button fx:id="clearBt" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#clearButtonClicked" text="Clear" />
+                              <Button fx:id="clearBt" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#clearButtonClicked" text="Reset Game" />
+                              <Button fx:id="logOutBt" disable="true" mnemonicParsing="false" onAction="#logOutButtonClicked" text="LogOut" visible="false" />
                            </children>
                            <VBox.margin>
                               <Insets bottom="10.0" top="10.0" />

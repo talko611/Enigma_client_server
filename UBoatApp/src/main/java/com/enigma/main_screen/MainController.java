@@ -6,9 +6,9 @@ import com.enigma.dtos.ServletAnswers.LoadFileAnswer;
 import com.enigma.main_screen.contest_component.ContestDataController;
 import com.enigma.main_screen.machine_component.configuration_component.ConfigurationController;
 import com.enigma.main_screen.machine_component.machine_details_component.MachineDetailsController;
-import com.google.gson.Gson;
 import com.squareup.okhttp.*;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -110,5 +110,9 @@ public class MainController {
         if(uiAdapter.isIsLoaded()){
             configurationComponentController.initComponent(true);
         }
+    }
+
+    public void setLoggedInProperty(SimpleBooleanProperty loggedInProperty){
+        this.uiAdapter.setIsLoggedInProperty(loggedInProperty);
     }
 }

@@ -13,6 +13,7 @@ import com.enigma.main_component.dashboard_tab_component.DashboardController;
 import com.enigma.utiles.AppUtils;
 import com.enigma.utiles.UiAdapter;
 import com.squareup.okhttp.*;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -88,6 +89,8 @@ public class ContestComponentController {
                 case ENDING:
                     uiAdapter.setIsGameEnded(true);
                     uiAdapter.setIsInActiveGame(false);
+                    doneBt.visibleProperty().set(true);
+                    doneBt.disableProperty().set(false);
                     //Todo - get winner + revel done button when get
                     break;
             }
@@ -119,11 +122,8 @@ public class ContestComponentController {
 
     @FXML
     void doneButtonClicked(ActionEvent event) {
-        //Todo init component
-        uiAdapter.setIsReady(false);
-        uiAdapter.setIsJoinToGame(false);
-        uiAdapter.setIsTaskSet(false);
-        uiAdapter.setIsGameEnded(false);
+        doneBt.disableProperty().set(true);
+        launchEndGameRequest();
     }
 
     public void setUiAdapter(UiAdapter uiAdapter) {
@@ -224,8 +224,45 @@ public class ContestComponentController {
         thread.start();
     }
 
+    private void launchEndGameRequest(){
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(AppUtils.APP_URL + AppUtils.EXIT_GAME_RESOURCE).newBuilder();
+        urlBuilder.addQueryParameter("id", AppUtils.CLIENT_ID.toString());
+        Request request = new Request.Builder().url(urlBuilder.build()).build();
+        Call call = AppUtils.CLIENT.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                System.out.println("Exit game request has failed!");
+                Platform.runLater(()->doneBt.disableProperty().set(false));
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                if(response.code() == 200){
+                    Platform.runLater(()->{
+                        resetComponent();
+                        uiAdapter.setIsReady(false);
+                        uiAdapter.setIsJoinToGame(false);
+                        uiAdapter.setIsTaskSet(false);
+                        uiAdapter.setIsGameEnded(false);
+                        doneBt.disableProperty().set(true);
+                        doneBt.visibleProperty().set(false);
+                    });
+                }else {
+                    Platform.runLater(()->doneBt.disableProperty().set(false));
+                }
+            }
+        });
+    }
+
     public void setMyTeamNameLb(String myTeamNameLb) {
         this.myTeamNameLb.setText(myTeamNameLb);
+    }
+
+    private void resetComponent(){
+        participants.clear();
+        candidates.clear();
+        agentProgressContainer.getChildren().clear();
     }
 
     public static class UiAllie{

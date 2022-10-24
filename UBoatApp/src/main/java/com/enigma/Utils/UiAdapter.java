@@ -5,6 +5,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 
 public class UiAdapter {
+    private SimpleBooleanProperty isLoggedIn;
     private SimpleBooleanProperty isLoaded;
     private SimpleBooleanProperty isConfigure;
     private SimpleBooleanProperty isEncryptedMessage;
@@ -26,6 +27,22 @@ public class UiAdapter {
         this.isReady = new SimpleBooleanProperty();
         this.isGameEnded = new SimpleBooleanProperty();
         gameStatus = GameStatus.AWAITING;
+    }
+
+    public void setIsLoggedInProperty(SimpleBooleanProperty isLoggedIn) {
+        this.isLoggedIn = isLoggedIn;
+    }
+
+    public void setIsLoggedIn(boolean isLoggedIn) {
+        this.isLoggedIn.set(isLoggedIn);
+    }
+
+    public boolean isIsLoggedIn() {
+        return isLoggedIn.get();
+    }
+
+    public SimpleBooleanProperty isLoggedInProperty() {
+        return isLoggedIn;
     }
 
     public GameStatus getGameStatus() {

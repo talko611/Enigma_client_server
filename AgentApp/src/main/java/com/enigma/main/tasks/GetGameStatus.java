@@ -13,8 +13,8 @@ import java.io.IOException;
 import java.util.function.Consumer;
 
 public class GetGameStatus implements Runnable{
-    private Consumer<GameDetailsObject> updateGameStatus;
-    private SimpleBooleanProperty isReady;
+    private final Consumer<GameDetailsObject> updateGameStatus;
+    private final SimpleBooleanProperty isReady;
 
     public GetGameStatus(Consumer<GameDetailsObject> updateGameStatus, SimpleBooleanProperty isReady) {
         this.updateGameStatus = updateGameStatus;
@@ -44,8 +44,12 @@ public class GetGameStatus implements Runnable{
         Call call = AppUtils.CLIENT.newCall(request);
         try {
             Response response = call.execute();
-            GameDetailsObject gameDetails = AppUtils.GSON_SERVICE.fromJson(response.body().charStream(), GameDetailsObject.class);
-            Platform.runLater(()->updateGameStatus.accept(gameDetails));
+            if(response.code() == 200){
+                GameDetailsObject gameDetails = AppUtils.GSON_SERVICE.fromJson(response.body().charStream(), GameDetailsObject.class);
+                Platform.runLater(()->updateGameStatus.accept(gameDetails));
+            }else if(response.code() == 206){
+                Platform.runLater(()->isReady.set(false));
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

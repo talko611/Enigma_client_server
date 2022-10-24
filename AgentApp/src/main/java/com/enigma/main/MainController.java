@@ -75,9 +75,10 @@ public class MainController {
             updateGameStatusFields(gameDetailsObject);
             switch (gameDetailsObject.getGameStatus()){
                 case ENDING:
-                    this.uiAdapter.isGameEndedProperty().set(true);
+                    uiAdapter.isGameEndedProperty().set(true);
+                    uiAdapter.isInActiveGameProperty().set(false);
                     this.executorService.shutdownNow();
-                    //todo end all threads
+                    break;
                 case RUNNING:
                     uiAdapter.setIsInActiveGame(true);
                     break;
@@ -94,6 +95,7 @@ public class MainController {
             uiCandidatesList.add(new UiCandidate(candidate.getDecryption(), candidate.getConfiguration()));
         };
     }
+
     private void initComponent(){
         this.uBoatNameLb.setText("");
         this.gameStatusLb.setText("waiting to join for new game");
@@ -101,10 +103,12 @@ public class MainController {
         this.participantsLb.setText("");
         this.difficultyLb.setText("");
         this.percentageLb.setText("0%");
-        this.tasksPreformedLb.setText("0");
-        this.tasksAcceptedLb.setText("0");
+        this.tasksPreformed.set(0);
+        this.tasksAccepted.set(0);
+        uiCandidatesList.clear();
         this.taskProgressBar.setProgress(0);
     }
+
     private void updateGameStatusFields(GameDetailsObject gameDetailsObject){
         this.uBoatNameLb.setText(gameDetailsObject.getuBoatName());
         this.battlefieldNameLb.setText(gameDetailsObject.getBattlefieldName());
@@ -139,6 +143,8 @@ public class MainController {
 
         uiAdapter.isReadyProperty().addListener((observable, oldValue, newValue) -> {
             if(!newValue){
+                uiAdapter.isGameEndedProperty().set(false);
+                initComponent();
                 getParts();
             }if(newValue){
                 getGameStatus();
@@ -171,6 +177,7 @@ public class MainController {
     public void setNumOfWorkers(int numOfWorkers) {
         this.numOfThreads = numOfWorkers;
     }
+
     public void setAgentNameLb(String agentNameLb){this.agentNameLb.setText(agentNameLb);}
 
     public static class UiCandidate{

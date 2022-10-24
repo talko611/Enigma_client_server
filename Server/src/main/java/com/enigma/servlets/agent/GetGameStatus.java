@@ -17,7 +17,6 @@ import java.util.*;
 
 @WebServlet("/agent/get_game_status")
 public class GetGameStatus extends HttpServlet {
-    private final Gson GSON_SERVICE = new Gson();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try{

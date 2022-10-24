@@ -39,6 +39,7 @@ public class ContestDataController {
     @FXML private Button resetMachineBt;
     @FXML private Button readyBt;
     @FXML private Button clearBt;
+    @FXML private Button logOutBt;
     @FXML private TableView<UiAllie> teamsTable;
     @FXML private TableColumn<?, ?> teamNameParCol;
     @FXML private TableColumn<?, ?> agentNumCol;
@@ -49,13 +50,10 @@ public class ContestDataController {
     @FXML private TableColumn<?, ?> decryptionCol;
     @FXML private TableColumn<?, ?> teamNameCanCol;
     @FXML private TableColumn<?, ?> configurationCol;
-
     private ObservableList<UiAllie> uiAllies;
     private ObservableList<UiCandidate> uiCandidates;
-
     private UiAdapter uiAdapter;
     private Trie dictionary;
-
     private Consumer<GameDetailsObject> updateGameDetails;
     private Consumer<List<Candidate>> updateCandidates;
     @FXML
@@ -94,6 +92,7 @@ public class ContestDataController {
                     case ENDING:
                         uiAdapter.setIsGameEnded(true);
                         uiAdapter.setIsInActiveGame(false);
+                        userMessage.setText("Team " + gameDetailsObject.getWinningTeamName() + " has won!");
                         break;
                 }
             }
@@ -121,7 +120,12 @@ public class ContestDataController {
 
     @FXML
     void clearButtonClicked(ActionEvent event){
+        launchResetGameRequest();
+    }
 
+    @FXML
+    void logOutButtonClicked(ActionEvent event){
+        launchLogOutRequest();
     }
 
     public void setUiAdapter(UiAdapter uiAdapter) {
@@ -137,17 +141,41 @@ public class ContestDataController {
             }
         });
         uiAdapter.isReadyProperty().addListener((observable, oldValue, newValue) -> {
-            if(newValue)
+            if(newValue){
                 listenToGameStatus();
+                this.readyBt.disableProperty().set(true);
+            }
+            else{
+                this.processBt.disableProperty().set(false);
+                this.resetMachineBt.disableProperty().set(false);
+                this.clearBt.disableProperty().set(true);
+                this.logOutBt.disableProperty().set(true);
+                this.logOutBt.visibleProperty().set(false);
+                getParticipants();
+            }
+
         });
         uiAdapter.isInActiveGameProperty().addListener((observable, oldValue, newValue) -> {
-            if(newValue)
+            if(newValue){
                 launchGetCandidatesRequest();
+                this.readyBt.disableProperty().set(true);
+            }
+
         });
-        clearBt.disableProperty().bind(uiAdapter.isInActiveGameProperty().or(uiAdapter.isEncryptedMessageProperty()).or(uiAdapter.isReadyProperty()));
-        resetMachineBt.disableProperty().bind(uiAdapter.isInActiveGameProperty().or(uiAdapter.isEncryptedMessageProperty()).or(uiAdapter.isReadyProperty()));
-        readyBt.disableProperty().bind(uiAdapter.isEncryptedMessageProperty().not().or(uiAdapter.isGameEndedProperty()).or(uiAdapter.isInActiveGameProperty()));
-        processBt.disableProperty().bind(uiAdapter.isEncryptedMessageProperty().or(uiAdapter.isGameEndedProperty()));
+        uiAdapter.isEncryptedMessageProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue){
+                this.processBt.disableProperty().set(true);
+                this.resetMachineBt.disableProperty().set(true);
+                this.readyBt.disableProperty().set(false);
+            }
+        });
+        uiAdapter.isGameEndedProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue){
+                this.clearBt.disableProperty().set(false);
+                this.logOutBt.disableProperty().set(false);
+                this.logOutBt.visibleProperty().set(true);
+            }
+        });
         configurationLb.textProperty().bind(uiAdapter.currentConfigProperty());
         battlefieldNameLb.textProperty().bind(uiAdapter.battlefieldNameProperty());
     }
@@ -251,10 +279,60 @@ public class ContestDataController {
             }
         });
     }
+
     private void launchGetCandidatesRequest(){
         Thread thread = new Thread(new GetCandidatesTask(uiAdapter.isGameEndedProperty(), this.updateCandidates));
         thread.setName("Update Candidates(UBoat App)");
         thread.start();
+    }
+
+    private void launchResetGameRequest(){
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(AppUtils.APP_URL + AppUtils.RESET_GAME_RESOURCE).newBuilder();
+        urlBuilder.addQueryParameter("id", AppUtils.CLIENT_ID.toString());
+        Request request = new Request.Builder().url(urlBuilder.build()).build();
+        Call call = AppUtils.HTTP_CLIENT.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                Platform.runLater(()->userMessage.setText("Rest request has failed"));
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                if(response.code() == 200){
+                    Platform.runLater(()->{
+                        uiAdapter.setIsReady(false);
+                        uiAdapter.setIsGameEnded(false);
+                        uiAdapter.setIsEncryptedMessage(false);
+                        srcMessageTb.setText("");
+                        encryptedMessage.setText("");
+                        userMessage.setText("Game has been reset");
+                        uiCandidates.clear();
+                    });
+                }
+            }
+        });
+    }
+
+    private void launchLogOutRequest(){
+        HttpUrl.Builder  urlBuilder = HttpUrl.parse(AppUtils.APP_URL + AppUtils.LOG_OUR_RESOURCE).newBuilder();
+        urlBuilder.addQueryParameter("id", AppUtils.CLIENT_ID.toString());
+        Request request = new Request.Builder().url(urlBuilder.build()).build();
+        Call call = AppUtils.HTTP_CLIENT.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                Platform.runLater(()->userMessage.setText("Something got wrong cannot succeed to log out\nPlease Try again"));
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                if(response.code() == 200){
+                    Platform.runLater(()->uiAdapter.setIsLoggedIn(false));
+
+                }
+            }
+        });
     }
 
     public static class UiAllie{

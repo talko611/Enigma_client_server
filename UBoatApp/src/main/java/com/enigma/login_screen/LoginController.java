@@ -59,11 +59,14 @@ public class LoginController {
             message.visibleProperty().set(true);
         }
     }
-
     public void setIsLoginSuccessful(SimpleBooleanProperty isLoginSuccessful) {
         this.isLoginSuccessful = isLoginSuccessful;
     }
     public String getName(){
         return nameField.getText();
+    }
+    public void resetComponent(){
+        this.nameField.clear();
+        this.message.setText("");
     }
 }

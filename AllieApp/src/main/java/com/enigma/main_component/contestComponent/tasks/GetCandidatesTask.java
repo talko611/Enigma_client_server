@@ -49,10 +49,17 @@ public class GetCandidatesTask implements Runnable{
         urlBuilder.addQueryParameter("id", AppUtils.CLIENT_ID.toString());
         Request request = new Request.Builder().url(urlBuilder.build()).build();
         Call call = AppUtils.CLIENT.newCall(request);
-        Response response = call.execute();
-        List<Candidate> candidateList = AppUtils.GSON_SERVICE.fromJson(response.body().charStream(), TypeToken.getParameterized(List.class, Candidate.class).getType());
-        if(!candidateList.isEmpty()){
-            Platform.runLater(()->updateCandidates.accept(candidateList));
+        Response response = null;
+        try {
+            response = call.execute();
+            List<Candidate> candidateList = AppUtils.GSON_SERVICE.fromJson(response.body().charStream(), TypeToken.getParameterized(List.class, Candidate.class).getType());
+            if(!candidateList.isEmpty()){
+                Platform.runLater(()->updateCandidates.accept(candidateList));
+            }
+        } catch (IOException e) {
+            assert response != null;
+            response.body().close();
         }
+
     }
 }

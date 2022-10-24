@@ -137,8 +137,13 @@ public class UserManager {
 
     public void removeBattlefieldById(UUID battlefieldId){
         synchronized (battlefieldLock){
-            battlefields.get(battlefieldId).freeAllies();
             battlefields.remove(battlefieldId);
+        }
+    }
+
+    public void removeUBoat(UUID uBoatId){
+        synchronized (uBoatsLock){
+            uBoats.remove(uBoatId);
         }
     }
 

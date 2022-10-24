@@ -40,6 +40,7 @@ public class MainController {
             }else{
                 dashboardTab.disableProperty().set(false);
                 contestTab.disableProperty().set(true);
+                dashboardComponentController.resetComponent();
                 mainTabPane.getSelectionModel().select(dashboardTab);
             }
         });

@@ -39,6 +39,16 @@ public class Battlefield {
         winners ="";
     }
 
+    public synchronized void reset(){
+        encryptedMessage = null;
+        decryptedMessage = null;
+        messageConfiguration = null;
+        winners = "";
+        gameStatus = GameStatus.AWAITING;
+        candidates.clear();
+        teams.clear();
+    }
+
     public void setDecryptedMessage(String decryptedMessage) {
         this.decryptedMessage = decryptedMessage;
     }
@@ -114,12 +124,8 @@ public class Battlefield {
     public void addNewAllie(Allie allie){
         teams.add(allie);
     }
-    public void removeAllie(Allie allie){
+    public synchronized void removeAllie(Allie allie){
         teams.remove(allie);
-    }
-
-    public void freeAllies(){
-        teams.forEach(Allie::exitGame);
     }
 
     public void updateActivateGame(UserManager userManager){

@@ -29,7 +29,8 @@ public class GetGameStatus extends HttpServlet {
                 userId = UUID.fromString(String.valueOf(req.getAttribute("id")));
                 allie = userManager.getAllieById(userId);
                 if(allie == null){
-                    throw new NullPointerException("User is not found");
+                    resp.setStatus(404);
+                    return;
                 }
             }
             Battlefield battlefield = userManager.getBattlefieldById(allie.getBattlefieldId());
@@ -38,12 +39,15 @@ public class GetGameStatus extends HttpServlet {
                 if(battlefield.getGameStatus() == GameStatus.RUNNING){
                     updateAgentsGameStarted(allie);
                     allie.setInActiveGame(true);
+                } else if (battlefield.getGameStatus() == GameStatus.ENDING) {
+                    allie.stopProducer();
                 }
                 //Todo -  decide what to do in other situations
                 gameStatus = ServletsUtils.getGameStatus(battlefield, userManager);
             }
             resp.getWriter().println(GSON_SERVICE.toJson(gameStatus));
         }catch (NullPointerException e){
+            resp.setStatus(206);
             //Todo - redirect to login
         }
     }

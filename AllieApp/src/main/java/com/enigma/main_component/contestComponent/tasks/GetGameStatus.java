@@ -45,8 +45,15 @@ public class GetGameStatus implements Runnable{
         urlBuilder.addQueryParameter("id", AppUtils.CLIENT_ID.toString());
         Request request = new Request.Builder().url(urlBuilder.build()).build();
         Call call = AppUtils.CLIENT.newCall(request);
-        Response response = call.execute();
-        GameDetailsObject gameStatus = AppUtils.GSON_SERVICE.fromJson(response.body().charStream(), GameDetailsObject.class);
-        Platform.runLater(()->updateGameStatus.accept(gameStatus));
+        Response response = null;
+        try {
+            response = call.execute();
+            GameDetailsObject gameStatus = AppUtils.GSON_SERVICE.fromJson(response.body().charStream(), GameDetailsObject.class);
+            Platform.runLater(()->updateGameStatus.accept(gameStatus));
+        } catch (IOException e) {
+            assert response != null;
+            response.body().close();
+        }
+
     }
 }

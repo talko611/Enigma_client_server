@@ -120,7 +120,7 @@
                         <Insets bottom="5.0" />
                      </VBox.margin>
                   </HBox>
-                  <Button fx:id="doneBt" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#doneButtonClicked" prefHeight="20.0" prefWidth="50.0" text="Done" visible="false">
+                  <Button fx:id="doneBt" disable="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#doneButtonClicked" prefHeight="25.0" prefWidth="50.0" text="Done" visible="false">
                      <VBox.margin>
                         <Insets bottom="10.0" />
                      </VBox.margin>

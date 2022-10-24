@@ -21,6 +21,7 @@ public class AppUtils {
     public static final String START_PRODUCING_TASKS_RESOURCE = "start_producing";
     public static final String GET_AGENT_PROGRESS_RESOURCE = "get_agents_progress";
     public static final String GET_CANDIDATES_RESOURCE = "get_candidates";
+    public static final String EXIT_GAME_RESOURCE = "exit_game";
 
     public static void setClientId(UUID clientId) {
         CLIENT_ID = clientId;
