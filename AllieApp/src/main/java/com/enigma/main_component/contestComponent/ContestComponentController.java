@@ -208,6 +208,7 @@ public class ContestComponentController {
                 if(response.code() != 200){
                     System.out.println("Allie app : start producing request has been denied");
                 }
+                response.body().close();
             }
         });
     }
@@ -251,6 +252,7 @@ public class ContestComponentController {
                 }else {
                     Platform.runLater(()->doneBt.disableProperty().set(false));
                 }
+                response.body().close();
             }
         });
     }

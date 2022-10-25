@@ -13,6 +13,8 @@ import com.enigma.main_screen.contest_component.trie_data_structure.Trie;
 import com.google.gson.Gson;
 import com.squareup.okhttp.*;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -56,6 +58,7 @@ public class ContestDataController {
     private Trie dictionary;
     private Consumer<GameDetailsObject> updateGameDetails;
     private Consumer<List<Candidate>> updateCandidates;
+    private String lastInitialConfiguration;
     @FXML
     void initialize(){
         this.teamNameParCol.setCellValueFactory(new PropertyValueFactory<>("teamName"));
@@ -105,6 +108,7 @@ public class ContestDataController {
 
     @FXML
     void processButtonClicked(ActionEvent event) {
+        lastInitialConfiguration = uiAdapter.getCurrentConfig();
         launchEncryptRequest();
     }
 

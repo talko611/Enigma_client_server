@@ -36,6 +36,11 @@ public class GetAgentProgressTask implements Runnable{
                 System.out.println(Thread.currentThread().getName() + "(Allie app)-> was interrupted");
             }
         }
+        try {
+            launchGetAgentProgressRequest();
+        } catch (IOException e) {
+            System.out.println(Thread.currentThread().getName() + "(Allie app)-> request failed");
+        }
         System.out.println(Thread.currentThread().getName() + "(Allie app)-> is going down");
     }
 
@@ -44,17 +49,10 @@ public class GetAgentProgressTask implements Runnable{
         urlBuilder.addQueryParameter("id", AppUtils.CLIENT_ID.toString());
         Request request = new Request.Builder().url(urlBuilder.build()).build();
         Call call = AppUtils.CLIENT.newCall(request);
-        Response response = null;
-        try {
-            response = call.execute();
-            List<AgentProgressObject> agentProgressObjectList = AppUtils.GSON_SERVICE.fromJson(response.body().charStream(), TypeToken.getParameterized(List.class, AgentProgressObject.class).getType());
-            if(!agentProgressObjectList.isEmpty()){
-                Platform.runLater(()->updateAgentProgress.accept(agentProgressObjectList));
-            }
-        } catch (IOException e) {
-            assert response != null;
-            response.body().close();
-
+        Response response = call.execute();
+        List<AgentProgressObject> agentProgressObjectList = AppUtils.GSON_SERVICE.fromJson(response.body().charStream(), TypeToken.getParameterized(List.class, AgentProgressObject.class).getType());
+        if(!agentProgressObjectList.isEmpty()){
+            Platform.runLater(()->updateAgentProgress.accept(agentProgressObjectList));
         }
     }
 }

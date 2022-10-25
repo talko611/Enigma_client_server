@@ -121,6 +121,7 @@ public class DashboardController {
                     Platform.runLater(()->{
                         userMessage.setText("Cannot fulfill request please check if you sign to battlefield and set task size");
                     });
+                    response.body().close();
                 }
             }
         });

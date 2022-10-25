@@ -45,7 +45,7 @@ public class GetMyAgentsTask implements Runnable{
             Response response = call.execute();
             List<String> agents = AppUtils.GSON_SERVICE.fromJson(response.body().charStream(), TypeToken.getParameterized(List.class, String.class).getType());
             Platform.runLater(()-> updateAgents.accept(agents));
-            response.body().close();
+
         } catch (IOException e) {
             System.out.println("Get Agent request failed");
         }

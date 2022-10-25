@@ -4,6 +4,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 
+import java.text.NumberFormat;
+
 public class AgentDetailsController {
     @FXML private Label agentNameLb;
     @FXML private Label assignedTaskLb;
@@ -11,6 +13,13 @@ public class AgentDetailsController {
     @FXML private ProgressBar agentProgressBar;
     @FXML private Label progressBarLb;
     @FXML private Label producedCandidatesLb;
+    private NumberFormat nf;
+
+    @FXML
+    void initialize(){
+        this.nf = NumberFormat.getInstance();
+        nf.setMaximumFractionDigits(2);
+    }
 
     public void setAgentName(String name){
         this.agentNameLb.setText(name);
@@ -29,6 +38,6 @@ public class AgentDetailsController {
 
     public void setProgress(double progress){
         this.agentProgressBar.setProgress(progress);
-        this.progressBarLb.setText(progress * 100 +"%");
+        this.progressBarLb.setText(nf.format(progress * 100) + "%");
     }
 }

@@ -84,6 +84,7 @@ public class GetDecryptionTasks implements Runnable{
         urlBuildr.addQueryParameter("id", AppUtils.CLIENT_ID.toString());
         Request request = new Request.Builder().url(urlBuildr.build()).build();
         Call call = AppUtils.CLIENT.newCall(request);
+        int tasksSize = 0;
         try {
             Response response = call.execute();
             if(response.code() == 200){
@@ -91,16 +92,24 @@ public class GetDecryptionTasks implements Runnable{
                 if(tasks != null){
                     this.numOfTasksToExecute.accumulateAndGet(tasks.size(), Integer::sum);
                     launchTasksToExecutes(tasks);
+                    tasksSize = tasks.size();
+                    int finalTasksSize1 = tasksSize;
                     Platform.runLater(()->{
-                        tasksAssigned.set(tasksAssigned.get() + tasks.size());
+                        tasksAssigned.set(tasksAssigned.get() + finalTasksSize1);
                         updateProgress.accept(tasksAssigned.get());
                     });
                 }
             } else if (response.code() == 206) {
+                response.body().close();
                 return true;
             }
-        } catch (IOException | RejectedExecutionException e) {
+        } catch (IOException e) {
             System.out.println("Agent App: get tasks thread request failed");
+        }catch (RejectedExecutionException e){
+            int finalTasksSize = tasksSize;
+            Platform.runLater(()->{
+                tasksAssigned.set(tasksAssigned.get() + finalTasksSize);
+            });
         }
         return false;
     }

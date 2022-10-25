@@ -47,7 +47,6 @@ public class GetBattlefieldsTask implements Runnable {
             Platform.runLater(()->{
                 updateBattlefieldTable.accept(answer);
             });
-            response.body().close();
         }catch (IOException e){
             System.out.println("Got exception from server");
         }

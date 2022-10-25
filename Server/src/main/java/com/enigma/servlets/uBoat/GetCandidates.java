@@ -35,7 +35,8 @@ public class GetCandidates extends HttpServlet {
                 candidate.getConfiguration().equals(battlefield.getMessageConfiguration())){
                     synchronized (battlefield){
                         battlefield.setGameStatus(GameStatus.ENDING);
-                        battlefield.setWinners(candidate.getTeamName());
+                        if(battlefield.getWinners().equals(""))
+                            battlefield.setWinners(candidate.getTeamName());
                     }
                 }
             });
