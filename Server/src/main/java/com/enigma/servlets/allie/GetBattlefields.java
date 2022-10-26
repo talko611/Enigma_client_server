@@ -35,7 +35,7 @@ public class GetBattlefields extends HttpServlet {
                 throw new NullPointerException("User is not exist");
             }
         }catch (NullPointerException e){
-            //TODO - redirect to login page
+            resp.setStatus(404);
         }
     }
 

@@ -42,7 +42,7 @@ public class GetCandidates extends HttpServlet {
             });
             resp.getWriter().println(GSON_SERVICE.toJson(candidateList));
         }catch (NullPointerException e){
-            //todo -redirect to login
+            resp.setStatus(404);
         }
     }
 }

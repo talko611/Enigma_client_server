@@ -8,15 +8,14 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.scene.Parent;
 
 import java.io.IOException;
 import java.util.function.Consumer;
 
 public class GetGameStatus implements Runnable{
-    private Consumer<GameDetailsObject> updateGameStatus;
-    private SimpleBooleanProperty isGameEnded;
-    private SimpleBooleanProperty isReady;
+    private final Consumer<GameDetailsObject> updateGameStatus;
+    private final SimpleBooleanProperty isGameEnded;
+    private final SimpleBooleanProperty isReady;
 
     public GetGameStatus(Consumer<GameDetailsObject> updateGameStatus, SimpleBooleanProperty isReady, SimpleBooleanProperty isGameEnded) {
         this.updateGameStatus = updateGameStatus;
@@ -26,18 +25,18 @@ public class GetGameStatus implements Runnable{
 
     @Override
     public void run() {
-        System.out.println("Allie app: get game status thread is up");
+        System.out.println("Allie app(" + Thread.currentThread().getName() + ") -> is up");
         while (isReady.get() && !isGameEnded.get()){
             try {
                 getGameStatusRequest();
-                Thread.sleep(1500);
+                Thread.sleep(1000);
             } catch (IOException e) {
-                System.out.println("Allie app: get game status thread request was failed");
+                System.out.println("Allie app(" + Thread.currentThread().getName() + ") -> failed to close response");
             } catch (InterruptedException e) {
-                System.out.println("Allie app: get game status thread was interrupted");
+                System.out.println("Allie app(" + Thread.currentThread().getName() + ") -> was interrupted");
             }
         }
-        System.out.println("Allie app: get game status thread is going down");
+        System.out.println("Allie app(" + Thread.currentThread().getName() + ") -> is going down");
     }
 
     private void getGameStatusRequest() throws IOException {
@@ -45,9 +44,16 @@ public class GetGameStatus implements Runnable{
         urlBuilder.addQueryParameter("id", AppUtils.CLIENT_ID.toString());
         Request request = new Request.Builder().url(urlBuilder.build()).build();
         Call call = AppUtils.CLIENT.newCall(request);
-        Response response = call.execute();
-        GameDetailsObject gameStatus = AppUtils.GSON_SERVICE.fromJson(response.body().charStream(), GameDetailsObject.class);
-        Platform.runLater(()->updateGameStatus.accept(gameStatus));
-
+        Response response = null;
+        try{
+            response = call.execute();
+            GameDetailsObject gameStatus = AppUtils.GSON_SERVICE.fromJson(response.body().charStream(), GameDetailsObject.class);
+            Platform.runLater(()->updateGameStatus.accept(gameStatus));
+        }catch (IOException e){
+            System.out.println("Allie app(" + Thread.currentThread().getName() + ") -> request failed");
+        }finally {
+            if(response != null)
+                response.body().close();
+        }
     }
 }

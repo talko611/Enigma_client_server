@@ -34,7 +34,7 @@ public class GetAgents extends HttpServlet {
                 resp.getWriter().println(GSON_SERVICE.toJson(agentNames));
             }
         }catch (NullPointerException e){
-            //TODO - redirect to login page
+            resp.setStatus(404);
         }
 
     }

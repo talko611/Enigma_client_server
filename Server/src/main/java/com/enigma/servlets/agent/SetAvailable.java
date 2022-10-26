@@ -2,9 +2,7 @@ package com.enigma.servlets.agent;
 
 import com.engine.enums.AgentStatus;
 import com.engine.users.Agent;
-import com.engine.users.Allie;
 import com.engine.users.UserManager;
-import com.engine.users.battlefield.Battlefield;
 import com.enigma.servlets.ServletsUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -30,7 +28,7 @@ public class SetAvailable extends HttpServlet {
             }
 
         }catch (NullPointerException e){
-            //Todo - redirect
+            resp.setStatus(404);
         }
 
     }

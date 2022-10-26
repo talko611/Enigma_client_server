@@ -1,15 +1,10 @@
 package com.enigma.utils;
 
-import com.enigma.dtos.dataObjects.DecryptionTaskData;
-import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.squareup.okhttp.*;
 
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.List;
+
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class AppUtils {
     public static final OkHttpClient CLIENT = new OkHttpClient();
@@ -24,12 +19,5 @@ public class AppUtils {
     public static final String GET_GAME_STATUS = "get_game_status";
     public static final String GET_TASKS_RESOURCE = "get_tasks";
     public static final String REPORT_OF_CANDIDATES = "report_candidates";
-
-    public static void main(String[] args) {
-        AtomicInteger integer = new AtomicInteger(10);
-        System.out.println(integer.accumulateAndGet(10, Integer::sum));
-    }
-
-
 
 }

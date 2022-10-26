@@ -1,6 +1,6 @@
 package com.enigma.dtos.ServletAnswers;
 
-import java.util.ArrayList;
+
 import java.util.List;
 
 public class MachinePartsAnswer {

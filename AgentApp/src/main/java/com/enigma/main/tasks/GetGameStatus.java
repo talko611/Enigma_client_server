@@ -23,27 +23,30 @@ public class GetGameStatus implements Runnable{
 
     @Override
     public void run() {
-        System.out.println("Agent app: get details app is started");
+        System.out.println("Agent app(" + Thread.currentThread().getName() + ") -> is started");
         while(isReady.get()){
-            getGameStatus();
             try {
+                getGameStatus();
                 Thread.sleep(1500);
             } catch (InterruptedException e) {
-                System.out.println("Agent app: get details app was interrupted");
+                System.out.println("Agent app(" + Thread.currentThread().getName() + ") -> was interrupted");
             }catch (RuntimeException e){
-                System.out.println("Agent app: get details app got exception from server");
+                System.out.println("Agent app(" + Thread.currentThread().getName() + ") -> got exception from server");
+            }catch (IOException e){
+                System.out.println("Agent app(" + Thread.currentThread().getName() + ") -> could not close response body");
             }
         }
-        System.out.println("Agent app: get details app is going down");
+        System.out.println("Agent app(" + Thread.currentThread().getName() + ") -> is going down");
     }
 
-    private void getGameStatus(){
+    private void getGameStatus() throws IOException {
         HttpUrl.Builder urlBuilder = HttpUrl.parse(AppUtils.APP_URL + AppUtils.GET_GAME_STATUS).newBuilder();
         urlBuilder.addQueryParameter("id", AppUtils.CLIENT_ID.toString());
         Request request = new Request.Builder().url(urlBuilder.build()).build();
         Call call = AppUtils.CLIENT.newCall(request);
+        Response response = null;
         try {
-            Response response = call.execute();
+            response = call.execute();
             if(response.code() == 200){
                 GameDetailsObject gameDetails = AppUtils.GSON_SERVICE.fromJson(response.body().charStream(), GameDetailsObject.class);
                 Platform.runLater(()->updateGameStatus.accept(gameDetails));
@@ -52,6 +55,9 @@ public class GetGameStatus implements Runnable{
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }finally {
+            if(response != null)
+            response.body().close();
         }
 
     }

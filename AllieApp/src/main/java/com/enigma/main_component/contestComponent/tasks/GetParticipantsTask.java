@@ -16,8 +16,8 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class GetParticipantsTask implements Runnable{
-    private SimpleBooleanProperty isGameActive;
-    private Consumer<List<AllieData>> updateParticipantsList;
+    private final SimpleBooleanProperty isGameActive;
+    private final Consumer<List<AllieData>> updateParticipantsList;
 
     public GetParticipantsTask(SimpleBooleanProperty isGameActive, Consumer<List<AllieData>> updateParticipantsList) {
         this.isGameActive = isGameActive;
@@ -26,18 +26,18 @@ public class GetParticipantsTask implements Runnable{
 
     @Override
     public void run() {
-        System.out.println("Allie app : Get participants task is up");
+        System.out.println("Allie app(" + Thread.currentThread().getName() + ") -> is up");
         while (!isGameActive.get()){
             try {
                 launchGetGameParticipantsRequest();
                 Thread.sleep(1500);
             } catch (IOException e) {
-                System.out.println("Allie app : Get participants task was failed");
+                System.out.println("Allie app(" + Thread.currentThread().getName() + ") -> failed to close response");
             } catch (InterruptedException e) {
-                System.out.println("Allie app : Get participants task was interrupted");
+                System.out.println("Allie app(" + Thread.currentThread().getName() + ") -> was interrupted");
             }
         }
-        System.out.println("Allie app : Get participants task is going down");
+        System.out.println("Allie app(" + Thread.currentThread().getName() + ") -> is going down");
     }
 
     private void launchGetGameParticipantsRequest() throws IOException {
@@ -45,8 +45,17 @@ public class GetParticipantsTask implements Runnable{
         urlBuilder.addQueryParameter("id", AppUtils.CLIENT_ID.toString());
         Request request = new Request.Builder().url(urlBuilder.build()).build();
         Call call = AppUtils.CLIENT.newCall(request);
-        Response response = call.execute();
-        List<AllieData> allieDataList = AppUtils.GSON_SERVICE.fromJson(response.body().charStream(), TypeToken.getParameterized(List.class, AllieData.class).getType());
-        Platform.runLater(()->updateParticipantsList.accept(allieDataList));
+        Response response = null;
+        try{
+            response = call.execute();
+            List<AllieData> allieDataList = AppUtils.GSON_SERVICE.fromJson(response.body().charStream(), TypeToken.getParameterized(List.class, AllieData.class).getType());
+            Platform.runLater(()->updateParticipantsList.accept(allieDataList));
+        }catch (IOException e){
+            System.out.println("Allie app(" + Thread.currentThread().getName() + ") -> request failed");
+        }finally {
+            if(response != null)
+                response.body().close();
+        }
+
     }
 }

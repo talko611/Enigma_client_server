@@ -3,7 +3,6 @@ package com.enigma.main_component;
 import com.enigma.main_component.contestComponent.ContestComponentController;
 import com.enigma.main_component.dashboard_tab_component.DashboardController;
 import com.enigma.utiles.UiAdapter;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;

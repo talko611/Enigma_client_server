@@ -6,14 +6,14 @@ import javafx.beans.property.SimpleStringProperty;
 
 public class UiAdapter {
     private SimpleBooleanProperty isLoggedIn;
-    private SimpleBooleanProperty isLoaded;
-    private SimpleBooleanProperty isConfigure;
-    private SimpleBooleanProperty isEncryptedMessage;
-    private SimpleBooleanProperty isReady;
-    private SimpleBooleanProperty isGameEnded;
-    private SimpleStringProperty currentConfig;
-    private SimpleBooleanProperty isInActiveGame;
-    private SimpleStringProperty battlefieldName;
+    private final SimpleBooleanProperty isLoaded;
+    private final SimpleBooleanProperty isConfigure;
+    private final SimpleBooleanProperty isEncryptedMessage;
+    private final SimpleBooleanProperty isReady;
+    private final SimpleBooleanProperty isGameEnded;
+    private final SimpleStringProperty currentConfig;
+    private final SimpleBooleanProperty isInActiveGame;
+    private final SimpleStringProperty battlefieldName;
     private String srcMessage;
     private GameStatus gameStatus;
 

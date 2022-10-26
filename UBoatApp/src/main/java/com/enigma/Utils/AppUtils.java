@@ -19,8 +19,8 @@ public class AppUtils {
     public static final String GET_GAME_STATUS_RESOURCE = "get_game_status";
     public static final String GET_CANDIDATES_RESOURCE = "get_candidates";
     public static final String RESET_GAME_RESOURCE = "reset_game";
-
     public static final String LOG_OUR_RESOURCE = "logOut";
+    public static final String RESET_MACHINE_RESOURCE = "reset_machine";
     public static final OkHttpClient HTTP_CLIENT = new OkHttpClient();
     public static UUID CLIENT_ID;
     public static final Gson GSON_SERVICE = new Gson();

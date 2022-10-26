@@ -23,7 +23,7 @@ public class GetEnigmaParts extends HttpServlet {
             Agent agent = userManager.getAgentById(agentId);
             Battlefield battlefield = userManager.getBattlefieldById(userManager.getAllieById(agent.getAllieId()).getBattlefieldId());
             if(battlefield == null){
-                resp.setStatus(404);
+                resp.setStatus(401);
             }else {
                 synchronized (battlefield){
                     if(battlefield.getEnigmaParts() == null){
@@ -35,7 +35,7 @@ public class GetEnigmaParts extends HttpServlet {
                 }
             }
         }catch (NullPointerException e){
-            //Todo- redirect
+            resp.setStatus(404);
         }
 
     }

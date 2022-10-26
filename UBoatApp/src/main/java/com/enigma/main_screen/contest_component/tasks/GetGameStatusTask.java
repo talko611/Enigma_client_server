@@ -13,8 +13,8 @@ import java.io.IOException;
 import java.util.function.Consumer;
 
 public class GetGameStatusTask implements Runnable{
-    private SimpleBooleanProperty isGameEnded;
-    private Consumer<GameDetailsObject> updateGameStatus;
+    private final SimpleBooleanProperty isGameEnded;
+    private final Consumer<GameDetailsObject> updateGameStatus;
 
     public GetGameStatusTask(SimpleBooleanProperty isGameEnded, Consumer<GameDetailsObject> updateGameStatus) {
         this.isGameEnded = isGameEnded;
@@ -23,18 +23,18 @@ public class GetGameStatusTask implements Runnable{
 
     @Override
     public void run() {
-        System.out.println("Uboat App: get game status thread is up");
+        System.out.println("UBoat app (" + Thread.currentThread().getName() + ") -> is up");
         while(!isGameEnded.get()){
             try {
                 launchGetGameStatusRequest();
                 Thread.sleep(1500);
             } catch (IOException e) {
-                System.out.println("Uboat App: get game status thread was interrupted");
+                System.out.println("UBoat app (" + Thread.currentThread().getName() + ") -> was interrupted");
             } catch (InterruptedException e) {
-                System.out.println("Uboat App: get game status thread was failed to fulfill the request");
+                System.out.println("UBoat app (" + Thread.currentThread().getName() + ") -> could not fulfill request");
             }
         }
-        System.out.println("Uboat App: get game status thread is going down");
+        System.out.println("UBoat app (" + Thread.currentThread().getName() + ") -> is going down");
     }
 
     private void launchGetGameStatusRequest() throws IOException {

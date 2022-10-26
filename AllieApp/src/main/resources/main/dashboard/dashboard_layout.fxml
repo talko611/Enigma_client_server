@@ -84,7 +84,7 @@
                                           <Insets right="5.0" />
                                        </HBox.margin>
                                     </Label>
-                                    <TextField fx:id="battlefieldNameTb" focusTraversable="false">
+                                    <TextField fx:id="battlefieldNameTb" focusTraversable="false" promptText="Click on Table to choose">
                                        <HBox.margin>
                                           <Insets />
                                        </HBox.margin>
@@ -106,7 +106,7 @@
                                           <Insets right="5.0" />
                                        </HBox.margin>
                                     </Label>
-                                    <TextField fx:id="taskSizeTb" focusTraversable="false">
+                                    <TextField fx:id="taskSizeTb" focusTraversable="false" promptText="Enter number">
                                        <HBox.margin>
                                           <Insets />
                                        </HBox.margin>

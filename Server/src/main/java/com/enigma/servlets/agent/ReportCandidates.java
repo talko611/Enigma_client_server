@@ -7,7 +7,6 @@ import com.enigma.dtos.dataObjects.Candidate;
 import com.enigma.servlets.ServletsUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,7 +22,7 @@ import java.util.stream.Collectors;
 public class ReportCandidates extends HttpServlet {
     private final Gson GSON_SERVICE = new Gson();
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         try{
             UUID agentId = UUID.fromString(req.getParameter("id"));
             UserManager userManager = ServletsUtils.getUserManager(getServletContext());
@@ -42,7 +41,7 @@ public class ReportCandidates extends HttpServlet {
                 allGameCandidates.put(candidate);
             }
         }catch (NullPointerException e){
-            //todo - redirect
+            resp.setStatus(404);
         } catch (InterruptedException e) {
             System.out.println("Report candidates servlet couldn't report of all candidates");
         }

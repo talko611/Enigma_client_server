@@ -8,7 +8,6 @@ import com.engine.users.UserManager;
 import com.enigma.dtos.ServletAnswers.LoadFileAnswer;
 import com.enigma.servlets.ServletsUtils;
 import com.google.gson.Gson;
-import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -60,7 +59,6 @@ public class LoadBattlefield extends HttpServlet {
                         resp.setStatus(200);
                     }
                     //Case client already uploaded this battlefield
-                    //Todo - consider remove cause this case cannot happen
                     else if(uboat.getBattlefieldId()!= null &&
                             userManager.getBattlefieldById(uboat.getBattlefieldId()).getName().equals(battlefieldName)){
                         answer.setSuccess(true);
@@ -75,7 +73,7 @@ public class LoadBattlefield extends HttpServlet {
                 }
             }
         }catch (NullPointerException e){
-         //Todo - redirect to login page
+         resp.setStatus(404);
         }catch (JAXBException | InputMismatchException e){
             resp.setStatus(400);
             answer.setSuccess(false);

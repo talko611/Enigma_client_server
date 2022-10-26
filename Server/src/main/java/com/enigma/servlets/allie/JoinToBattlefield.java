@@ -28,9 +28,7 @@ public class JoinToBattlefield extends HttpServlet {
             UUID battlefieldId = UUID.fromString(req.getParameter("battlefield"));
             UserManager userManager = ServletsUtils.getUserManager(getServletContext());
             Allie client = userManager.getAllieById(clientId);
-            //Todo - handle cases client is not found
             Battlefield battlefield = userManager.getBattlefieldById(battlefieldId);
-            //Todo - handle cases battlefield is not found
             synchronized (battlefield){
                 RequestServerAnswer answer = validateRequest(client, battlefield);
                 if(answer.isSuccess()) {
@@ -41,7 +39,7 @@ public class JoinToBattlefield extends HttpServlet {
                 resp.getWriter().println(GSON_SERVICE.toJson(answer));
             }
         }catch (NullPointerException e){
-            //Todo - redirect to log in page
+            resp.setStatus(404);
         }
     }
 

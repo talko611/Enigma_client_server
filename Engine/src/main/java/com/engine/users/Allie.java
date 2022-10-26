@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.stream.Collectors;
 
 public class Allie extends User{
     private UUID battlefieldId;
@@ -18,7 +17,7 @@ public class Allie extends User{
     private long taskSize;
     private long numOfTasks;
     private Thread producer;
-    private BlockingQueue<Candidate> candidates;
+    private final BlockingQueue<Candidate> candidates;
 
     public Allie(String name){
         super(name);

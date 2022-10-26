@@ -4,7 +4,6 @@ import com.engine.users.battlefield.Battlefield;
 import com.engine.users.Uboat;
 import com.engine.users.UserManager;
 import com.enigma.servlets.ServletsUtils;
-import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -23,10 +22,9 @@ public class GetDictionary extends HttpServlet {
             UserManager userManager = ServletsUtils.getUserManager(getServletContext());
             Uboat client = userManager.getUBoatById(clientId);
             Battlefield battlefield = userManager.getBattlefieldById(client.getBattlefieldId());
-            //Todo - handle cases when uboat is not found and battlefield is not found
             resp.getWriter().println(battlefield.getEnigmaParts().getDmParts().getDictionary());
         }catch (NullPointerException e){
-            //Todo- redirect to login page
+            resp.setStatus(404);
         }
     }
 }

@@ -12,13 +12,12 @@ import javafx.application.Platform;
 import javax.xml.bind.JAXBException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.function.Consumer;
 
 public class GetMachinePart implements Runnable{
-    private XmlReader reader;
-    private Consumer<EnigmaParts> setEnigmaParts;
-    private Consumer<Boolean> updateIsReady;
+    private final XmlReader reader;
+    private final Consumer<EnigmaParts> setEnigmaParts;
+    private final Consumer<Boolean> updateIsReady;
 
     public GetMachinePart(Consumer<EnigmaParts> setEnigmaParts, Consumer<Boolean>updateIsReady) {
         this.setEnigmaParts = setEnigmaParts;
@@ -28,22 +27,22 @@ public class GetMachinePart implements Runnable{
 
     @Override
     public void run() {
-        System.out.println("Get machine parts task is up");
+        System.out.println("Agent app(" + Thread.currentThread().getName() + ") -> is up");
         while(!getEnigmaParts()){
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                System.out.println("Get machine parts task: was interrupted");
+                System.out.println("Agent app(" + Thread.currentThread().getName() + ") -> was interrupted");
             }
         }
         while (!setReady()){
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                System.out.println("Get machine parts task: was interrupted");
+                System.out.println("Agent app(" + Thread.currentThread().getName() + ") -> was interrupted");
             }
         }
-        System.out.println("Get machine parts task: is going down");
+        System.out.println("Agent app(" + Thread.currentThread().getName() + ") -> is going down");
     }
 
     private boolean getEnigmaParts(){
@@ -57,16 +56,14 @@ public class GetMachinePart implements Runnable{
             if(response.code() == 200){
                 String fileData = response.body().string();
                 EnigmaParts parts = reader.load(new ByteArrayInputStream(fileData.getBytes()));
-                Platform.runLater(()->{
-                    setEnigmaParts.accept(parts);
-                });
+                Platform.runLater(()-> setEnigmaParts.accept(parts));
                 isSuccess = true;
             }
         } catch (IOException e) {
-            System.out.println("Get machine parts task: Get enigma parts request has failed to complete");
+            System.out.println("Agent app(" + Thread.currentThread().getName() + ") -> has failed to get enigma part data from server");
 
         } catch (JAXBException e) {
-            System.out.println("Get machine parts task: Reader couldn't load file");
+            System.out.println("Agent app(" + Thread.currentThread().getName() + ") -> could not load the enigma pars from file");
         }
         return isSuccess;
     }
@@ -79,13 +76,11 @@ public class GetMachinePart implements Runnable{
         try {
             Response response = call.execute();
             if(response.code() == 200){
-                Platform.runLater(()->{
-                    updateIsReady.accept(true);
-                });
+                Platform.runLater(()-> updateIsReady.accept(true));
                 return true;
             }
         } catch (IOException e) {
-            System.out.println("Get machine parts task: Set ready req has failed to complete");
+            System.out.println("Agent app(" + Thread.currentThread().getName() + ") -> set ready request has failed");
         }
         return false;
     }

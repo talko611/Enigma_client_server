@@ -24,7 +24,7 @@ public class GetGameParticipants extends HttpServlet {
             req.setAttribute("id", uBoatId);
             getServletContext().getRequestDispatcher("/uBoat/get_allies").forward(req, resp);
         }catch (NullPointerException e){
-            //Todo - login
+            resp.setStatus(404);
         }
     }
 }

@@ -11,8 +11,8 @@ import java.io.IOException;
 import java.util.function.Consumer;
 
 public class SetAvailableTask implements Runnable{
-    private Consumer<Boolean> updateActiveStatus;
-    private Consumer<String> updateActiveLabel;
+    private final Consumer<Boolean> updateActiveStatus;
+    private final Consumer<String> updateActiveLabel;
 
     public SetAvailableTask(Consumer<Boolean> updateActiveStatus, Consumer<String> updateActiveLabel) {
         this.updateActiveStatus = updateActiveStatus;
@@ -21,15 +21,15 @@ public class SetAvailableTask implements Runnable{
 
     @Override
     public void run() {
-        System.out.println("Agent app: set activate thread is up");
+        System.out.println("Agent app(" + Thread.currentThread().getName() + ") -> is up");
         while (!isActivated()){
             try {
                 Thread.sleep(3000);
             } catch (InterruptedException e) {
-                System.out.println("Agent app: set activate thread was interrupted");
+                System.out.println("Agent app(" + Thread.currentThread().getName() + ") -> was interrupted");
             }
         }
-        System.out.println("Agent app: set activate thread is going down");
+        System.out.println("Agent app(" + Thread.currentThread().getName() + ") -> is going down");
     }
 
     private boolean isActivated(){

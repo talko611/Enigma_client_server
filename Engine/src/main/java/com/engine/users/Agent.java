@@ -8,7 +8,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 public class Agent extends User{
-    private UUID allieId;
+    private final UUID allieId;
     private int numOfTaskCanAccept;
     private long numOfTaskAccepted;
     private long numOfTaskAssigned;

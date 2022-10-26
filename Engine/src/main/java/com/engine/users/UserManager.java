@@ -6,10 +6,10 @@ import com.enigma.dtos.Enums.GameStatus;
 import java.util.*;
 
 public class UserManager {
-    private Map<UUID,Uboat> uBoats;
-    private Map<UUID, Allie> allies;
-    private Map<UUID, Agent> agents;
-    private Map<UUID, Battlefield> battlefields;
+    private final Map<UUID,Uboat> uBoats;
+    private final Map<UUID, Allie> allies;
+    private final Map<UUID, Agent> agents;
+    private final Map<UUID, Battlefield> battlefields;
 
     private static final Object uBoatsLock = new Object();
     private static final Object alliesLock = new Object();
@@ -26,7 +26,7 @@ public class UserManager {
     public boolean isUBoatExists(String userName){
         synchronized (uBoatsLock){
             for(Uboat uboat : uBoats.values()){
-                if(uboat.getName().equals(userName)){
+                if(uboat.getName().equalsIgnoreCase(userName)){
                     return true;
                 }
             }
@@ -37,7 +37,7 @@ public class UserManager {
     public boolean isAllieExists(String username){
         synchronized (alliesLock){
             for(Allie allie : allies.values()){
-                if(allie.getName().equals(username)){
+                if(allie.getName().equalsIgnoreCase(username)){
                     return true;
                 }
             }
@@ -48,7 +48,7 @@ public class UserManager {
     public boolean isAgentExists(String username){
         synchronized (agentsLock){
             for (Agent agent : agents.values()){
-                if(agent.getName().equals(username)){
+                if(agent.getName().equalsIgnoreCase(username)){
                     return true;
                 }
             }

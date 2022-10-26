@@ -3,7 +3,6 @@ package com.enigma.main_screen.machine_component.machine_details_component;
 import com.enigma.Utils.AppUtils;
 import com.enigma.Utils.UiAdapter;
 import com.enigma.dtos.ServletAnswers.MachineDetailsAnswer;
-import com.google.gson.Gson;
 import com.squareup.okhttp.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -29,16 +28,14 @@ public class MachineDetailsController {
     private void bindToUiAdapter(){
         uiAdapter.isLoadedProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue){
-                getMachineDetails();
+                launchGetMachineDetailsRequest();
             }
         });
-        uiAdapter.isConfigureProperty().addListener((observable, oldValue, newValue) -> {
-            getMachineDetails();
-        });
+        uiAdapter.isConfigureProperty().addListener((observable, oldValue, newValue) -> launchGetMachineDetailsRequest());
         currConfigurationAns.textProperty().bind(uiAdapter.currentConfigProperty());
     }
 
-    private void getMachineDetails(){
+    private void launchGetMachineDetailsRequest(){
         HttpUrl.Builder urlBuilder = HttpUrl
                 .parse(AppUtils.APP_URL + AppUtils.MACHINE_DETAILS_RESOURCE)
                 .newBuilder();

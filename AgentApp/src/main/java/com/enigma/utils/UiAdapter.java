@@ -4,12 +4,12 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 
 public class UiAdapter {
-    private SimpleBooleanProperty isActive;
-    private SimpleBooleanProperty isReady;
-    private SimpleBooleanProperty isLoggedIn;
-    private SimpleBooleanProperty isInActiveGame;
-    private SimpleBooleanProperty isGameEnded;
-    private SimpleStringProperty myName;
+    private final SimpleBooleanProperty isActive;
+    private final SimpleBooleanProperty isReady;
+    private final SimpleBooleanProperty isLoggedIn;
+    private final SimpleBooleanProperty isInActiveGame;
+    private final SimpleBooleanProperty isGameEnded;
+    private final SimpleStringProperty myName;
 
     public UiAdapter() {
         this.isActive = new SimpleBooleanProperty();

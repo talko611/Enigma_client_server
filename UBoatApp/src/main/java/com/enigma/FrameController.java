@@ -36,9 +36,9 @@ public class FrameController {
                     mainController.setPrimaryStage(this.primaryStage);
                     frameComponent.setCenter(root);
                 } catch (IOException e) {
-                    System.out.println("Cannot load app");
+                    System.out.println("UBoat app -> Cannot load app");
                 }
-                System.out.println("load after successful login");
+                System.out.println("UBoat app -> successful login");
             }else {
                 loginComponentController.resetComponent();
                 frameComponent.setCenter(loginComponent);

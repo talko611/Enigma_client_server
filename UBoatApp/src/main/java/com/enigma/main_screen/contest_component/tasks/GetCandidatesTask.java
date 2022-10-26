@@ -25,18 +25,18 @@ public class GetCandidatesTask implements Runnable{
 
     @Override
     public void run() {
-        System.out.println(Thread.currentThread().getName() + " is up");
+        System.out.println("UBoat app (" + Thread.currentThread().getName() + ") -> is up");
         while (!isGameEnded.get()){
             try {
                 launchGetCandidateRequest();
                 Thread.sleep(500);
             } catch (IOException e) {
-                System.out.println(Thread.currentThread().getName() + " could not fulfill request");
+                System.out.println("UBoat app (" + Thread.currentThread().getName() + ") -> could not fulfill request");
             } catch (InterruptedException e) {
-                System.out.println(Thread.currentThread().getName() + " was interrupted");
+                System.out.println("UBoat app (" + Thread.currentThread().getName() + ") -> was interrupted");
             }
         }
-        System.out.println(Thread.currentThread().getName() + " is going down");
+        System.out.println("UBoat app (" + Thread.currentThread().getName() + ") -> is going down");
     }
 
     private void launchGetCandidateRequest() throws IOException {

@@ -15,8 +15,8 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class GetParticipantsTask implements Runnable{
-    private Consumer<List<AllieData>> updateTeams;
-    private SimpleBooleanProperty isInActiveGame;
+    private final Consumer<List<AllieData>> updateTeams;
+    private final SimpleBooleanProperty isInActiveGame;
 
     public GetParticipantsTask(Consumer<List<AllieData>> updateTeams, SimpleBooleanProperty isInActiveGame) {
         this.updateTeams = updateTeams;
@@ -25,16 +25,16 @@ public class GetParticipantsTask implements Runnable{
 
     @Override
     public void run() {
-        System.out.println("Uboat App : get participants thread is up");
+        System.out.println("UBoat app (" + Thread.currentThread().getName() + ") -> is up");
         while(!isInActiveGame.get()){
             try{
                 Thread.sleep(2000);
                 getParticipants();
             }catch (InterruptedException e){
-                System.out.println("Uboat App: get participants thread is interrupted");
+                System.out.println("UBoat app (" + Thread.currentThread().getName() + ") -> was interrupted");
             }
         }
-        System.out.println("Uboat App: get participants thread is going down ");
+        System.out.println("UBoat app (" + Thread.currentThread().getName() + ") -> is going down");
     }
 
     private void getParticipants(){
@@ -49,7 +49,7 @@ public class GetParticipantsTask implements Runnable{
                 updateTeams.accept(allieDataList);
             });
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("UBoat app (" + Thread.currentThread().getName() + ") -> could not fulfill request");
         }
     }
 }

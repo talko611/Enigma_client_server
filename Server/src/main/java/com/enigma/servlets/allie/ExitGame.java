@@ -23,8 +23,7 @@ public class ExitGame extends HttpServlet {
             allie.exitGame(userManager);
             resp.setStatus(200);
         }catch (NullPointerException e){
-            resp.setStatus(401);
-            //todo- redirect
+            resp.setStatus(404);
         }
     }
 }

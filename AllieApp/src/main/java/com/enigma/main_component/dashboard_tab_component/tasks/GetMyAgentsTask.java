@@ -24,30 +24,35 @@ public class GetMyAgentsTask implements Runnable{
 
     @Override
     public void run() {
-        System.out.println("Allie App: Get my agent thread is up");
+        System.out.println("Allie App(" + Thread.currentThread().getName() + ") -> is up");
         while(!isReady.get()){
             try {
                 Thread.sleep(2000);
                 getAgents();
             } catch (InterruptedException e) {
-                System.out.println("Allie app: Get My Agent thread is interrupted");
+                System.out.println("Allie App(" + Thread.currentThread().getName() + ") -> was interrupted");
+            } catch (IOException e) {
+                System.out.println("Allie App(" + Thread.currentThread().getName() + ") -> could not close response");
             }
         }
-        System.out.println("Allie app: Get my agents thread is going down");
+        System.out.println("Allie App(" + Thread.currentThread().getName() + ") -> is going down");
     }
 
-    private void getAgents(){
+    private void getAgents() throws IOException {
         HttpUrl.Builder urlBuilder = HttpUrl.parse(AppUtils.APP_URL + AppUtils.GET_AGENTS_RESOURCE).newBuilder();
         urlBuilder.addQueryParameter("id",AppUtils.CLIENT_ID.toString());
         Request request = new Request.Builder().url(urlBuilder.build()).build();
         Call call = AppUtils.CLIENT.newCall(request);
+        Response response = null;
         try {
-            Response response = call.execute();
+            response = call.execute();
             List<String> agents = AppUtils.GSON_SERVICE.fromJson(response.body().charStream(), TypeToken.getParameterized(List.class, String.class).getType());
             Platform.runLater(()-> updateAgents.accept(agents));
-
         } catch (IOException e) {
-            System.out.println("Get Agent request failed");
+            System.out.println("Allie App(" + Thread.currentThread().getName() + ") -> request failed");
+        }finally {
+            if(response != null)
+                response.body().close();
         }
     }
 }

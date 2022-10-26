@@ -10,11 +10,9 @@ import com.enigma.main_screen.contest_component.tasks.GetCandidatesTask;
 import com.enigma.main_screen.contest_component.tasks.GetGameStatusTask;
 import com.enigma.main_screen.contest_component.tasks.GetParticipantsTask;
 import com.enigma.main_screen.contest_component.trie_data_structure.Trie;
-import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.squareup.okhttp.*;
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
-import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -100,10 +98,8 @@ public class ContestDataController {
                 }
             }
         };
-        this.updateCandidates = candidateList -> {
-            candidateList.forEach(candidate ->
-                    uiCandidates.add(new UiCandidate(candidate.getDecryption(), candidate.getTeamName(), candidate.getConfiguration())));
-        };
+        this.updateCandidates = candidateList -> candidateList.forEach(candidate ->
+                uiCandidates.add(new UiCandidate(candidate.getDecryption(), candidate.getTeamName(), candidate.getConfiguration())));
     }
 
     @FXML
@@ -119,7 +115,7 @@ public class ContestDataController {
 
     @FXML
     void resetMachineClicked(ActionEvent event) {
-
+        launchResetMachineRequest();
     }
 
     @FXML
@@ -137,16 +133,40 @@ public class ContestDataController {
         bindComponentToUiAdapter();
     }
 
+    private void launchResetMachineRequest(){
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(AppUtils.APP_URL + AppUtils.RESET_MACHINE_RESOURCE).newBuilder();
+        urlBuilder.addQueryParameter("id", AppUtils.CLIENT_ID.toString());
+        Request request = new Request.Builder().url(urlBuilder.build()).build();
+        Call call = AppUtils.HTTP_CLIENT.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                Platform.runLater(()->userMessage.setText("Something happened machine cannot be reset"));
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                if(response.code() == 200){
+                    RequestServerAnswer answer = AppUtils.GSON_SERVICE.fromJson(response.body().charStream(), RequestServerAnswer.class);
+                    Platform.runLater(()->{
+                        userMessage.setText("Machine is reset");
+                        uiAdapter.setCurrentConfig(answer.getMessage());
+                    });
+                }
+            }
+        });
+    }
+
     private void bindComponentToUiAdapter(){
         uiAdapter.isLoadedProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue){
                 launchGetDictionaryRequest();
-                getParticipants();
+                launchGetParticipantsTask();
             }
         });
         uiAdapter.isReadyProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue){
-                listenToGameStatus();
+                launchGetGameStatusTask();
                 this.readyBt.disableProperty().set(true);
             }
             else{
@@ -155,7 +175,7 @@ public class ContestDataController {
                 this.clearBt.disableProperty().set(true);
                 this.logOutBt.disableProperty().set(true);
                 this.logOutBt.visibleProperty().set(false);
-                getParticipants();
+                launchGetParticipantsTask();
             }
 
         });
@@ -184,18 +204,22 @@ public class ContestDataController {
         battlefieldNameLb.textProperty().bind(uiAdapter.battlefieldNameProperty());
     }
 
-    private void listenToGameStatus(){
-        new Thread(new GetGameStatusTask(uiAdapter.isGameEndedProperty(), updateGameDetails)).start();
+    private void launchGetGameStatusTask(){
+        Thread thread = new Thread(new GetGameStatusTask(uiAdapter.isGameEndedProperty(), updateGameDetails));
+        thread.setName("Get game status Task");
+        thread.start();
     }
 
-    private void getParticipants(){
-        new Thread(new GetParticipantsTask((data)->{
+    private void launchGetParticipantsTask(){
+        Thread thread = new Thread(new GetParticipantsTask((data)->{
             uiAllies.clear();
             data.forEach(allieData -> this.uiAllies.add(new
                     UiAllie(allieData.getAlliName(),allieData.getNumOfAgents(),allieData.getTaskSize())));
             teamsTable.setItems(uiAllies);
         },
-                uiAdapter.isInActiveGameProperty())).start();
+                uiAdapter.isInActiveGameProperty()));
+        thread.setName("Get participants Task");
+        thread.start();
     }
 
     private void setDictionary(Set<String> words){
@@ -232,10 +256,9 @@ public class ContestDataController {
                         userMessage.setText(answer.getMessage());
                     });
                 }else{
-                    Platform.runLater(()->{
-                        userMessage.setText(answer.getMessage());
-                    });
+                    Platform.runLater(()-> userMessage.setText(answer.getMessage()));
                 }
+                response.body().close();
             }
         });
     }
@@ -249,14 +272,12 @@ public class ContestDataController {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Request request, IOException e) {
-                System.out.println("Something went wrong");
-                //Todo - find out better way to handle this
+                System.out.println("UBoat app(Get dictionary request) -> could not fulfill request");
             }
 
             @Override
             public void onResponse(Response response) throws IOException {
-                Gson gson = new Gson();
-                Set<String> dictionary = gson.fromJson(response.body().charStream(), Set.class);
+                Set<String> dictionary = AppUtils.GSON_SERVICE.fromJson(response.body().charStream(), TypeToken.getParameterized(Set.class, String.class).getType());
                 Platform.runLater(()->setDictionary(dictionary));
             }
         });
@@ -286,7 +307,7 @@ public class ContestDataController {
 
     private void launchGetCandidatesRequest(){
         Thread thread = new Thread(new GetCandidatesTask(uiAdapter.isGameEndedProperty(), this.updateCandidates));
-        thread.setName("Update Candidates(UBoat App)");
+        thread.setName("Update candidates Task");
         thread.start();
     }
 
@@ -302,7 +323,7 @@ public class ContestDataController {
             }
 
             @Override
-            public void onResponse(Response response) throws IOException {
+            public void onResponse(Response response) {
                 if(response.code() == 200){
                     Platform.runLater(()->{
                         uiAdapter.setIsReady(false);
@@ -330,10 +351,9 @@ public class ContestDataController {
             }
 
             @Override
-            public void onResponse(Response response) throws IOException {
+            public void onResponse(Response response) {
                 if(response.code() == 200){
                     Platform.runLater(()->uiAdapter.setIsLoggedIn(false));
-
                 }
             }
         });

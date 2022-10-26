@@ -15,7 +15,6 @@ public interface Machine {
     Keyboard getKeyboard();
     String encryptDecrypt(String input);
     void reset();
-    boolean isKeyExists(String key);
     int getKeyboardSize();
     void setConfiguration();
     void updateConfiguration();

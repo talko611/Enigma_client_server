@@ -14,7 +14,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
@@ -42,9 +41,9 @@ public class GetTasks extends HttpServlet {
                 resp.setStatus(206);
             }
         }catch (NullPointerException e){
-            //todo - redirect to login page
+            resp.setStatus(404);
         } catch (IllegalArgumentException e) {
-            //todo - cannot Complete request
+            throw new IOException("failed to take tasks");
         }
     }
 }

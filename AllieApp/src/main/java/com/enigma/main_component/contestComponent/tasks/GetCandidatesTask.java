@@ -25,23 +25,23 @@ public class GetCandidatesTask implements Runnable{
 
     @Override
     public void run() {
-        System.out.println(Thread.currentThread().getName() + " is up");
+        System.out.println("Allie app(" + Thread.currentThread().getName() + ") -> is up");
         while(!isGameEnded.get()){
             try {
                 launchGetCandidatesRequest();
                 Thread.sleep(1000);
             } catch (IOException e) {
-                System.out.println(Thread.currentThread().getName() + " failed to fulfill request");
+                System.out.println("Allie app(" + Thread.currentThread().getName() + ") -> failed to close response");
             } catch (InterruptedException e) {
-                System.out.println(Thread.currentThread().getName() + " was interrupted");
+                System.out.println("Allie app(" + Thread.currentThread().getName() + ") -> was interrupted");
             }
         }
         try {
             launchGetCandidatesRequest();
         } catch (IOException e) {
-            System.out.println(Thread.currentThread().getName() + " failed to fulfill request");
+            System.out.println("Allie app(" + Thread.currentThread().getName() + ") -> failed to close response");
         }
-        System.out.println(Thread.currentThread().getName() + " is going down");
+        System.out.println("Allie app(" + Thread.currentThread().getName() + ") -> is going down");
     }
 
     private void launchGetCandidatesRequest() throws IOException {
@@ -49,10 +49,18 @@ public class GetCandidatesTask implements Runnable{
         urlBuilder.addQueryParameter("id", AppUtils.CLIENT_ID.toString());
         Request request = new Request.Builder().url(urlBuilder.build()).build();
         Call call = AppUtils.CLIENT.newCall(request);
-        Response response = call.execute();
-        List<Candidate> candidateList = AppUtils.GSON_SERVICE.fromJson(response.body().charStream(), TypeToken.getParameterized(List.class, Candidate.class).getType());
-        if(!candidateList.isEmpty()){
-            Platform.runLater(()->updateCandidates.accept(candidateList));
+        Response response = null;
+        try{
+            response = call.execute();
+            List<Candidate> candidateList = AppUtils.GSON_SERVICE.fromJson(response.body().charStream(), TypeToken.getParameterized(List.class, Candidate.class).getType());
+            if(!candidateList.isEmpty()){
+                Platform.runLater(()->updateCandidates.accept(candidateList));
+            }
+        }catch (IOException e){
+            System.out.println("Allie app(" + Thread.currentThread().getName() + ") -> request failed");
+        }finally {
+            if(response != null)
+                response.body().close();
         }
 
     }

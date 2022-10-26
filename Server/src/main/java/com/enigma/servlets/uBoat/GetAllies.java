@@ -42,7 +42,7 @@ public class GetAllies extends HttpServlet {
             }
             resp.getWriter().println(GSON_SERVICE.toJson(allieDataList));
         }catch (NullPointerException e){
-            //Todo - redirect
+            resp.setStatus(404);
         }
     }
 

@@ -2,9 +2,7 @@ package com.enigma;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
@@ -21,7 +19,7 @@ public class UBoatApp extends Application {
         FrameController controller = loader.getController();
         controller.setFrameComponent((BorderPane) root.getContent());
         controller.setPrimaryStage(primaryStage);
-        Scene scene  = new Scene(root, 700, 500);
+        Scene scene  = new Scene(root, 900, 500);
         primaryStage.setScene(scene);
         primaryStage.show();
     }

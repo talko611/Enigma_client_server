@@ -5,7 +5,6 @@ import com.enigma.Utils.UiAdapter;
 import com.enigma.dtos.dataObjects.ManualConfigStrings;
 import com.enigma.dtos.ServletAnswers.MachinePartsAnswer;
 import com.enigma.dtos.ServletAnswers.RequestServerAnswer;
-import com.google.gson.Gson;
 import com.squareup.okhttp.*;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -38,7 +37,6 @@ public class ConfigurationController {
         this.offsetConfigLine = new StringBuilder();
     }
 
-
     @FXML
     void addRotor(ActionEvent event) {
         if(rotorIdCb.getValue() != null && rotorOffsetCb.getValue() != null){
@@ -56,7 +54,7 @@ public class ConfigurationController {
     }
 
     @FXML
-    void autoConfig(ActionEvent event) {
+    void launchAutoConfigRequest(ActionEvent event) {
         uiAdapter.setIsConfigure(false);
         HttpUrl.Builder urlBuilder = HttpUrl
                 .parse(AppUtils.APP_URL + AppUtils.CONFIGURATION_RESOURCE)
@@ -67,15 +65,12 @@ public class ConfigurationController {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Request request, IOException e) {
-                Platform.runLater(()->{
-                    userMessageLb.setText("Something went wrong please try again");
-                });
+                Platform.runLater(()-> userMessageLb.setText("Something went wrong please try again"));
             }
 
             @Override
             public void onResponse(Response response) throws IOException {
-                Gson gson = new Gson();
-                RequestServerAnswer answer = gson.fromJson(response.body().charStream(), RequestServerAnswer.class);
+                RequestServerAnswer answer = AppUtils.GSON_SERVICE.fromJson(response.body().charStream(), RequestServerAnswer.class);
                 Platform.runLater(()->{
                     uiAdapter.setIsConfigure(answer.isSuccess());
                     userMessageLb.setText(answer.getMessage());
@@ -86,7 +81,7 @@ public class ConfigurationController {
     }
 
     @FXML
-    void manualConfig(ActionEvent event) {
+    void launchManualConfigRequest(ActionEvent event) {
         if(rotorAddNum < currentMachineParts.getRotorsCount()){
             userMessageLb.setText("Rotor number is less than the machine minimum");
             return;
@@ -96,13 +91,12 @@ public class ConfigurationController {
             return;
         }
         uiAdapter.setIsConfigure(false);
-        Gson gson = new Gson();
         ManualConfigStrings bodyData = createRequestBody();
         HttpUrl.Builder urlBuilder = HttpUrl
                 .parse(AppUtils.APP_URL + AppUtils.CONFIGURATION_RESOURCE)
                 .newBuilder();
         urlBuilder.addQueryParameter("id", AppUtils.CLIENT_ID.toString());
-        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), gson.toJson(bodyData));
+        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), AppUtils.GSON_SERVICE.toJson(bodyData));
         Request request = new Request.Builder()
                 .url(urlBuilder.build())
                 .method("POST", requestBody)
@@ -117,8 +111,7 @@ public class ConfigurationController {
 
             @Override
             public void onResponse(Response response) throws IOException {
-                Gson gson = new Gson();
-                RequestServerAnswer answer = gson.fromJson(response.body().charStream(), RequestServerAnswer.class);
+                RequestServerAnswer answer = AppUtils.GSON_SERVICE.fromJson(response.body().charStream(), RequestServerAnswer.class);
                 Platform.runLater(() -> {
                     uiAdapter.setIsConfigure(answer.isSuccess());
                     userMessageLb.setText(answer.getMessage());
@@ -129,8 +122,7 @@ public class ConfigurationController {
 
     }
 
-
-    private void getParts(){
+    private void launchGetMachinePartsRequest(){
         HttpUrl.Builder urlBuilder = HttpUrl.parse(AppUtils.APP_URL + AppUtils.MACHINE_PARTS_DETAILS_RESOURCE).newBuilder();
         urlBuilder.addQueryParameter("id", AppUtils.CLIENT_ID.toString());
         Request request = new Request.Builder()
@@ -145,8 +137,7 @@ public class ConfigurationController {
 
             @Override
             public void onResponse(Response response) throws IOException {
-                Gson gson = new Gson();
-                MachinePartsAnswer answer = gson.fromJson(response.body().charStream(), MachinePartsAnswer.class);
+                MachinePartsAnswer answer = AppUtils.GSON_SERVICE.fromJson(response.body().charStream(), MachinePartsAnswer.class);
                 Platform.runLater(()-> {
                     setCurrentMachineParts(answer);
                     initComponent(false);
@@ -158,6 +149,7 @@ public class ConfigurationController {
     private void setCurrentMachineParts(MachinePartsAnswer currentMachineParts){
         this.currentMachineParts = currentMachineParts;
     }
+
     public void initComponent(boolean deleteUserMessage){
         setRotorIdCb();
         setReflectorCb();
@@ -189,7 +181,7 @@ public class ConfigurationController {
     private void bindToUiAdaptor(){
         uiAdapter.isLoadedProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue){
-                getParts();
+                launchGetMachinePartsRequest();
             }
         });
     }

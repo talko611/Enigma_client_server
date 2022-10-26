@@ -44,6 +44,7 @@ public class DashboardController {
     private Map<UUID, GameDetailsObject> battlefieldMap;
     private ObservableList<UiBattlefield> uiBattlefieldList;
     private UUID chosenBattlefield;
+
     @FXML void initialize(){
         //Battlefields table set up
         nameCol.setCellValueFactory(new PropertyValueFactory<>("battlefieldName"));
@@ -57,13 +58,11 @@ public class DashboardController {
         updateBattlefieldTable = (data) ->{
             uiBattlefieldList.clear();
             battlefieldMap = (Map<UUID, GameDetailsObject>) data.getData();
-            battlefieldMap.forEach((key,value)->{
-                uiBattlefieldList.add(new UiBattlefield(value.getBattlefieldName(),
-                                                        value.getuBoatName(),
-                                                        value.getGameStatus().toString(),
-                                                        value.getParticipantsStatus(),
-                                                        value.getDecryptionLevel()));
-            });
+            battlefieldMap.forEach((key,value)-> uiBattlefieldList.add(new UiBattlefield(value.getBattlefieldName(),
+                                                    value.getuBoatName(),
+                                                    value.getGameStatus().toString(),
+                                                    value.getParticipantsStatus(),
+                                                    value.getDecryptionLevel())));
             battlefieldTb.setItems(uiBattlefieldList);
         };
         updateAgents = (agents)->{
@@ -84,6 +83,7 @@ public class DashboardController {
            }
        }
     }
+
     @FXML
     void joinButtonClicked(ActionEvent event) {
         if(chosenBattlefield != null){
@@ -98,6 +98,21 @@ public class DashboardController {
         launchSetReadyRequest();
     }
 
+    @FXML
+    void setTaskSizeClicked(ActionEvent event) {
+        try {
+            long taskSize = Long.parseLong(taskSizeTb.getText());
+            if(taskSize > 0){
+                launchSetTaskSizeRequest(taskSize);
+            }else{
+                userMessage.setText("Please enter only positive whole number");
+            }
+        }catch (NumberFormatException e){
+            userMessage.setText("Please enter only positive whole number");
+        }
+
+    }
+
     private void launchSetReadyRequest(){
         HttpUrl.Builder urlBuilder = HttpUrl.parse(AppUtils.APP_URL + AppUtils.SET_READY_RESOURCE).newBuilder();
         urlBuilder.addQueryParameter("id", AppUtils.CLIENT_ID.toString());
@@ -106,39 +121,19 @@ public class DashboardController {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Request request, IOException e) {
-                Platform.runLater(()->{
-                    userMessage.setText("Could not preform request please try again");
-                });
+                Platform.runLater(()-> userMessage.setText("Could not preform request please try again"));
             }
 
             @Override
             public void onResponse(Response response) throws IOException {
                 if(response.code() == 200){
-                    Platform.runLater(()->{
-                        uiAdapter.setIsReady(true);
-                    });
+                    Platform.runLater(()-> uiAdapter.setIsReady(true));
                 }else{
-                    Platform.runLater(()->{
-                        userMessage.setText("Cannot fulfill request please check if you sign to battlefield and set task size");
-                    });
-                    response.body().close();
+                    Platform.runLater(()-> userMessage.setText("Cannot fulfill request please check if you sign to battlefield and set task size"));
                 }
+                response.body().close();
             }
         });
-    }
-
-    @FXML
-    void setTaskSizeClicked(ActionEvent event) {
-        try {
-            long taskSize = Long.parseLong(taskSizeTb.getText());
-            if(taskSize > 0){
-                launchSetTaskSizeRequest(taskSize);
-            }
-            userMessage.setText("Please enter only positive whole number");
-        }catch (NumberFormatException e){
-            userMessage.setText("Please enter only positive whole number");
-        }
-
     }
 
     private void launchSetTaskSizeRequest(long taskSize){
@@ -149,9 +144,7 @@ public class DashboardController {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Request request, IOException e) {
-                Platform.runLater(()->{
-                    userMessage.setText("Couldn't complete request" );
-                });
+                Platform.runLater(()-> userMessage.setText("Couldn't complete request" ));
             }
 
             @Override
@@ -193,9 +186,7 @@ public class DashboardController {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Request request, IOException e) {
-                Platform.runLater(()->{
-                    userMessage.setText("Cannot fulfill request please try again ");
-                });
+                Platform.runLater(()-> userMessage.setText("Cannot fulfill request please try again "));
             }
 
             @Override
@@ -210,11 +201,15 @@ public class DashboardController {
     }
 
     private void launchGetBattlefieldsTask(){
-        new Thread(new GetBattlefieldsTask(updateBattlefieldTable, uiAdapter.isReadyProperty())).start();
+        Thread thread = new Thread(new GetBattlefieldsTask(updateBattlefieldTable, uiAdapter.isReadyProperty()));
+        thread.setName("Get battlefields Task");
+        thread.start();
     }
 
     private void launchGetMyAgentsTask(){
-        new Thread(new GetMyAgentsTask(updateAgents, uiAdapter.isReadyProperty())).start();
+        Thread thread = new Thread(new GetMyAgentsTask(updateAgents, uiAdapter.isReadyProperty()));
+        thread.setName("Get my agents Task");
+        thread.start();
     }
 
     public List<String> getAgentsNames(){

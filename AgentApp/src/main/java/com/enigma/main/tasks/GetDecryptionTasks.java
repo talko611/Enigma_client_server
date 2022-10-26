@@ -59,12 +59,12 @@ public class GetDecryptionTasks implements Runnable{
 
     @Override
     public void run() {
-        System.out.println("Agent App: get tasks thread is up");
+        System.out.println("Agent App(" + Thread.currentThread().getName() + ") -> is up");
         boolean finishProducing = false;
         try {
             Thread.sleep(2000);//Let producer time to start producing in server
         } catch (InterruptedException e) {
-            System.out.println("Agent App: get tasks thread was interrupted");
+            System.out.println("Agent App(" + Thread.currentThread().getName() + ") -> was interrupted");
         }
         while (!isGameEnded.get() && !finishProducing){
             try {
@@ -73,20 +73,23 @@ public class GetDecryptionTasks implements Runnable{
                     finishProducing = getTasks();
                 }
             } catch (InterruptedException e) {
-                System.out.println("Agent App: get tasks thread was interrupted");
+                System.out.println("Agent App("+ Thread.currentThread().getName() + ") -> was interrupted");
+            }catch (IOException e){
+                System.out.println("Agent App("+ Thread.currentThread().getName() + ") -> could not close response body");
             }
         }
-        System.out.println("Agent App: get tasks thread is going down");
+        System.out.println("Agent App(" + Thread.currentThread().getName() + ") -> is going down");
     }
 
-    private boolean getTasks(){
+    private boolean getTasks() throws IOException {
         HttpUrl.Builder urlBuildr = HttpUrl.parse(AppUtils.APP_URL + AppUtils.GET_TASKS_RESOURCE).newBuilder();
         urlBuildr.addQueryParameter("id", AppUtils.CLIENT_ID.toString());
         Request request = new Request.Builder().url(urlBuildr.build()).build();
         Call call = AppUtils.CLIENT.newCall(request);
         int tasksSize = 0;
+        Response response = null;
         try {
-            Response response = call.execute();
+            response = call.execute();
             if(response.code() == 200){
                 List<DecryptionTaskData> tasks = AppUtils.GSON_SERVICE.fromJson(response.body().charStream(), new TypeToken<List<DecryptionTaskData>>(){}.getType());
                 if(tasks != null){
@@ -100,16 +103,16 @@ public class GetDecryptionTasks implements Runnable{
                     });
                 }
             } else if (response.code() == 206) {
-                response.body().close();
                 return true;
             }
         } catch (IOException e) {
             System.out.println("Agent App: get tasks thread request failed");
         }catch (RejectedExecutionException e){
             int finalTasksSize = tasksSize;
-            Platform.runLater(()->{
-                tasksAssigned.set(tasksAssigned.get() + finalTasksSize);
-            });
+            Platform.runLater(()-> tasksAssigned.set(tasksAssigned.get() + finalTasksSize));
+        }finally {
+            if(response != null)
+                response.body().close();
         }
         return false;
     }

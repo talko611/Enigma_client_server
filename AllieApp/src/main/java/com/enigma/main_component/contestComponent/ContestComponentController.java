@@ -97,22 +97,18 @@ public class ContestComponentController {
         };
         this.updateParticipantsList = (alliDataList)->{
           participants.clear();
-          alliDataList.forEach(allieData -> {
-              participants.add(new UiAllie(allieData.getAlliName().equalsIgnoreCase(myTeamNameLb.getText()) ? allieData.getAlliName() + "(me)" : allieData.getAlliName()
-                      , allieData.getNumOfAgents(), allieData.getTaskSize()));
-          });
+          alliDataList.forEach(allieData -> participants.add(new UiAllie(allieData.getAlliName().equalsIgnoreCase(myTeamNameLb.getText()) ? allieData.getAlliName() + "(me)" : allieData.getAlliName()
+                  , allieData.getNumOfAgents(), allieData.getTaskSize())));
           this.participantsTable.setItems(participants);
         };
-        this.updateAgentProgress = (agentProgressObjects -> {
-            agentProgressObjects.forEach(agentProgressObject -> {
-                AgentDetailsController agentDetailsController = this.agentNameToComponentController.get(agentProgressObject.getAgentName());
-                agentDetailsController.setAcceptedTasksLb(String.valueOf(agentProgressObject.getTasksAccepted()));
-                agentDetailsController.setAssignedTaskLb(String.valueOf(agentProgressObject.getTasksAssigned()));
-                agentDetailsController.setProducedCandidatesLb(String.valueOf(agentProgressObject.getCandidatesProduced()));
-                agentDetailsController.setProgress(agentProgressObject.getTasksAccepted()/ (double) agentProgressObject.getTasksAssigned());
+        this.updateAgentProgress = (agentProgressObjects -> agentProgressObjects.forEach(agentProgressObject -> {
+            AgentDetailsController agentDetailsController = this.agentNameToComponentController.get(agentProgressObject.getAgentName());
+            agentDetailsController.setAcceptedTasksLb(String.valueOf(agentProgressObject.getTasksAccepted()));
+            agentDetailsController.setAssignedTaskLb(String.valueOf(agentProgressObject.getTasksAssigned()));
+            agentDetailsController.setProducedCandidatesLb(String.valueOf(agentProgressObject.getCandidatesProduced()));
+            agentDetailsController.setProgress(agentProgressObject.getTasksAccepted()/ (double) agentProgressObject.getTasksAssigned());
 
-            });
-        });
+        }));
         this.updateCandidates = (candidateList -> candidateList
                 .forEach(candidate -> {
                     this.candidates.add(new UiCandidate(candidate.getDecryption(), candidate.getConfiguration()));
@@ -138,7 +134,7 @@ public class ContestComponentController {
     private void bindAdapterToComponent(){
         uiAdapter.isReadyProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue){
-                getGameStatus();
+                launchGetGameStatusTask();
                 launchGetParticipantsTask();
                 loadAgentDetailsComponents();
             }
@@ -152,8 +148,10 @@ public class ContestComponentController {
         });
     }
 
-    private void getGameStatus(){
-        new Thread(new GetGameStatus(updateGameStatus, uiAdapter.isReadyProperty(), uiAdapter.isGameEndedProperty())).start();
+    private void launchGetGameStatusTask(){
+        Thread thread = new Thread(new GetGameStatus(updateGameStatus, uiAdapter.isReadyProperty(), uiAdapter.isGameEndedProperty()));
+        thread.setName("Get game status Task");
+        thread.start();
     }
 
     private void updateGameStatusFields(GameDetailsObject gameDetailsObject){
@@ -167,7 +165,9 @@ public class ContestComponentController {
     }
 
     private void launchGetParticipantsTask(){
-        new Thread(new GetParticipantsTask(uiAdapter.isInActiveGameProperty(), this.updateParticipantsList)).start();
+        Thread thread = new Thread(new GetParticipantsTask(uiAdapter.isInActiveGameProperty(), this.updateParticipantsList));
+        thread.setName("Get participating team Task");
+        thread.start();
     }
 
     private void loadAgentDetailsComponents(){
@@ -200,13 +200,13 @@ public class ContestComponentController {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Request request, IOException e) {
-                System.out.println("Allie app: start producing request has failed");
+                System.out.println("Allie app -> start producing request has failed");
             }
 
             @Override
             public void onResponse(Response response) throws IOException {
                 if(response.code() != 200){
-                    System.out.println("Allie app : start producing request has been denied");
+                    System.out.println("Allie app -> start producing request has been denied");
                 }
                 response.body().close();
             }
@@ -215,13 +215,13 @@ public class ContestComponentController {
 
     private  void launchGetAgentProgressTask(){
         Thread thread =  new Thread(new GetAgentProgressTask(uiAdapter.isGameEndedProperty(), this.updateAgentProgress));
-        thread.setName("Get Agent Progress thread");
+        thread.setName("Get agents' progress Task");
         thread.start();
     }
 
     private void launchGetCandidatesTask(){
         Thread thread = new Thread(new GetCandidatesTask(uiAdapter.isGameEndedProperty(), this.updateCandidates));
-        thread.setName("Get Candidates(Allie App)");
+        thread.setName("Get candidates Task");
         thread.start();
     }
 

@@ -7,7 +7,6 @@ import com.enigma.utils.AppUtils;
 import com.enigma.utils.UiAdapter;
 import com.squareup.okhttp.*;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -60,7 +59,7 @@ public class LoginController {
             message.setText("Username is missing");
             return false;
         }
-        if(workersCb.getValue()== null){
+        if(workersCb.getValue() == null){
             message.setText("Num of workers is not chosen");
             return false;
         }
@@ -91,7 +90,6 @@ public class LoginController {
                     message.setText("Cannot log in please try again");
                     loginBt.disableProperty().set(false);
                 });
-
             }
 
             @Override
@@ -103,10 +101,11 @@ public class LoginController {
                     message.setText(answer.getMessage());
                     loginBt.disableProperty().set(false);
                     if(response.code() == 200)
-                        uiAdapter.setIsActive(true);
+                        Platform.runLater(()->uiAdapter.setIsActive(true));
                     if(response.code() == 206)
-                        uiAdapter.setIsActive(false);
+                        Platform.runLater(()->uiAdapter.setIsActive(false));
                 });
+                response.body().close();
             }
         });
 
@@ -126,21 +125,20 @@ public class LoginController {
             teamsCb.getItems().addAll(allies.keySet());
             teamsCb.setValue(value);
         };
-        GetActiveAllies activeAllies = new GetActiveAllies(updateTeams, uiAdapter.isLoggedInProperty());
-        new Thread(activeAllies).start();
+        Thread thread = new Thread(new GetActiveAllies(updateTeams, uiAdapter.isLoggedInProperty()));
+        thread.setName("Get allies name thread");
+        thread.start();
     }
+
     public String getTeamName(){
         return teamsCb.getValue();
     }
+
     public int getThreadsNum(){
         return workersCb.getValue();
     }
 
     public String getAgentName(){
         return nameField.getText();
-    }
-
-    public int getNumOfTasks() {
-        return numOfTasks;
     }
 }

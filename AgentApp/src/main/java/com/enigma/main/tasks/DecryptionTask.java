@@ -49,9 +49,9 @@ public class DecryptionTask implements Runnable{
             setOffsets();
             String currentDecryption = decrypt();
             if(isOptionalDecryption(currentDecryption)){
-                String initialConfiguration = this.machine.getInitialConfiguration();
-                candidatesToReportServer.add(new Candidate(currentDecryption, initialConfiguration, this.teamName));
-                Platform.runLater(()->reportFoundCandidates.accept(new Candidate(currentDecryption, initialConfiguration, this.teamName)));
+                String currentConfiguration = this.machine.getCurrentConfiguration();
+                candidatesToReportServer.add(new Candidate(currentDecryption, currentConfiguration, this.teamName));
+                Platform.runLater(()->reportFoundCandidates.accept(new Candidate(currentDecryption, currentConfiguration, this.teamName)));
             }
             moveToNextConfiguration();
         }

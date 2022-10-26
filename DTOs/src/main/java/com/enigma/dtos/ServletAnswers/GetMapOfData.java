@@ -6,7 +6,7 @@ import java.util.UUID;
 
 
 public class GetMapOfData<T> {
-    private Map<UUID,T> data;
+    private final Map<UUID,T> data;
     private String message;
 
     public GetMapOfData(){
@@ -29,7 +29,4 @@ public class GetMapOfData<T> {
         data.put(id, user);
     }
 
-    public void setData(Map<UUID, T> data) {
-        this.data = data;
-    }
 }

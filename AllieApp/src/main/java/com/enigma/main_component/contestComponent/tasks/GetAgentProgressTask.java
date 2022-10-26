@@ -25,23 +25,23 @@ public class GetAgentProgressTask implements Runnable{
 
     @Override
     public void run() {
-        System.out.println(Thread.currentThread().getName() + "(Allie app)-> is up");
+        System.out.println("Allie app(" + Thread.currentThread().getName() + ") -> is up");
         while(!isGameEnded.get()){
             try {
                 launchGetAgentProgressRequest();
                 Thread.sleep(500);
             } catch (IOException e) {
-                System.out.println(Thread.currentThread().getName() + "(Allie app)-> request failed");
+                System.out.println("Allie app(" + Thread.currentThread().getName() + ") -> failed to close response");
             } catch (InterruptedException e) {
-                System.out.println(Thread.currentThread().getName() + "(Allie app)-> was interrupted");
+                System.out.println("Allie app(" + Thread.currentThread().getName() + ") -> was interrupted");
             }
         }
         try {
             launchGetAgentProgressRequest();
         } catch (IOException e) {
-            System.out.println(Thread.currentThread().getName() + "(Allie app)-> request failed");
+            System.out.println("Allie app(" + Thread.currentThread().getName() + ") -> failed to close response");
         }
-        System.out.println(Thread.currentThread().getName() + "(Allie app)-> is going down");
+        System.out.println("Allie app(" + Thread.currentThread().getName() + ") -> is going down");
     }
 
     private void launchGetAgentProgressRequest() throws IOException {
@@ -49,10 +49,19 @@ public class GetAgentProgressTask implements Runnable{
         urlBuilder.addQueryParameter("id", AppUtils.CLIENT_ID.toString());
         Request request = new Request.Builder().url(urlBuilder.build()).build();
         Call call = AppUtils.CLIENT.newCall(request);
-        Response response = call.execute();
-        List<AgentProgressObject> agentProgressObjectList = AppUtils.GSON_SERVICE.fromJson(response.body().charStream(), TypeToken.getParameterized(List.class, AgentProgressObject.class).getType());
-        if(!agentProgressObjectList.isEmpty()){
-            Platform.runLater(()->updateAgentProgress.accept(agentProgressObjectList));
+        Response response = null;
+        try{
+            response = call.execute();
+            List<AgentProgressObject> agentProgressObjectList = AppUtils.GSON_SERVICE.fromJson(response.body().charStream(), TypeToken.getParameterized(List.class, AgentProgressObject.class).getType());
+            if(!agentProgressObjectList.isEmpty()){
+                Platform.runLater(()->updateAgentProgress.accept(agentProgressObjectList));
+            }
+        }catch (IOException e){
+            System.out.println("Allie app(" + Thread.currentThread().getName() + ") -> request failed");
+        }finally {
+            if(response != null)
+                response.body().close();
         }
+
     }
 }

@@ -11,7 +11,7 @@ public class DmParts {
     private Set<String> dictionary;
     private String excludeChars;
 
-    private final int maxAgents = 50;
+    private static final int maxAgents = 50;
 
     public void saveDmParts(CTEDecipher cteDecipher){
         this.excludeChars = cteDecipher.getCTEDictionary().getExcludeChars().trim();

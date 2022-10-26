@@ -31,7 +31,7 @@ public class GetGameStatus extends HttpServlet {
             }
             resp.getWriter().println(GSON_SERVICE.toJson(gameStatus));
         }catch (NullPointerException e){
-            //Todo - redirect to login
+            resp.setStatus(404);
         }
     }
 }

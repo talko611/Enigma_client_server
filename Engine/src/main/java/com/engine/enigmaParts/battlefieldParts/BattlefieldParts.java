@@ -3,7 +3,6 @@ package com.engine.enigmaParts.battlefieldParts;
 import com.engine.enums.DecryptionDifficulty;
 import com.engine.generated.CTEBattlefield;
 
-import java.util.Locale;
 
 public class BattlefieldParts {
     private String name;

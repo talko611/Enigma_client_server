@@ -40,8 +40,7 @@ public class StartProducing extends HttpServlet {
                 resp.setStatus(401);
             }
         }catch (NullPointerException e){
-            resp.setStatus(401);
-            //Todo - redirect to login page;
+            resp.setStatus(404);
         }
     }
 }

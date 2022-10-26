@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.enigma.main.MainController">
+<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.enigma.main.MainController">
    <top>
       <VBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="600.0" BorderPane.alignment="CENTER">
          <children>
@@ -129,7 +129,7 @@
    <center>
       <HBox alignment="TOP_CENTER" prefHeight="300.0" prefWidth="600.0" BorderPane.alignment="CENTER">
          <children>
-            <VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="300.0" prefWidth="200.0" HBox.hgrow="SOMETIMES">
+            <VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="300.0" prefWidth="259.0" HBox.hgrow="SOMETIMES">
                <children>
                   <Label text="Agent Progress">
                      <font>
@@ -139,7 +139,7 @@
                         <Insets bottom="15.0" />
                      </VBox.margin>
                   </Label>
-                  <HBox alignment="TOP_CENTER" prefHeight="50.0" prefWidth="200.0">
+                  <HBox alignment="TOP_CENTER" prefHeight="50.0" prefWidth="250.0">
                      <children>
                         <ProgressBar fx:id="taskProgressBar" prefWidth="150.0" progress="0.0">
                            <HBox.margin>

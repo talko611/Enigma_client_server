@@ -33,7 +33,7 @@ public class GetAgentsProgress extends HttpServlet {
                     agent.getName())));
             resp.getWriter().println(GSON_SERVICE.toJson(agentProgressList));
         }catch (NullPointerException e){
-            //Todo - redirect to login
+            resp.setStatus(404);
         }
     }
 }

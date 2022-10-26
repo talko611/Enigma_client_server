@@ -18,7 +18,7 @@ public class Battlefield {
     private final String name;
     private final UUID id;
     private UUID UBoatId;
-    private List<Allie> teams;
+    private final List<Allie> teams;
     private EnigmaParts enigmaParts;
     private Machine machine;
     private String encryptedMessage;
@@ -27,7 +27,7 @@ public class Battlefield {
     private String fileContent;
     private String winners;
     private GameStatus gameStatus;
-    private BlockingQueue<Candidate> candidates;
+    private final BlockingQueue<Candidate> candidates;
 
     public Battlefield(String name){
         this.name = name;
@@ -107,10 +107,6 @@ public class Battlefield {
 
     public void setUBoatId(UUID UBoatId) {
         this.UBoatId = UBoatId;
-    }
-
-    public void setTeams(List<Allie> teams) {
-        this.teams = teams;
     }
 
     public UUID getUBoatId() {

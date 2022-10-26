@@ -51,11 +51,7 @@ public class MachineImp implements Machine{
     @Override
     public void reset(){
         this.rotors.forEach(Rotor::reset);
-    }
-
-    @Override
-    public boolean isKeyExists(String key){
-        return this.keyboard.isKeyExists(key);
+        updateConfiguration();
     }
 
     @Override

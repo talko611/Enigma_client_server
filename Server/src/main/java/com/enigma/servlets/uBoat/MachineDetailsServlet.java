@@ -32,7 +32,7 @@ public class MachineDetailsServlet extends HttpServlet {
             }
             resp.getWriter().println(GSON_SERVICE.toJson(answer));
         }catch (NullPointerException e){
-            //Todo-redirect
+            resp.setStatus(404);
         }
     }
 }

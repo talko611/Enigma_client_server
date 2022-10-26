@@ -42,13 +42,11 @@ public class GetGameStatus extends HttpServlet {
                 } else if (battlefield.getGameStatus() == GameStatus.ENDING) {
                     allie.stopProducer();
                 }
-                //Todo -  decide what to do in other situations
                 gameStatus = ServletsUtils.getGameStatus(battlefield, userManager);
             }
             resp.getWriter().println(GSON_SERVICE.toJson(gameStatus));
         }catch (NullPointerException e){
             resp.setStatus(206);
-            //Todo - redirect to login
         }
     }
     private void updateAgentsGameStarted(Allie allie){

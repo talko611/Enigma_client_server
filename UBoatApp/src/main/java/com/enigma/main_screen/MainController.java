@@ -47,6 +47,7 @@ public class MainController {
         machineDetailsComponentController.setUiAdapter(uiAdapter);
         configurationComponentController.setUiAdapter(uiAdapter);
         contestDataComponentController.setUiAdapter(uiAdapter);
+        machineTab.disableProperty().bind(uiAdapter.isEncryptedMessageProperty());
     }
 
     public void setPrimaryStage(Stage primaryStage) {
@@ -64,6 +65,7 @@ public class MainController {
             return;
         sendLoadFileRequest(selectedFile);
     }
+
     private void sendLoadFileRequest(File fileToUpload){
         loadFileButton.disableProperty().set(true);
         RequestBody body = new MultipartBuilder()

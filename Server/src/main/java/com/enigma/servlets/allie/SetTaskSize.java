@@ -51,7 +51,7 @@ public class SetTaskSize extends HttpServlet {
             }
             resp.getWriter().println(GSON_SERVICE.toJson(answer));
         }catch (NullPointerException e){
-            //Todo- redirect to login page
+            resp.setStatus(404);
         }catch (NumberFormatException e){
             answer.setSuccess(false);
             answer.setMessage("Program do not support that size of task size");

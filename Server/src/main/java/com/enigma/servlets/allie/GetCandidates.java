@@ -29,7 +29,7 @@ public class GetCandidates extends HttpServlet {
             allie.getCandidates().drainTo(candidates);
             resp.getWriter().println(GSON_SERVICE.toJson(candidates));
         }catch (NullPointerException e){
-            //todo - redirect to login page
+            resp.setStatus(404);
         }
     }
 }

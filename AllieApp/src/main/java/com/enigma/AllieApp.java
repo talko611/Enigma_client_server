@@ -19,7 +19,7 @@ public class AllieApp extends Application {
         FrameController controller = loader.getController();
         controller.setPrimaryStage(primaryStage);
         controller.setFrameComponent((BorderPane) root.getContent());
-        Scene scene = new Scene(root, 700, 500);
+        Scene scene = new Scene(root, 900, 500);
         primaryStage.setScene(scene);
         primaryStage.show();
     }

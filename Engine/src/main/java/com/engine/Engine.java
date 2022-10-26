@@ -5,7 +5,6 @@ import com.engine.enigmaParts.machineParts.MachineParts;
 import com.engine.enums.DecryptionDifficulty;
 import com.engine.users.Agent;
 import com.enigma.dtos.EngineAnswers.CalculationOperationAnswer;
-import com.enigma.dtos.dataObjects.DecryptionTaskData;
 import com.enigma.dtos.dataObjects.EncryptMessageData;
 import com.enigma.dtos.EngineAnswers.InputOperationAnswer;
 import com.enigma.dtos.ServletAnswers.MachineDetailsAnswer;
@@ -16,7 +15,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.InputMismatchException;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
 
 public interface Engine {
     EnigmaParts loadGame( InputStream fileData) throws JAXBException, InputMismatchException, IOException;
@@ -35,7 +33,7 @@ public interface Engine {
 
     MachineDetailsAnswer getDetails(Machine machine, MachineParts machineParts);
 
-    CalculationOperationAnswer calculateNumberOfTasks(DecryptionDifficulty difficulty, long taskSize, MachineParts machineParts, int rotorCount);
+    CalculationOperationAnswer<Long> calculateNumberOfTasks(DecryptionDifficulty difficulty, long taskSize, MachineParts machineParts, int rotorCount);
 
     Thread launchTaskProducer(String teamName, DecryptionDifficulty difficulty, List<Agent> agents, int taskSize, MachineParts machineParts, List<Integer> rotorsId, int reflectorId, String EncryptedMessage);
 

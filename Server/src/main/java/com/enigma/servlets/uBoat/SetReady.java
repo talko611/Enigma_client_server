@@ -45,8 +45,7 @@ public class SetReady extends HttpServlet {
             }
             resp.getWriter().println(GSON_SERVICE.toJson(answer));
         }catch (NullPointerException e){
-            resp.setStatus(301);
-            //TODO - redirect to login page
+            resp.setStatus(404);
         }
     }
 

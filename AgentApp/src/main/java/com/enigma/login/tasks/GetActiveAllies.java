@@ -25,29 +25,35 @@ public class GetActiveAllies implements Runnable{
 
     @Override
     public void run() {
-        System.out.println("Agent app: get allies thread is up");
+        System.out.println("Agent app(" + Thread.currentThread().getName() + ") -> is up");
         while (!isLoggedIn.get()){
             try{
-                Thread.sleep(3000);
+                Thread.sleep(1000);
                 getAllies();
             }catch (InterruptedException e){
-                System.out.println("Agent app: Get allies thread was interrupted");
+                System.out.println("Agent app("+ Thread.currentThread().getName() + ") -> was interrupted");
+            }catch (IOException e){
+                System.out.println("Agent app("+ Thread.currentThread().getName() + ") -> could not close response body");
             }
         }
-        System.out.println("Agent app: get allies thread is going down");
+        System.out.println("Agent app("+ Thread.currentThread().getName() + ") -> is going down");
     }
-    private void getAllies(){
+    private void getAllies() throws IOException {
         HttpUrl.Builder urlBuilder = HttpUrl.parse(AppUtils.APP_URL + AppUtils.GET_ALLIES_RESOURCE ).newBuilder();
         Request request = new Request.Builder().url(urlBuilder.build()).build();
         Call call = AppUtils.CLIENT.newCall(request);
+        Response response = null;
         try {
-            Response response = call.execute();
+            response = call.execute();
             GetMapOfData<String> answer = AppUtils.GSON_SERVICE.fromJson(response.body().charStream(), TypeToken.getParameterized(GetMapOfData.class, String.class).getType());
-            Platform.runLater(()->{
-                updateAllies.accept(answer);
-            });
+            Platform.runLater(()-> updateAllies.accept(answer));
+
         } catch (IOException e) {
-            System.out.println("Got exception from server tried to get allies");
+            System.out.println("Agent app(" + Thread.currentThread().getName() + ") -> failed to get allie names");
+        }finally {
+            if(response != null)
+                response.body().close();;
+
         }
     }
 }

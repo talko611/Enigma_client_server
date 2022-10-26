@@ -5,10 +5,7 @@ import com.engine.enigmaParts.machineParts.MachineParts;
 import com.enigma.dtos.dataObjects.Candidate;
 import com.enigma.dtos.dataObjects.GameDetailsObject;
 import com.enigma.main.tasks.*;
-import com.enigma.utils.AppUtils;
 import com.enigma.utils.UiAdapter;
-import com.squareup.okhttp.*;
-import javafx.application.Platform;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -20,9 +17,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -91,9 +85,7 @@ public class MainController {
             this.taskProgressBar.setProgress(progress);
             this.percentageLb.setText(progress * 100 + "%");
         };
-        this.reportCandidateFound = (candidate) ->{
-            uiCandidatesList.add(new UiCandidate(candidate.getDecryption(), candidate.getConfiguration()));
-        };
+        this.reportCandidateFound = (candidate) -> uiCandidatesList.add(new UiCandidate(candidate.getDecryption(), candidate.getConfiguration()));
     }
 
     private void initComponent(){
@@ -122,22 +114,26 @@ public class MainController {
         bindComponent();
     }
 
-    private void getParts(){
-        new Thread(new GetMachinePart(updateEnigmaParts, uiAdapter.isReadyProperty()::set)).start();
+    private void launchGetEnigmaPartsTask(){
+        Thread thread = new Thread(new GetMachinePart(updateEnigmaParts, uiAdapter.isReadyProperty()::set));
+        thread.setName("Get enigma part Task");
+        thread.start();
     }
 
-    private void getGameStatus(){
-        new Thread(new GetGameStatus(updateGameStatus, uiAdapter.isReadyProperty())).start();
+    private void launchGetGameStatusTask(){
+        Thread thread = new Thread(new GetGameStatus(updateGameStatus, uiAdapter.isReadyProperty()));
+        thread.setName("Get game status Task");
+        thread.start();
     }
 
     private void bindComponent(){
         //one time set this thread when join in the middle of a game;
         if(!uiAdapter.isIsActive()){
-            new Thread(new SetAvailableTask(uiAdapter.isActiveProperty()::set, agentStatusLb::setText)).start();
+            launchSetAvailableTask();
         }
         uiAdapter.isActiveProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue){
-                getParts();
+                launchGetEnigmaPartsTask();
             }
         });
 
@@ -145,21 +141,27 @@ public class MainController {
             if(!newValue){
                 uiAdapter.isGameEndedProperty().set(false);
                 initComponent();
-                getParts();
+                launchGetEnigmaPartsTask();
             }if(newValue){
-                getGameStatus();
+                launchGetGameStatusTask();
             }
         });
 
         uiAdapter.isInActiveGameProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue)
-                getTasks();
+                launchGetDecryptionTask();
         });
     }
 
-    private void getTasks(){
+    private void launchSetAvailableTask(){
+        Thread thread = new Thread(new SetAvailableTask(uiAdapter.isActiveProperty()::set, agentStatusLb::setText));
+        thread.setName("Set available Task");
+        thread.start();
+    }
+
+    private void launchGetDecryptionTask(){
         this.executorService = Executors.newFixedThreadPool(this.numOfThreads);
-        new Thread(new GetDecryptionTasks(uiAdapter.isGameEndedProperty(),
+        Thread thread = new Thread(new GetDecryptionTasks(uiAdapter.isGameEndedProperty(),
                 this.tasksPreformed,
                 this.tasksAccepted,
                 this.updateProgress,
@@ -167,7 +169,9 @@ public class MainController {
                 this.teamNameLb.getText(),
                 this.dictionary,
                 this.machineParts,
-                this.executorService)).start();
+                this.executorService));
+        thread.setName("Get descriptions tasks Task");
+        thread.start();
     }
 
     public void setTeamNameLb(String teamName) {

@@ -10,9 +10,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 
 public class FrameController {
     private BorderPane frameComponent;
@@ -37,13 +37,11 @@ public class FrameController {
                     controller.setFrameComponent(frameComponent);
                     frameComponent.setCenter(parent);
                 }catch (IOException e){
-                    System.out.println(e.getCause());
-                    System.out.println(e.getStackTrace());
+                    System.out.println(Arrays.toString(e.getStackTrace()));
                 }
             }
         });
     }
-
 
     public void setFrameComponent(BorderPane frameComponent) {
         this.frameComponent = frameComponent;

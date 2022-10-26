@@ -32,14 +32,16 @@ public class LoginController {
             call.enqueue(new Callback() {
                 @Override
                 public void onFailure(Request request, IOException e) {
-                    message.setText("An error has occurred");
-                    message.setVisible(true);
+                    Platform.runLater(()-> {
+                        message.setText("An error has occurred(check if server if is online)");
+                        message.setVisible(true);
+                    });
+
                 }
 
                 @Override
                 public void onResponse(Response response) throws IOException {
-                    Gson gson = new Gson();
-                    LogInAnswer answer = gson.fromJson(response.body().charStream(),LogInAnswer.class);
+                    LogInAnswer answer = AppUtils.GSON_SERVICE.fromJson(response.body().charStream(),LogInAnswer.class);
                     if(answer.isSuccess()){
                         Platform.runLater(() -> {
                             isLoginSuccessful.set(true);
@@ -51,6 +53,7 @@ public class LoginController {
                             message.setText(answer.getMessage());
                         });
                     }
+                    response.body().close();
                 }
             });
         } else{
